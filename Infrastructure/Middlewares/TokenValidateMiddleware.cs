@@ -1,0 +1,68 @@
+using Infrastructure.Common;
+using Microsoft.AspNetCore.Http;
+
+namespace Infrastructure.Middlewares;
+
+public class TokenValidateMiddleware(RequestDelegate next, RedisService redisService)
+{
+    public async Task Invoke(HttpContext context)
+    {
+        Console.WriteLine($"Middleware đang xử lý request: {context.Request.Path}");
+        var path = context.Request.Path.Value?.ToLowerInvariant();
+
+        // Bỏ qua middleware cho các endpoint không cần xác thực
+        if (path != null &&
+            (path.StartsWith("/account/login") ||
+             path.StartsWith("/account/refreshtoken") ||
+             path.StartsWith("/account/register") ||
+             path.StartsWith("/scalar") || 
+             path.StartsWith("/account/logout")))
+        {
+            await next(context);
+            return;
+        }
+
+        string token = null;
+
+        // ✅ Ưu tiên lấy token từ Authorization Header
+        var authHeader = context.Request.Headers["Authorization"].ToString();
+        if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer "))
+        {
+            token = authHeader.Substring("Bearer ".Length).Trim();
+        }
+
+        if (string.IsNullOrEmpty(token))
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsync("Unauthorized: Missing token");
+            return;
+        }
+
+        try
+        {
+            var userId = JwtService.getUserIdFromToken(token);
+
+            // Kiểm tra token lưu trong Redis
+            var redisKey = $"accessToken:{userId}";
+            var storedToken = await redisService.GetValue(redisKey);
+            if (string.IsNullOrEmpty(storedToken) || storedToken != token)
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                await context.Response.WriteAsync("Unauthorized: Invalid or expired token");
+                return;
+            }
+
+            // Lưu userId vào context để sử dụng cho các middleware hoặc controller sau
+            context.Items["UserId"] = userId;
+        }
+        catch (Exception ex)
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            await context.Response.WriteAsync("Unauthorized: " + ex.Message);
+            return;
+        }
+
+        // Nếu token hợp lệ, tiếp tục xử lý request
+        await next(context);
+    }
+}
