@@ -11,7 +11,12 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__MySqlConnectionStr=Server=mysql;Database=CoworkingSpace;User=trung;Password=trung220703;
     depends_on:
-      - mysql
+      redis:
+        condition: service_healthy  # Chờ Redis sẵn sàng
+      mysql:
+        condition: service_started  # Chờ MySQL khởi động
+    networks:
+      - coworking-network
 
   mysql:
     image: mysql:8.0
@@ -22,14 +27,22 @@ services:
       MYSQL_PASSWORD: trung220703
     ports:
       - "3307:3306"
-    volumes:
-      - coworking_data:/var/lib/mysql
-        
+    networks:
+      - coworking-network
+
   redis:
     image: redis:latest
     container_name: coworking-redis
     ports:
       - "6379:6379"
-
-volumes:
-  coworking_data:
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]  # Kiểm tra Redis có phản hồi không
+      interval: 5s                        # Kiểm tra mỗi 5 giây
+      timeout: 3s                         # Timeout sau 3 giây
+      retries: 5                          # Thử lại 5 lần trước khi coi là lỗi
+    networks:
+      - coworking-network
+        
+networks:
+  coworking-network:
+    driver: bridge

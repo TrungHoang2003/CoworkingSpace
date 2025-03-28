@@ -53,11 +53,8 @@ builder.Services.AddCors(option =>
 
 var options = new ConfigurationOptions
 {
-    EndPoints =
-    {
-        $"{builder.Configuration["Redis:Host"]}:{builder.Configuration["Redis:Port"]}"
-    },
-    AbortOnConnectFail = false
+    EndPoints = {"localhost:6379"},
+    AbortOnConnectFail = false,
 };
 builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(options));
 

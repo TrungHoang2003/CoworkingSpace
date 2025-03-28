@@ -7,7 +7,7 @@ namespace Infrastructure.Common;
 
 public class CloudinaryService()
 {
-    private readonly Cloudinary cloudinary= null!;
+    private readonly Cloudinary _cloudinary= null!;
 
     public CloudinaryService(IConfiguration configuration) : this()
     {
@@ -16,7 +16,7 @@ public class CloudinaryService()
             configuration["Cloudinary:ApiKey"],
             configuration["Cloudinary:ApiSecret"]);
 
-        cloudinary = new Cloudinary(acc);
+        _cloudinary = new Cloudinary(acc);
     }
 
     public async Task<string?> UploadImage(IFormFile file)
@@ -29,7 +29,7 @@ public class CloudinaryService()
             Folder = "Coworking-Space"
         };
         
-        var uploadResult = await cloudinary.UploadAsync(uploadParams);
+        var uploadResult = await _cloudinary.UploadAsync(uploadParams);
         return uploadResult.SecureUrl.ToString();
     }
 }
