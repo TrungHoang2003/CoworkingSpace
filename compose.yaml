@@ -1,0 +1,35 @@
+﻿version: '3.8'
+
+services:
+  webapi:
+    build:
+      context: .
+      dockerfile: WebAPI.CoworkingSpace/Dockerfile
+    ports:
+      - "5000:80"  # Hoặc port bạn dùng trong WebAPI
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__MySqlConnectionStr=Server=mysql;Database=CoworkingSpace;User=trung;Password=trung220703;
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: CoworkingSpace
+      MYSQL_USER: trung
+      MYSQL_PASSWORD: trung220703
+    ports:
+      - "3307:3306"
+    volumes:
+      - coworking_data:/var/lib/mysql
+        
+  redis:
+    image: redis:latest
+    container_name: coworking-redis
+    ports:
+      - "6379:6379"
+
+volumes:
+  coworking_data:

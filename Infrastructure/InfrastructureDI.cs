@@ -1,3 +1,4 @@
+using System.Collections.Immutable;
 using System.Reflection;
 using Domain.Entites;
 using Infrastructure.Common;
@@ -25,9 +26,6 @@ public static class InfrastructureDI
         {
            options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)); 
         });
-
-        services.AddSingleton<IConnectionMultiplexer>(
-            sp => ConnectionMultiplexer.Connect("localhost:6379"));
         
         services.AddSingleton<JwtService>();
         services.AddSingleton<RedisService>();

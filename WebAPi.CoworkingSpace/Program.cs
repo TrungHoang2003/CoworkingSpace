@@ -5,6 +5,7 @@ using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +50,16 @@ builder.Services.AddCors(option =>
             .AllowAnyHeader();
     });
 });
+
+var options = new ConfigurationOptions
+{
+    EndPoints =
+    {
+        $"{builder.Configuration["Redis:Host"]}:{builder.Configuration["Redis:Port"]}"
+    },
+    AbortOnConnectFail = false
+};
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(options));
 
 var app = builder.Build();
 
