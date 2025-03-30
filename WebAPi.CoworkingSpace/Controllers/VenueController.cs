@@ -14,7 +14,6 @@ namespace CoworkingSpace.Controllers;
 
 public class VenueController(IVenueRepository repository, IMediator mediator): Controller
 {
-    [Authorize]
     [HttpGet("GetVenueTypes")]
     public async Task<IActionResult> GetVenueTypes()
     { 

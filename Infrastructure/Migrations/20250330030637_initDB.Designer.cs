@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250327030001_configDB")]
-    partial class configDB
+    [Migration("20250330030637_initDB")]
+    partial class initDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -390,7 +390,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("VenueAddressId")
+                    b.Property<int?>("VenueAddressId")
                         .HasColumnType("int");
 
                     b.Property<string>("VenueLogoUrl")
@@ -755,9 +755,7 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.Entites.VenueAddress", "VenueAddress")
                         .WithMany()
-                        .HasForeignKey("VenueAddressId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("VenueAddressId");
 
                     b.HasOne("Domain.Entites.VenueType", "VenueType")
                         .WithMany()

@@ -59,6 +59,8 @@ namespace Infrastructure.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     FullName = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
+                    AvatarUrl = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     UserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     NormalizedUserName = table.Column<string>(type: "varchar(256)", maxLength: 256, nullable: true)
@@ -132,9 +134,9 @@ namespace Infrastructure.Migrations
                 {
                     VenueTypeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
+                    Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Description = table.Column<string>(type: "longtext", nullable: false)
+                    Description = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -290,22 +292,30 @@ namespace Infrastructure.Migrations
                 {
                     Venueid = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    HostId = table.Column<int>(type: "int", nullable: false),
                     VenueTypeId = table.Column<int>(type: "int", nullable: false),
-                    VenueAddressId = table.Column<int>(type: "int", nullable: false),
-                    Name = table.Column<string>(type: "longtext", nullable: false)
+                    VenueAddressId = table.Column<int>(type: "int", nullable: true),
+                    Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Description = table.Column<string>(type: "longtext", nullable: false)
+                    Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    VenueLogoUrl = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Venues", x => x.Venueid);
                     table.ForeignKey(
+                        name: "FK_Venues_AspNetUsers_HostId",
+                        column: x => x.HostId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
                         name: "FK_Venues_VenueAddresses_VenueAddressId",
                         column: x => x.VenueAddressId,
                         principalTable: "VenueAddresses",
-                        principalColumn: "VenueAddressId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "VenueAddressId");
                     table.ForeignKey(
                         name: "FK_Venues_VenueTypes_VenueTypeId",
                         column: x => x.VenueTypeId,
@@ -345,7 +355,6 @@ namespace Infrastructure.Migrations
                     SpaceId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     CollectionId = table.Column<int>(type: "int", nullable: false),
-                    HostId = table.Column<int>(type: "int", nullable: false),
                     SpaceTypeId = table.Column<int>(type: "int", nullable: false),
                     VenueId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "longtext", nullable: true)
@@ -357,17 +366,17 @@ namespace Infrastructure.Migrations
                     Capacity = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    UserId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_WorkingSpaces", x => x.SpaceId);
                     table.ForeignKey(
-                        name: "FK_WorkingSpaces_AspNetUsers_HostId",
-                        column: x => x.HostId,
+                        name: "FK_WorkingSpaces_AspNetUsers_UserId",
+                        column: x => x.UserId,
                         principalTable: "AspNetUsers",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_WorkingSpaces_Collections_CollectionId",
                         column: x => x.CollectionId,
@@ -630,6 +639,11 @@ namespace Infrastructure.Migrations
                 column: "VenueId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Venues_HostId",
+                table: "Venues",
+                column: "HostId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Venues_VenueAddressId",
                 table: "Venues",
                 column: "VenueAddressId");
@@ -645,14 +659,14 @@ namespace Infrastructure.Migrations
                 column: "CollectionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WorkingSpaces_HostId",
-                table: "WorkingSpaces",
-                column: "HostId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_WorkingSpaces_SpaceTypeId",
                 table: "WorkingSpaces",
                 column: "SpaceTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_WorkingSpaces_UserId",
+                table: "WorkingSpaces",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_WorkingSpaces_VenueId",

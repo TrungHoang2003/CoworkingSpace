@@ -32,4 +32,10 @@
       </Content>
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="ini.sql">
+        <DependentUpon>Dockerfile</DependentUpon>
+      </None>
+    </ItemGroup>
+
 </Project>

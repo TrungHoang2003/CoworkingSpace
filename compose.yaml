@@ -1,23 +1,4 @@
-﻿version: '3.8'
-
-services:
-  webapi:
-    build:
-      context: .
-      dockerfile: WebAPI.CoworkingSpace/Dockerfile
-    ports:
-      - "5000:80"  # Hoặc port bạn dùng trong WebAPI
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__MySqlConnectionStr=Server=mysql;Database=CoworkingSpace;User=trung;Password=trung220703;
-    depends_on:
-      redis:
-        condition: service_healthy  # Chờ Redis sẵn sàng
-      mysql:
-        condition: service_started  # Chờ MySQL khởi động
-    networks:
-      - coworking-network
-
+﻿services:
   mysql:
     image: mysql:8.0
     environment:
@@ -27,6 +8,8 @@ services:
       MYSQL_PASSWORD: trung220703
     ports:
       - "3307:3306"
+    volumes:
+      - ./Infrastructure/Database:/docker-entrypoint-initdb.d
     networks:
       - coworking-network
 
@@ -35,14 +18,26 @@ services:
     container_name: coworking-redis
     ports:
       - "6379:6379"
-    healthcheck:
-      test: ["CMD", "redis-cli", "ping"]  # Kiểm tra Redis có phản hồi không
-      interval: 5s                        # Kiểm tra mỗi 5 giây
-      timeout: 3s                         # Timeout sau 3 giây
-      retries: 5                          # Thử lại 5 lần trước khi coi là lỗi
     networks:
       - coworking-network
+      
+  ngrok:
+    image: ngrok/ngrok:latest
+    environment:
+      NGROK_AUTHTOKEN: 2v1Cl4mGHAdU3dAcLIWIDDFUesC_3A3Chfhc1KkrYp9u6yAWd
+    command:
+      - "http"
+      - "http://host.docker.internal:5196"
+      - "--domain" 
+      - "noted-rhino-humbly.ngrok-free.app"
+    networks:
+      - coworking-network
+    ports:
+      - "4040:4040"  # Port cho ngrok dashboard
         
 networks:
   coworking-network:
     driver: bridge
+
+volumes:
+  mysql-data:
