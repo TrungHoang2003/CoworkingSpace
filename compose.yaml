@@ -27,9 +27,10 @@
     environment:
       NGROK_AUTHTOKEN: 2v1Cl4mGHAdU3dAcLIWIDDFUesC_3A3Chfhc1KkrYp9u6yAWd
     command:
-      - "start"
-      - "--cloud-edge-id"
-      - "ep_2v2prxAWuDLdTz46B26uIT6Ldm2"
+      - "http"
+      - "host.docker.internal:5196"
+      - "--domain"
+      - "noted-rhino-humbly.ngrok-free.app"
     ports:
       - "4040:4040"
     networks:
