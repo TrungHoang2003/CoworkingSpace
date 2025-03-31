@@ -18,7 +18,7 @@ public class VenueController(IVenueRepository repository, IMediator mediator): C
     public async Task<IActionResult> GetVenueTypes()
     { 
         var result = await repository.GetVenueTypes();
-        return Ok(result);
+        return Json(result);
     }
     
     [HttpGet("GetVenueTypeById/{venueTypeId}")]

@@ -23,17 +23,17 @@
       
   ngrok:
     image: ngrok/ngrok:latest
+    container_name: coworking-ngrok
     environment:
       NGROK_AUTHTOKEN: 2v1Cl4mGHAdU3dAcLIWIDDFUesC_3A3Chfhc1KkrYp9u6yAWd
     command:
-      - "http"
-      - "http://host.docker.internal:5196"
-      - "--domain" 
-      - "noted-rhino-humbly.ngrok-free.app"
+      - "start"
+      - "--cloud-edge-id"
+      - "ep_2v2prxAWuDLdTz46B26uIT6Ldm2"
+    ports:
+      - "4040:4040"
     networks:
       - coworking-network
-    ports:
-      - "4040:4040"  # Port cho ngrok dashboard
         
 networks:
   coworking-network:

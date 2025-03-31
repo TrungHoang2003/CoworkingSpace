@@ -72,8 +72,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.UseCors("AllowAll");
 app.UseRouting();
+app.UseCors("AllowAll");
 app.UseAuthentication();
 //app.UseMiddleware<TokenValidateMiddleware>();
 app.UseAuthorization();
