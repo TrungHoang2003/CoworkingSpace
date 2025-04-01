@@ -145,7 +145,7 @@ public class AuthenticationRepository(IConfiguration configuration, UserManager<
             { "code", code },
             { "client_id", clientId },
             { "client_secret", clientSecret },
-            { "redirectUri", "http://localhost:5196/Authentication/GoogleCallback" },
+            { "redirect_uri", "http://localhost:5196/Authentication/GoogleCallback" },
             { "grant_type", "authorization_code" }
         };
 
@@ -156,10 +156,7 @@ public class AuthenticationRepository(IConfiguration configuration, UserManager<
         
         var tokenData = JsonSerializer.Deserialize<GoogleTokenResponse>(responseString);
         
-        if(tokenData == null)
-            return Result<string>.Failure(new Error("Oauth error", "token couldn't be retrieved"));
-
-        var payload = await GoogleJsonWebSignature.ValidateAsync(tokenData.idToken);
+        var payload = await GoogleJsonWebSignature.ValidateAsync(tokenData!.id_token);
         
         var user = await userManager.FindByEmailAsync(payload.Email);
 

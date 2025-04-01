@@ -1,8 +1,10 @@
+using Newtonsoft.Json;
+
 namespace Infrastructure.Responses;
 
 public class GoogleTokenResponse
 {
-   public string accessToken { get; set; }
-   public string idToken { get; set; }
-   public string refreshToken { get; set; }
+   public string access_token { get; set; }
+   
+   public string id_token { get; set; }
 }
