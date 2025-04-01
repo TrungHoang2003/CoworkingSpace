@@ -1,3 +1,4 @@
+using System.Net;
 using Infrastructure.Common;
 using Infrastructure.DTOs;
 using Infrastructure.Interfaces;
@@ -29,5 +30,29 @@ public class AuthenticationController(IAuthenticationRepository repository): Con
          return BadRequest(response.Error);
       
       return Ok(response.Value);
+   }
+
+   [HttpGet("GoogleLogin")]
+   public async Task<IActionResult> GoogleLogin()
+   {
+      var response= repository.GoogleLogin();
+      
+      if(response.Result.IsFailure) return BadRequest(response.Result.Error);
+      
+      var url = response.Result.Value;
+      
+      return Redirect(url);
+   }
+
+   [HttpGet("GoogleCallBack")]
+   public async Task<IActionResult> GoogleCallBack([FromQuery] string code)
+   {
+      var result = await repository.GoogleCallBack(code);
+      if(!result.IsSuccess)
+         return BadRequest(result.Error);
+
+      var url = result.Value;
+      
+      return Redirect(url);
    }
 }

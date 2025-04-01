@@ -1,15 +1,47 @@
+using System.Text.Json;
 using Domain.Entites;
 using Domain.Responses;
+using Google.Apis.Auth;
 using Infrastructure.Common;
 using Infrastructure.DTOs;
 using Infrastructure.Errors;
 using Infrastructure.Interfaces;
+using Infrastructure.Responses;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Repositories;
 
-public class AuthenticationRepository(UserManager<User> userManager, JwtService jwtService, RedisService redis): IAuthenticationRepository
+public class AuthenticationRepository(IConfiguration configuration, UserManager<User> userManager, JwtService jwtService, RedisService redis): IAuthenticationRepository
 {
+    public async Task<Result> GoogleRegister(UserRegisterDTO userRegisterDto)
+    {
+        var user = new User
+        {
+            UserName = userRegisterDto.UserName,
+            FullName = userRegisterDto.FullName,
+            Email = userRegisterDto.Email,
+            AvatarUrl = userRegisterDto.AvatarUrl,
+            EmailConfirmed = true,
+        };
+
+        var result = await userManager.CreateAsync(user); 
+
+        if (!result.Succeeded)
+        {
+            var errors = result.Errors.Select(e=>e.Description).ToList();
+            return Result.Failure(new Error("Register failed", string.Join(",",errors)));
+        }    
+        
+        var addRoleResult = await userManager.AddToRoleAsync(user, "Customer");
+        
+        if (!addRoleResult.Succeeded)
+        {
+            return Result.Failure(new Error("Add role failed", string.Join(",", addRoleResult.Errors.Select(e => e.Description))));
+        }
+
+        return Result.Success();
+    }
     public async Task<Result> Register(UserRegisterDTO userRegisterDto)
     {
         var user = new User
@@ -73,5 +105,79 @@ public class AuthenticationRepository(UserManager<User> userManager, JwtService 
         };
         
         return Result<LoginResponse>.Success(tokens);
+    }
+
+    public Task<Result<string>> GoogleLogin()
+    {
+        var clientId = configuration["Authentication:Google:ClientId"];
+        
+        if(clientId == null)
+            return Task.FromResult(Result<string>.Failure(ConfigurationErrors.ClientIdNotFound));
+        
+        var redirectUri = "http://localhost:5196/Authentication/GoogleCallback";
+
+        var scope = "openid profile email";
+        var state = Guid.NewGuid().ToString();
+        
+        var url = $"https://accounts.google.com/o/oauth2/v2/auth?" +
+                  $"client_id={clientId}&" +
+                  $"redirect_uri={redirectUri}&" +
+                  $"response_type=code&" +
+                  $"scope={scope}&" +
+                  $"access_type=offline&" +
+                  $"state={state}";
+        
+        return Task.FromResult(Result<string>.Success(url));
+    }
+
+    public async Task<Result<string>> GoogleCallBack(string code)
+    {
+        var tokenUrl = "https://oauth2.googleapis.com/token";
+        
+        var clientId = configuration["Authentication:Google:ClientId"];
+        if(clientId == null) return Result<string>.Failure(ConfigurationErrors.ClientIdNotFound);
+        
+        var clientSecret = configuration["Authentication:Google:ClientSecret"];
+        if (clientSecret == null) return Result<string>.Failure(ConfigurationErrors.ClientSecretNotFound);
+
+        var values = new Dictionary<string, string>()
+        {
+            { "code", code },
+            { "client_id", clientId },
+            { "client_secret", clientSecret },
+            { "redirectUri", "http://localhost:5196/Authentication/GoogleCallback" },
+            { "grant_type", "authorization_code" }
+        };
+
+        var content = new FormUrlEncodedContent(values);
+        var httpClient = new HttpClient();
+        var response = await httpClient.PostAsync(tokenUrl, content);
+        var responseString = await response.Content.ReadAsStringAsync();
+        
+        var tokenData = JsonSerializer.Deserialize<GoogleTokenResponse>(responseString);
+        
+        if(tokenData == null)
+            return Result<string>.Failure(new Error("Oauth error", "token couldn't be retrieved"));
+
+        var payload = await GoogleJsonWebSignature.ValidateAsync(tokenData.idToken);
+        
+        var user = await userManager.FindByEmailAsync(payload.Email);
+
+        if (user == null)
+        {
+            var userRegisterDto = new UserRegisterDTO
+            { 
+                UserName = payload.Email,
+                Email = payload.Email,
+                FullName = payload.Name,
+                AvatarUrl = payload.Picture
+            };
+            var result = await GoogleRegister(userRegisterDto);
+            if(!result.IsSuccess) return Result<string>.Failure(result.Error);
+        }
+        
+        var jwtToken = jwtService.GenerateJwtToken(user!, "Host");
+
+        return Result<string>.Success($"http://localhost:3000/google-auth-success?token={jwtToken}");
     }
 }

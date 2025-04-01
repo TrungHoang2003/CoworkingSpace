@@ -10,4 +10,6 @@ public interface IAuthenticationRepository
 {
     Task<Result> Register( UserRegisterDTO userRegisterDto);
     Task<Result<LoginResponse>> Login(UserLoginDTO userLoginDto);
+    Task<Result<string>> GoogleLogin();
+    Task<Result<string>> GoogleCallBack(string code);
 }

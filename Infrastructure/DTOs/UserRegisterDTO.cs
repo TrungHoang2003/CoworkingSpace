@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using MySqlConnector;
 
 namespace Infrastructure.DTOs;
 
@@ -12,4 +13,6 @@ public class UserRegisterDTO
     public string? Email { get; set; }
     [Required]
     public string? Password { get; set; }
+    
+    public string? AvatarUrl { get; set; }
 }

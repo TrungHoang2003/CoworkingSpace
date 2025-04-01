@@ -1,7 +1,12 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\trung\\RiderProjects\\CoworkingSpace\\",
-  "Documents": [],
+  "WorkspaceRootPath": "C:\\Sandbox\\.Net Projects\\CoworkingSpace\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{A56C337C-F60E-495E-A3A9-E5CF90F10185}|Infrastructure\\Infrastructure.csproj|c:\\sandbox\\.net projects\\coworkingspace\\infrastructure\\repositories\\authenticationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{A56C337C-F60E-495E-A3A9-E5CF90F10185}|Infrastructure\\Infrastructure.csproj|solutionrelative:infrastructure\\repositories\\authenticationrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,8 +14,21 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "AuthenticationRepository.cs",
+              "DocumentMoniker": "C:\\Sandbox\\.Net Projects\\CoworkingSpace\\Infrastructure\\Repositories\\AuthenticationRepository.cs",
+              "RelativeDocumentMoniker": "Infrastructure\\Repositories\\AuthenticationRepository.cs",
+              "ToolTip": "C:\\Sandbox\\.Net Projects\\CoworkingSpace\\Infrastructure\\Repositories\\AuthenticationRepository.cs",
+              "RelativeToolTip": "Infrastructure\\Repositories\\AuthenticationRepository.cs",
+              "ViewState": "AgIAAHEAAAAAAAAAAADwv4UAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-01T03:43:07.005Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
