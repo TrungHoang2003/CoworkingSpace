@@ -15,7 +15,7 @@ public class WorkingSpaceRepository(ApplicationDbContext dbContext, IConfigurati
 
         try
         {
-            var sql = $"select * from WorkingSpaces";
+            var sql = $"select * from Spaces";
             var result = await connection.QueryAsync<Space>(sql);
             
            return Result<IEnumerable<Space>>.Success(result); 

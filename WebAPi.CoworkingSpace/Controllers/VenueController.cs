@@ -28,10 +28,20 @@ public class VenueController(IVenueRepository repository, IMediator mediator): C
         return Ok(result);
     }
     
-    [HttpPost("RegisterVenue")]
-    public async Task<IActionResult> RegisterVenue([FromBody] SignUpVenueDTO signUpVenueDto)
+    [HttpPost("SignUpVenue")]
+    public async Task<IActionResult> SignUpVenue([FromForm] SignUpVenueDTO signUpVenueDto)
     {
         var result = await mediator.Send(new SignUpVenueCommand(signUpVenueDto));
+        if (result.IsFailure)
+            return BadRequest(result.Error);
+        
+        return Ok(result);
+    }
+    
+    [HttpPost("UpdateVenueDetails")]
+    public async Task<IActionResult> UpdateVenueDetails([FromBody] UpdateVenueDetailsDTO updateVenueDetailsDto)
+    {
+        var result = await mediator.Send(new UpdateVenueDetailsCommand(updateVenueDetailsDto));
         if (result.IsFailure)
             return BadRequest(result.Error);
         

@@ -1,0 +1,34 @@
+using Dapper;
+using Domain.Entites;
+using Infrastructure.DbHelper;
+using Infrastructure.Interfaces;
+using Microsoft.Extensions.Configuration;
+
+namespace Infrastructure.Repositories;
+
+public class VenueAddressRepository(ApplicationDbContext dbContext, IConfiguration configuration) : GenericRepository<VenueAddress>(dbContext), IVenueAddressRepository
+{
+    private readonly ApplicationDbContext _dbContext = dbContext;
+
+    public void UpdateVenueFullAddress(VenueAddress venueAddress)
+    {
+        venueAddress.FullAddress = $"{venueAddress.Street}, {venueAddress.District}, {venueAddress.City}";
+        _dbContext.Update(venueAddress);
+    }
+
+    public Task<VenueAddress?> GetAddressByVenueId(int venueId)
+    {
+        var cnn = new MySqlServer(configuration).OpenConnection();
+        
+        try
+        {
+            const string sql = "select * from VenueAddress where VenueId = @VenueId";
+            var result = cnn.QueryFirstOrDefaultAsync<VenueAddress>(sql, new {VenueId = venueId});
+            return result;
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Error while getting address", e);
+        }
+    }
+}

@@ -12,7 +12,7 @@ using StackExchange.Redis;
 
 namespace Infrastructure;
 
-public static class InfrastructureDI
+public static class InfrastructureDi
 {
     public static void AddInfrastructure(this IServiceCollection services, string connectionString)
     {
@@ -32,6 +32,8 @@ public static class InfrastructureDI
         services.AddSingleton<CloudinaryService>();
         services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<IVenueAddressRepository, VenueAddressRepository>();
+        services.AddScoped<IVenueTypeRepository, VenueTypeRepository>();
         services.AddScoped<IVenueRepository, VenueRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
     }

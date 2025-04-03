@@ -38,7 +38,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("AmenityId");
 
-                    b.ToTable("Amenities");
+                    b.ToTable("Amenity");
                 });
 
             modelBuilder.Entity("Domain.Entites.Collection", b =>
@@ -56,7 +56,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Collections");
+                    b.ToTable("Collection");
                 });
 
             modelBuilder.Entity("Domain.Entites.Payment", b =>
@@ -228,7 +228,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("VenueId");
 
-                    b.ToTable("WorkingSpaces");
+                    b.ToTable("Space");
                 });
 
             modelBuilder.Entity("Domain.Entites.SpaceAmenity", b =>
@@ -372,13 +372,16 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entites.Venue", b =>
                 {
-                    b.Property<int>("Venueid")
+                    b.Property<int>("VenueId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Venueid"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("VenueId"));
 
                     b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Floor")
                         .HasColumnType("longtext");
 
                     b.Property<int>("HostId")
@@ -396,7 +399,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("VenueTypeId")
                         .HasColumnType("int");
 
-                    b.HasKey("Venueid");
+                    b.HasKey("VenueId");
 
                     b.HasIndex("HostId");
 
@@ -404,7 +407,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("VenueTypeId");
 
-                    b.ToTable("Venues");
+                    b.ToTable("Venue");
                 });
 
             modelBuilder.Entity("Domain.Entites.VenueAddress", b =>
@@ -416,26 +419,26 @@ namespace Infrastructure.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("VenueAddressId"));
 
                     b.Property<string>("City")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("District")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<decimal>("Latitude")
+                    b.Property<string>("FullAddress")
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal?>("Latitude")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<decimal>("Longitude")
+                    b.Property<decimal?>("Longitude")
                         .HasColumnType("decimal(65,30)");
 
-                    b.Property<string>("StreetAddress")
-                        .IsRequired()
+                    b.Property<string>("Street")
                         .HasColumnType("longtext");
 
                     b.HasKey("VenueAddressId");
 
-                    b.ToTable("VenueAddresses");
+                    b.ToTable("VenueAddress");
                 });
 
             modelBuilder.Entity("Domain.Entites.VenueImage", b =>
@@ -476,9 +479,12 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("VenueTypePictureUrl")
+                        .HasColumnType("longtext");
+
                     b.HasKey("VenueTypeId");
 
-                    b.ToTable("VenueTypes");
+                    b.ToTable("VenueType");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
@@ -750,21 +756,21 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entites.VenueAddress", "VenueAddress")
+                    b.HasOne("Domain.Entites.VenueAddress", "Address")
                         .WithMany()
                         .HasForeignKey("VenueAddressId");
 
-                    b.HasOne("Domain.Entites.VenueType", "VenueType")
+                    b.HasOne("Domain.Entites.VenueType", "Type")
                         .WithMany()
                         .HasForeignKey("VenueTypeId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Address");
+
                     b.Navigation("Host");
 
-                    b.Navigation("VenueAddress");
-
-                    b.Navigation("VenueType");
+                    b.Navigation("Type");
                 });
 
             modelBuilder.Entity("Domain.Entites.VenueImage", b =>

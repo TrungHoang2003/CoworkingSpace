@@ -10,15 +10,14 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 {
    protected override void OnModelCreating(ModelBuilder modelBuilder)
    {
-      
       base.OnModelCreating(modelBuilder);
+
    }
 
-   public DbSet<Space> WorkingSpaces { get; set; }
-   public DbSet<Venue> Venues { get; set; }
-   public DbSet<Collection> Collections { get; set; }
-   public DbSet<Amenity> Amenities { get; set; }
-   public DbSet<VenueType> VenueTypes { get; set; }
-   public DbSet<VenueAddress> VenueAddresses { get; set; }
-   
+   public DbSet<Space> Space { get; set; }
+   public DbSet<Venue> Venue { get; set; }
+   public DbSet<Collection> Collection { get; set; }
+   public DbSet<Amenity> Amenity { get; set; }
+   public DbSet<VenueType> VenueType { get; set; }
+   public DbSet<VenueAddress> VenueAddress { get; set; }
 }

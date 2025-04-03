@@ -15,7 +15,7 @@ public class VenueRepository(ApplicationDbContext dbContext, IConfiguration conf
 
         try
         {
-            const string sql = "select * from VenueTypes";
+            const string sql = "select * from VenueType";
             var result = await cnn.QueryAsync<VenueType>(sql);
             return result;
         }
@@ -31,7 +31,7 @@ public class VenueRepository(ApplicationDbContext dbContext, IConfiguration conf
 
         try
         {
-            const string sql = "select * from Venues where VenueTypeId = @VenueTypeId";
+            const string sql = "select * from Venue where VenueTypeId = @VenueTypeId";
             var result = await cnn.QueryFirstOrDefaultAsync<Venue>(sql, new { VenueTypeId = venueTypeId });
             return result;
         }
@@ -47,8 +47,24 @@ public class VenueRepository(ApplicationDbContext dbContext, IConfiguration conf
 
         try
         {
-            const string sql = "select * from VenueTypes where VenueTypeId = @VenueTypeId";
+            const string sql = "select * from VenueType where VenueTypeId = @VenueTypeId";
             var result = await cnn.QueryFirstOrDefaultAsync<VenueType>(sql, new { VenueTypeId = venueTypeId });
+            return result;
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Error while getting venueType by id", e);
+        }
+    }
+
+    public async Task<Venue?> GetVenueById(int venueId)
+    {
+        var cnn = new MySqlServer(configuration).OpenConnection();
+
+        try
+        {
+            const string sql = "select * from Venue where VenueId = @VenueId";
+            var result = await cnn.QueryFirstOrDefaultAsync<Venue>(sql, new { VenueId = venueId });
             return result;
         }
         catch (Exception e)

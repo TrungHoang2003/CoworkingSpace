@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initDB : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -16,7 +16,7 @@ namespace Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Amenities",
+                name: "Amenity",
                 columns: table => new
                 {
                     AmenityId = table.Column<int>(type: "int", nullable: false)
@@ -28,7 +28,7 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Amenities", x => x.AmenityId);
+                    table.PrimaryKey("PK_Amenity", x => x.AmenityId);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -108,28 +108,30 @@ namespace Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "VenueAddresses",
+                name: "VenueAddress",
                 columns: table => new
                 {
                     VenueAddressId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    StreetAddress = table.Column<string>(type: "longtext", nullable: false)
+                    Street = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    District = table.Column<string>(type: "longtext", nullable: false)
+                    District = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    City = table.Column<string>(type: "longtext", nullable: false)
+                    City = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Latitude = table.Column<decimal>(type: "decimal(65,30)", nullable: false),
-                    Longitude = table.Column<decimal>(type: "decimal(65,30)", nullable: false)
+                    FullAddress = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Latitude = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    Longitude = table.Column<decimal>(type: "decimal(65,30)", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VenueAddresses", x => x.VenueAddressId);
+                    table.PrimaryKey("PK_VenueAddress", x => x.VenueAddressId);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "VenueTypes",
+                name: "VenueType",
                 columns: table => new
                 {
                     VenueTypeId = table.Column<int>(type: "int", nullable: false)
@@ -137,11 +139,13 @@ namespace Infrastructure.Migrations
                     Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    VenueTypePictureUrl = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_VenueTypes", x => x.VenueTypeId);
+                    table.PrimaryKey("PK_VenueType", x => x.VenueTypeId);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -267,7 +271,7 @@ namespace Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Collections",
+                name: "Collection",
                 columns: table => new
                 {
                     CollectionId = table.Column<int>(type: "int", nullable: false)
@@ -276,9 +280,9 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Collections", x => x.CollectionId);
+                    table.PrimaryKey("PK_Collection", x => x.CollectionId);
                     table.ForeignKey(
-                        name: "FK_Collections_AspNetUsers_UserId",
+                        name: "FK_Collection_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
@@ -287,10 +291,10 @@ namespace Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "Venues",
+                name: "Venue",
                 columns: table => new
                 {
-                    Venueid = table.Column<int>(type: "int", nullable: false)
+                    VenueId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     HostId = table.Column<int>(type: "int", nullable: false),
                     VenueTypeId = table.Column<int>(type: "int", nullable: false),
@@ -300,56 +304,35 @@ namespace Infrastructure.Migrations
                     Description = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     VenueLogoUrl = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Floor = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Venues", x => x.Venueid);
+                    table.PrimaryKey("PK_Venue", x => x.VenueId);
                     table.ForeignKey(
-                        name: "FK_Venues_AspNetUsers_HostId",
+                        name: "FK_Venue_AspNetUsers_HostId",
                         column: x => x.HostId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Venues_VenueAddresses_VenueAddressId",
+                        name: "FK_Venue_VenueAddress_VenueAddressId",
                         column: x => x.VenueAddressId,
-                        principalTable: "VenueAddresses",
+                        principalTable: "VenueAddress",
                         principalColumn: "VenueAddressId");
                     table.ForeignKey(
-                        name: "FK_Venues_VenueTypes_VenueTypeId",
+                        name: "FK_Venue_VenueType_VenueTypeId",
                         column: x => x.VenueTypeId,
-                        principalTable: "VenueTypes",
+                        principalTable: "VenueType",
                         principalColumn: "VenueTypeId",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "VenueImage",
-                columns: table => new
-                {
-                    VenueImageId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    VenueId = table.Column<int>(type: "int", nullable: false),
-                    ImageUrl = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    UploadedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_VenueImage", x => x.VenueImageId);
-                    table.ForeignKey(
-                        name: "FK_VenueImage_Venues_VenueId",
-                        column: x => x.VenueId,
-                        principalTable: "Venues",
-                        principalColumn: "Venueid",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "WorkingSpaces",
+                name: "Space",
                 columns: table => new
                 {
                     SpaceId = table.Column<int>(type: "int", nullable: false)
@@ -371,29 +354,52 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_WorkingSpaces", x => x.SpaceId);
+                    table.PrimaryKey("PK_Space", x => x.SpaceId);
                     table.ForeignKey(
-                        name: "FK_WorkingSpaces_AspNetUsers_UserId",
+                        name: "FK_Space_AspNetUsers_UserId",
                         column: x => x.UserId,
                         principalTable: "AspNetUsers",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_WorkingSpaces_Collections_CollectionId",
+                        name: "FK_Space_Collection_CollectionId",
                         column: x => x.CollectionId,
-                        principalTable: "Collections",
+                        principalTable: "Collection",
                         principalColumn: "CollectionId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_WorkingSpaces_SpaceType_SpaceTypeId",
+                        name: "FK_Space_SpaceType_SpaceTypeId",
                         column: x => x.SpaceTypeId,
                         principalTable: "SpaceType",
                         principalColumn: "SpaceTypeId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_WorkingSpaces_Venues_VenueId",
+                        name: "FK_Space_Venue_VenueId",
                         column: x => x.VenueId,
-                        principalTable: "Venues",
-                        principalColumn: "Venueid",
+                        principalTable: "Venue",
+                        principalColumn: "VenueId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "VenueImage",
+                columns: table => new
+                {
+                    VenueImageId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    VenueId = table.Column<int>(type: "int", nullable: false),
+                    ImageUrl = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    UploadedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VenueImage", x => x.VenueImageId);
+                    table.ForeignKey(
+                        name: "FK_VenueImage_Venue_VenueId",
+                        column: x => x.VenueId,
+                        principalTable: "Venue",
+                        principalColumn: "VenueId",
                         onDelete: ReferentialAction.Cascade);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
@@ -425,9 +431,9 @@ namespace Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Reservation_WorkingSpaces_SpaceId",
+                        name: "FK_Reservation_Space_SpaceId",
                         column: x => x.SpaceId,
-                        principalTable: "WorkingSpaces",
+                        principalTable: "Space",
                         principalColumn: "SpaceId",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -456,9 +462,9 @@ namespace Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Review_WorkingSpaces_SpaceId",
+                        name: "FK_Review_Space_SpaceId",
                         column: x => x.SpaceId,
-                        principalTable: "WorkingSpaces",
+                        principalTable: "Space",
                         principalColumn: "SpaceId",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -477,15 +483,15 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_SpaceAmenity", x => x.WorkingSpaceAmenityId);
                     table.ForeignKey(
-                        name: "FK_SpaceAmenity_Amenities_AmenityId",
+                        name: "FK_SpaceAmenity_Amenity_AmenityId",
                         column: x => x.AmenityId,
-                        principalTable: "Amenities",
+                        principalTable: "Amenity",
                         principalColumn: "AmenityId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_SpaceAmenity_WorkingSpaces_SpaceId",
+                        name: "FK_SpaceAmenity_Space_SpaceId",
                         column: x => x.SpaceId,
-                        principalTable: "WorkingSpaces",
+                        principalTable: "Space",
                         principalColumn: "SpaceId",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -506,9 +512,9 @@ namespace Infrastructure.Migrations
                 {
                     table.PrimaryKey("PK_SpaceImage", x => x.ImageId);
                     table.ForeignKey(
-                        name: "FK_SpaceImage_WorkingSpaces_SpaceId",
+                        name: "FK_SpaceImage_Space_SpaceId",
                         column: x => x.SpaceId,
-                        principalTable: "WorkingSpaces",
+                        principalTable: "Space",
                         principalColumn: "SpaceId",
                         onDelete: ReferentialAction.Cascade);
                 })
@@ -583,8 +589,8 @@ namespace Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "IX_Collections_UserId",
-                table: "Collections",
+                name: "IX_Collection_UserId",
+                table: "Collection",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -619,6 +625,26 @@ namespace Infrastructure.Migrations
                 column: "SpaceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Space_CollectionId",
+                table: "Space",
+                column: "CollectionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Space_SpaceTypeId",
+                table: "Space",
+                column: "SpaceTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Space_UserId",
+                table: "Space",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Space_VenueId",
+                table: "Space",
+                column: "VenueId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SpaceAmenity_AmenityId",
                 table: "SpaceAmenity",
                 column: "AmenityId");
@@ -634,43 +660,23 @@ namespace Infrastructure.Migrations
                 column: "SpaceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_VenueImage_VenueId",
-                table: "VenueImage",
-                column: "VenueId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Venues_HostId",
-                table: "Venues",
+                name: "IX_Venue_HostId",
+                table: "Venue",
                 column: "HostId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Venues_VenueAddressId",
-                table: "Venues",
+                name: "IX_Venue_VenueAddressId",
+                table: "Venue",
                 column: "VenueAddressId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Venues_VenueTypeId",
-                table: "Venues",
+                name: "IX_Venue_VenueTypeId",
+                table: "Venue",
                 column: "VenueTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_WorkingSpaces_CollectionId",
-                table: "WorkingSpaces",
-                column: "CollectionId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_WorkingSpaces_SpaceTypeId",
-                table: "WorkingSpaces",
-                column: "SpaceTypeId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_WorkingSpaces_UserId",
-                table: "WorkingSpaces",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_WorkingSpaces_VenueId",
-                table: "WorkingSpaces",
+                name: "IX_VenueImage_VenueId",
+                table: "VenueImage",
                 column: "VenueId");
         }
 
@@ -714,28 +720,28 @@ namespace Infrastructure.Migrations
                 name: "Reservation");
 
             migrationBuilder.DropTable(
-                name: "Amenities");
+                name: "Amenity");
 
             migrationBuilder.DropTable(
-                name: "WorkingSpaces");
+                name: "Space");
 
             migrationBuilder.DropTable(
-                name: "Collections");
+                name: "Collection");
 
             migrationBuilder.DropTable(
                 name: "SpaceType");
 
             migrationBuilder.DropTable(
-                name: "Venues");
+                name: "Venue");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
 
             migrationBuilder.DropTable(
-                name: "VenueAddresses");
+                name: "VenueAddress");
 
             migrationBuilder.DropTable(
-                name: "VenueTypes");
+                name: "VenueType");
         }
     }
 }

@@ -8,4 +8,6 @@ public class VenueType
    
    public string? Name { get; set; }
    public string? Description { get; set; }
+   
+   public string? VenueTypePictureUrl { get; set; }
 }

@@ -6,7 +6,6 @@ namespace CoworkingSpace.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-[Authorize]
 public class UserController(IUserRepository repository):Controller
 { 
     [HttpPost("UpdateAvatar")]
@@ -14,6 +13,5 @@ public class UserController(IUserRepository repository):Controller
    {
        var result = await repository.UpdateAvatar(file);
        return result.IsSuccess ? Ok() : BadRequest(result.Error);
-       
    }
 }
