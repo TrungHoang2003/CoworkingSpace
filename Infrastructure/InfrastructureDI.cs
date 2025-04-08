@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
+using Role = Domain.Entities.Role;
 
 namespace Infrastructure;
 
@@ -16,7 +17,7 @@ public static class InfrastructureDi
 {
     public static void AddInfrastructure(this IServiceCollection services, string connectionString)
     {
-        services.AddIdentity<User, IdentityRole<int>>(options =>
+        services.AddIdentity<User, Role>(options =>
         {
             options.User.AllowedUserNameCharacters =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";

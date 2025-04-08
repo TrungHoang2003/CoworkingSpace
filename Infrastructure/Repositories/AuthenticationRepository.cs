@@ -1,5 +1,6 @@
 using System.Text.Json;
 using Domain.Entites;
+using Domain.Entities;
 using Domain.Responses;
 using Google.Apis.Auth;
 using Infrastructure.Common;
@@ -12,7 +13,8 @@ using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Repositories;
 
-public class AuthenticationRepository(IConfiguration configuration, UserManager<User> userManager, JwtService jwtService, RedisService redis): IAuthenticationRepository
+public class AuthenticationRepository(IConfiguration configuration, UserManager<User> userManager,
+    RoleManager<Role> roleManager, JwtService jwtService, RedisService redis): IAuthenticationRepository
 {
     public async Task<Result> GoogleRegister(UserRegisterDTO userRegisterDto)
     {
@@ -33,12 +35,12 @@ public class AuthenticationRepository(IConfiguration configuration, UserManager<
             return Result.Failure(new Error("Register failed", string.Join(",",errors)));
         }    
         
-        var addRoleResult = await userManager.AddToRoleAsync(user, "Customer");
+        var hostRole = await roleManager.RoleExistsAsync("Customer");
+        if(!hostRole) await roleManager.CreateAsync(new Role("Customer"));
         
+        var addRoleResult = await userManager.AddToRoleAsync(user, "Customer");
         if (!addRoleResult.Succeeded)
-        {
             return Result.Failure(new Error("Add role failed", string.Join(",", addRoleResult.Errors.Select(e => e.Description))));
-        }
 
         return Result.Success();
     }
@@ -59,12 +61,12 @@ public class AuthenticationRepository(IConfiguration configuration, UserManager<
             return Result.Failure(new Error("Register failed", string.Join(",",errors)));
         }    
         
-        var addRoleResult = await userManager.AddToRoleAsync(user, "Customer");
+        var customerRole= await roleManager.RoleExistsAsync("Customer");
+        if(!customerRole) await roleManager.CreateAsync(new Role("Customer"));
         
+        var addRoleResult = await userManager.AddToRoleAsync(user, "Customer");
         if (!addRoleResult.Succeeded)
-        {
             return Result.Failure(new Error("Add role failed", string.Join(",", addRoleResult.Errors.Select(e => e.Description))));
-        }
 
         return Result.Success();
     }
@@ -81,7 +83,7 @@ public class AuthenticationRepository(IConfiguration configuration, UserManager<
         
         var roles = await userManager.GetRolesAsync(user);
         
-        var accessToken = jwtService.GenerateJwtToken(user, roles[0]);
+        var accessToken = jwtService.GenerateJwtToken(user, "");
         var refreshToken = jwtService.GenerateRefreshToken();
         var refreshKey = $"refreshToken:{user.Id}";
         var accessKey = $"accessToken:{user.Id}";
@@ -173,7 +175,7 @@ public class AuthenticationRepository(IConfiguration configuration, UserManager<
             if(!result.IsSuccess) return Result<string>.Failure(result.Error);
         }
         
-        var jwtToken = jwtService.GenerateJwtToken(user!, "Host");
+        var jwtToken = jwtService.GenerateJwtToken(user!,"");
 
         return Result<string>.Success($"http://localhost:3000/google-auth-success?token={jwtToken}");
     }

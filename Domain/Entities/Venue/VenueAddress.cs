@@ -7,10 +7,6 @@ public class VenueAddress
 {
     [Key]
     public int VenueAddressId { get; set; }
-    
-    public int VenueId { get; set; }
-    [ForeignKey("VenueId")] public Venue Venue { get; set; }
-    
     public string? Street { get; set; }
     public string? District { get; set; }
     public string? City { get; set; } 

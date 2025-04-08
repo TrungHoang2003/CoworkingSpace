@@ -11,5 +11,5 @@ public class Amenity
     public string? Description { get; set; }
 
     // Navigation property
-    public ICollection<SpaceAmenity>? WorkingSpaceAmenities { get; set; } // Many-to-Many with WorkingSpaces
+    public ICollection<SpaceAmenity>? SpaceAmenities { get; set; } 
 }

@@ -31,7 +31,7 @@ public class VenueRepository(ApplicationDbContext dbContext, IConfiguration conf
 
         try
         {
-            const string sql = "select * from Venue where VenueTypeId = @VenueTypeId";
+            const string sql = "select * from Venue where VenueTypeId = @venueTypeId";
             var result = await cnn.QueryFirstOrDefaultAsync<Venue>(sql, new { VenueTypeId = venueTypeId });
             return result;
         }
@@ -47,7 +47,7 @@ public class VenueRepository(ApplicationDbContext dbContext, IConfiguration conf
 
         try
         {
-            const string sql = "select * from VenueType where VenueTypeId = @VenueTypeId";
+            const string sql = "select * from VenueType where VenueTypeId = @venueTypeId";
             var result = await cnn.QueryFirstOrDefaultAsync<VenueType>(sql, new { VenueTypeId = venueTypeId });
             return result;
         }
@@ -63,7 +63,7 @@ public class VenueRepository(ApplicationDbContext dbContext, IConfiguration conf
 
         try
         {
-            const string sql = "select * from Venue where VenueId = @VenueId";
+            const string sql = "select * from Venue where VenueId = @venueId";
             var result = await cnn.QueryFirstOrDefaultAsync<Venue>(sql, new { VenueId = venueId });
             return result;
         }

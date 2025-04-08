@@ -16,19 +16,19 @@ public class VenueAddressRepository(ApplicationDbContext dbContext, IConfigurati
         _dbContext.Update(venueAddress);
     }
 
-    public Task<VenueAddress?> GetAddressByVenueId(int venueId)
+    public Task<VenueAddress?> GetVenueAddressById(int venueAddressId)
     {
         var cnn = new MySqlServer(configuration).OpenConnection();
-        
+
         try
         {
-            const string sql = "select * from VenueAddress where VenueId = @VenueId";
-            var result = cnn.QueryFirstOrDefaultAsync<VenueAddress>(sql, new {VenueId = venueId});
+            const string sql = "select * from VenueAddress where VenueAddressId = @venueAddressId";
+            var result = cnn.QueryFirstOrDefaultAsync<VenueAddress>(sql, new { VenueAddressId = venueAddressId });
             return result;
         }
         catch (Exception e)
         {
-            throw new Exception("Error while getting address", e);
+            throw new Exception("Error while getting venue address by id", e);
         }
     }
 }

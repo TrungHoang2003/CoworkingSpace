@@ -14,23 +14,22 @@ public class UpdateVenueDetailsCommandHandler(IUnitOfWork unitOfWork)
     public async Task<Result> Handle(UpdateVenueDetailsCommand command, CancellationToken cancellationToken)
     {
         var venue = await unitOfWork.Venue.GetVenueById(command.UpdateVenueDetailsDto.VenueId);
-        if (venue == null)
-            return VenueErrors.VenueNotFound;
+        if (venue == null) return VenueErrors.VenueNotFound;
         
-        var venueAddress = await unitOfWork.VenueAddress.GetAddressByVenueId(command.UpdateVenueDetailsDto.VenueId);
-        if(venueAddress == null)
-            return VenueErrors.VenueNotFound;
+        var venueAddress = await unitOfWork.VenueAddress.GetVenueAddressById(venue.VenueAddressId);
+        if(venueAddress == null) return VenueErrors.VenueNotFound;
 
         venue.Name = command.UpdateVenueDetailsDto.VenueName;
         venue.Description = command.UpdateVenueDetailsDto.VenueDescription;
-        venue.Address.Street = command.UpdateVenueDetailsDto.VenueStreet;
-        venue.Address.City = command.UpdateVenueDetailsDto.VenueCity;
-        venue.Address.District = command.UpdateVenueDetailsDto.VenueDistrict;
-        venue.Address.Latitude = command.UpdateVenueDetailsDto.VenueLatitude;
-        venue.Address.Longitude = command.UpdateVenueDetailsDto.VenueLongitude;
+        venueAddress.Street = command.UpdateVenueDetailsDto.VenueStreet;
+        venueAddress.City = command.UpdateVenueDetailsDto.VenueCity;
+        venueAddress.District = command.UpdateVenueDetailsDto.VenueDistrict;
+        venueAddress.Latitude = command.UpdateVenueDetailsDto.VenueLatitude;
+        venueAddress.Longitude = command.UpdateVenueDetailsDto.VenueLongitude;
         venue.Floor = command.UpdateVenueDetailsDto.VenueFloor;
 
         await unitOfWork.Venue.Update(venue);
+        await unitOfWork.VenueAddress.Update(venueAddress);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 
         return Result.Success();

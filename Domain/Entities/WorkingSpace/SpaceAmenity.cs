@@ -6,7 +6,7 @@ namespace Domain.Entites;
 public class SpaceAmenity
 {
     [Key]
-    public int WorkingSpaceAmenityId { get; set; }
+    public int SpaceAmenityId { get; set; }
 
     public int SpaceId { get; set; }
 

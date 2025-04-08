@@ -1,4 +1,5 @@
 using Domain.Entites;
+using Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -6,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 namespace Infrastructure.DbHelper;
 
 public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options):
-   IdentityDbContext<User, IdentityRole<int>, int>(options)
+   IdentityDbContext<User, Role, int>(options)
 {
    protected override void OnModelCreating(ModelBuilder modelBuilder)
    {

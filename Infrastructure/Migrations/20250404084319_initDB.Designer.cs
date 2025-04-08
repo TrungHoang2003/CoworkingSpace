@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250403093724_init")]
-    partial class init
+    [Migration("20250404084319_initDB")]
+    partial class initDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -44,22 +44,37 @@ namespace Infrastructure.Migrations
                     b.ToTable("Amenity");
                 });
 
-            modelBuilder.Entity("Domain.Entites.Collection", b =>
+            modelBuilder.Entity("Domain.Entites.GuestHour", b =>
                 {
-                    b.Property<int>("CollectionId")
+                    b.Property<int>("GuestHourId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("CollectionId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("GuestHourId"));
 
-                    b.Property<int>("UserId")
+                    b.Property<int>("DayOfWeek")
                         .HasColumnType("int");
 
-                    b.HasKey("CollectionId");
+                    b.Property<TimeSpan>("EndTime")
+                        .HasColumnType("time(6)");
 
-                    b.HasIndex("UserId");
+                    b.Property<bool>("IsClosed")
+                        .HasColumnType("tinyint(1)");
 
-                    b.ToTable("Collection");
+                    b.Property<bool>("IsOpen24Hours")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<TimeSpan>("StartTime")
+                        .HasColumnType("time(6)");
+
+                    b.Property<int>("VenueId")
+                        .HasColumnType("int");
+
+                    b.HasKey("GuestHourId");
+
+                    b.HasIndex("VenueId");
+
+                    b.ToTable("GuestHour");
                 });
 
             modelBuilder.Entity("Domain.Entites.Payment", b =>
@@ -185,10 +200,10 @@ namespace Infrastructure.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("SpaceId"));
 
-                    b.Property<int>("Capacity")
+                    b.Property<int?>("BookingWindowId")
                         .HasColumnType("int");
 
-                    b.Property<int>("CollectionId")
+                    b.Property<int>("Capacity")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -223,7 +238,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("SpaceId");
 
-                    b.HasIndex("CollectionId");
+                    b.HasIndex("BookingWindowId");
 
                     b.HasIndex("SpaceTypeId");
 
@@ -236,11 +251,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entites.SpaceAmenity", b =>
                 {
-                    b.Property<int>("WorkingSpaceAmenityId")
+                    b.Property<int>("SpaceAmenityId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("WorkingSpaceAmenityId"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("SpaceAmenityId"));
 
                     b.Property<int>("AmenityId")
                         .HasColumnType("int");
@@ -248,7 +263,7 @@ namespace Infrastructure.Migrations
                     b.Property<int>("SpaceId")
                         .HasColumnType("int");
 
-                    b.HasKey("WorkingSpaceAmenityId");
+                    b.HasKey("SpaceAmenityId");
 
                     b.HasIndex("AmenityId");
 
@@ -393,7 +408,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("VenueAddressId")
+                    b.Property<int>("VenueAddressId")
                         .HasColumnType("int");
 
                     b.Property<string>("VenueLogoUrl")
@@ -490,7 +505,91 @@ namespace Infrastructure.Migrations
                     b.ToTable("VenueType");
                 });
 
-            modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole<int>", b =>
+            modelBuilder.Entity("Domain.Entities.BookingWindow", b =>
+                {
+                    b.Property<int>("BookingWindowId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("BookingWindowId"));
+
+                    b.Property<int>("MaxNoticeDays")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MinNotice")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Unit")
+                        .HasColumnType("int");
+
+                    b.HasKey("BookingWindowId");
+
+                    b.ToTable("BookingWindow");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Collection", b =>
+                {
+                    b.Property<int>("CollectionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("CollectionId"));
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CollectionId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Collection");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PaymentInfo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AccountNumber")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("BankCode")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("FullName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("IdentityNumber")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("Note")
+                        .IsRequired()
+                        .HasColumnType("longtext");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PaymentInfo");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Role", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -517,6 +616,50 @@ namespace Infrastructure.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.WorkingSpace.SpaceCollection", b =>
+                {
+                    b.Property<int>("SpaceCollectionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("SpaceCollectionId"));
+
+                    b.Property<int>("CollectionId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SpaceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SpaceCollectionId");
+
+                    b.HasIndex("CollectionId");
+
+                    b.HasIndex("SpaceId");
+
+                    b.ToTable("SpaceCollection");
+                });
+
+            modelBuilder.Entity("Domain.Entities.WorkingSpace.SpaceObservedHoliday", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("HolidayId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SpaceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SpaceId");
+
+                    b.ToTable("SpaceObservedHoliday");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
@@ -622,15 +765,15 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entites.Collection", b =>
+            modelBuilder.Entity("Domain.Entites.GuestHour", b =>
                 {
-                    b.HasOne("Domain.Entites.User", "User")
-                        .WithMany("Collections")
-                        .HasForeignKey("UserId")
+                    b.HasOne("Domain.Entites.Venue", "Venue")
+                        .WithMany("GuestHours")
+                        .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("User");
+                    b.Navigation("Venue");
                 });
 
             modelBuilder.Entity("Domain.Entites.Payment", b =>
@@ -692,11 +835,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entites.Space", b =>
                 {
-                    b.HasOne("Domain.Entites.Collection", "Collection")
-                        .WithMany("WorkingSpaces")
-                        .HasForeignKey("CollectionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.HasOne("Domain.Entities.BookingWindow", "BookingWindow")
+                        .WithMany("Spaces")
+                        .HasForeignKey("BookingWindowId");
 
                     b.HasOne("Domain.Entites.SpaceType", "SpaceType")
                         .WithMany("WorkingSpaces")
@@ -714,7 +855,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Collection");
+                    b.Navigation("BookingWindow");
 
                     b.Navigation("SpaceType");
 
@@ -724,7 +865,7 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entites.SpaceAmenity", b =>
                 {
                     b.HasOne("Domain.Entites.Amenity", "Amenity")
-                        .WithMany("WorkingSpaceAmenities")
+                        .WithMany("SpaceAmenities")
                         .HasForeignKey("AmenityId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -761,7 +902,9 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.Entites.VenueAddress", "Address")
                         .WithMany()
-                        .HasForeignKey("VenueAddressId");
+                        .HasForeignKey("VenueAddressId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entites.VenueType", "Type")
                         .WithMany()
@@ -787,9 +930,55 @@ namespace Infrastructure.Migrations
                     b.Navigation("Venue");
                 });
 
+            modelBuilder.Entity("Domain.Entities.Collection", b =>
+                {
+                    b.HasOne("Domain.Entites.User", "User")
+                        .WithMany("Collections")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.PaymentInfo", b =>
+                {
+                    b.HasOne("Domain.Entites.User", "User")
+                        .WithMany("PaymentInfos")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.WorkingSpace.SpaceCollection", b =>
+                {
+                    b.HasOne("Domain.Entities.Collection", null)
+                        .WithMany("Spaces")
+                        .HasForeignKey("CollectionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entites.Space", null)
+                        .WithMany("Collections")
+                        .HasForeignKey("SpaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Domain.Entities.WorkingSpace.SpaceObservedHoliday", b =>
+                {
+                    b.HasOne("Domain.Entites.Space", null)
+                        .WithMany("Holidays")
+                        .HasForeignKey("SpaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<int>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
+                    b.HasOne("Domain.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -816,7 +1005,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserRole<int>", b =>
                 {
-                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole<int>", null)
+                    b.HasOne("Domain.Entities.Role", null)
                         .WithMany()
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -840,12 +1029,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entites.Amenity", b =>
                 {
-                    b.Navigation("WorkingSpaceAmenities");
-                });
-
-            modelBuilder.Entity("Domain.Entites.Collection", b =>
-                {
-                    b.Navigation("WorkingSpaces");
+                    b.Navigation("SpaceAmenities");
                 });
 
             modelBuilder.Entity("Domain.Entites.Reservation", b =>
@@ -856,6 +1040,10 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entites.Space", b =>
                 {
                     b.Navigation("Amenities");
+
+                    b.Navigation("Collections");
+
+                    b.Navigation("Holidays");
 
                     b.Navigation("Reservations");
 
@@ -873,6 +1061,8 @@ namespace Infrastructure.Migrations
                 {
                     b.Navigation("Collections");
 
+                    b.Navigation("PaymentInfos");
+
                     b.Navigation("Payments");
 
                     b.Navigation("Reservations");
@@ -884,9 +1074,21 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entites.Venue", b =>
                 {
+                    b.Navigation("GuestHours");
+
                     b.Navigation("Spaces");
 
                     b.Navigation("VenueImages");
+                });
+
+            modelBuilder.Entity("Domain.Entities.BookingWindow", b =>
+                {
+                    b.Navigation("Spaces");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Collection", b =>
+                {
+                    b.Navigation("Spaces");
                 });
 #pragma warning restore 612, 618
         }
