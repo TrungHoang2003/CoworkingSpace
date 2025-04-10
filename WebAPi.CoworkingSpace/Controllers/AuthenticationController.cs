@@ -1,4 +1,5 @@
 using System.Net;
+using Domain.DTOs;
 using Infrastructure.Common;
 using Infrastructure.DTOs;
 using Infrastructure.Interfaces;
@@ -11,9 +12,9 @@ namespace CoworkingSpace.Controllers;
 public class AuthenticationController(IAuthenticationRepository repository): Controller
 {
    [HttpPost("Register")]
-   public async Task<IActionResult> Register([FromBody] UserRegisterDTO userRegisterDto)
+   public async Task<IActionResult> Register([FromBody] UserRegisterRequest userRegisterRequest)
    {
-      var response = await repository.Register(userRegisterDto);
+      var response = await repository.Register(userRegisterRequest);
       
       if (!response.IsSuccess)
          return BadRequest(response.Error);
@@ -22,9 +23,9 @@ public class AuthenticationController(IAuthenticationRepository repository): Con
    }
    
    [HttpPost("Login")]
-   public async Task<IActionResult> Login([FromBody] UserLoginDTO userLoginDto)
+   public async Task<IActionResult> Login([FromBody] UserLoginRequest userLoginRequest)
    {
-      var response = await repository.Login(userLoginDto);
+      var response = await repository.Login(userLoginRequest);
       
       if (!response.IsSuccess)
          return BadRequest(response.Error);

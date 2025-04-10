@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Entities;
-using Domain.Entities.WorkingSpace;
 
 namespace Domain.Entites;
 
@@ -44,5 +43,4 @@ public class Space
     public ICollection<SpaceImage>? SpaceImages { get; set; } // Các ảnh mô tả
     public ICollection<Reservation>? Reservations { get; set; } // 
     public ICollection<Review>? Reviews { get; set; } // Các đánh giá không gian
-    public ICollection<SpaceObservedHoliday>? Holidays { get; set; } // Áp dụng các ngày lễ
 }

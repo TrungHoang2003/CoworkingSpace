@@ -1,8 +1,8 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Domain.Entities;
+using Domain.Entites;
 
-namespace Domain.Entites;
+namespace Domain.Entities;
 
 public class Venue
 {
@@ -30,4 +30,5 @@ public class Venue
     public ICollection<VenueImage>? VenueImages { get; set; } // Hình ảnh văn phòng
     public ICollection<Space> Spaces { get; set; } // Danh sách không gian trong văn phòng
     public ICollection<GuestHour> GuestHours { get; set; } // Giờ cho thuê
+    public ICollection<VenueHoliday>? Holidays { get; set; } // Ngày nghỉ lễ
 }

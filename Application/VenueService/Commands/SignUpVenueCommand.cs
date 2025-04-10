@@ -1,6 +1,7 @@
 using Domain.DTOs;
 using Domain.Entites;
 using Domain.Entities;
+using Domain.Errors;
 using Infrastructure.Common;
 using Infrastructure.Errors;
 using Infrastructure.Interfaces;
@@ -10,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.VenueService.Commands;
 
-public sealed record SignUpVenueCommand(SignUpVenueDTO SignUpVenueDto): IRequest<Result>;
+public sealed record SignUpVenueCommand(SignUpVenueRequest SignUpVenueRequest): IRequest<Result>;
 
 public class SignUpVenueCommandHandler(
     CloudinaryService cloudinaryService,
@@ -24,35 +25,35 @@ public class SignUpVenueCommandHandler(
         string? venueLogoUrl = null;
 
         // Kiểm tra xem loại văn phòng có tồn tại không
-        var venueType = await unitOfWork.Venue.GetVenueTypeById(command.SignUpVenueDto.VenueTypeId);
+        var venueType = await unitOfWork.Venue.GetVenueTypeById(command.SignUpVenueRequest.VenueTypeId);
         if (venueType == null) return VenueErrors.VenueNotFound;
-        
+
         // Kiểm tra xem người dùng có upload avatar không, nếu có thì gọi API cloudinary và lưu Url vào db
-        if (command.SignUpVenueDto.UserAvatar != null)
+        if (command.SignUpVenueRequest.UserAvatar != null)
         {
-            userAvatarUrl = await cloudinaryService.UploadImage(command.SignUpVenueDto.UserAvatar);
+            userAvatarUrl = await cloudinaryService.UploadImage(command.SignUpVenueRequest.UserAvatar);
             if (userAvatarUrl == null) return CloudinaryErrors.UploadUserAvatarFailed;
         }
 
         // Lấy userId từ JWT
         var result = unitOfWork.User.GetUserIdFromJwt();
         if (result.IsFailure) return result.Error;
-        
+
         // Tìm kiếm người dùng trong db
         var user = await userManager.FindByIdAsync(result.Value.ToString());
         if (user == null) return AuthenErrors.UserNotFound;
 
         // Kiểm tra đã có role Host chưa, nếu chưa tạo role Host và gán cho User
         var hostRole = await roleManager.RoleExistsAsync("Host");
-        if(!hostRole) await roleManager.CreateAsync(new Role("Host"));
-        
+        if (!hostRole) await roleManager.CreateAsync(new Role("Host"));
+
         var addToRoleResult = await userManager.AddToRoleAsync(user, "Host");
-        if(!addToRoleResult.Succeeded)
+        if (!addToRoleResult.Succeeded)
             return Result.Failure(new Error("Role assignment failed",
                 string.Join(",", addToRoleResult.Errors.Select(e => e.Description).ToList())));
-        
+
         // Cập nhật thông tin người dùng
-        user.PhoneNumber = command.SignUpVenueDto.PhoneNumber;
+        user.PhoneNumber = command.SignUpVenueRequest.PhoneNumber;
         user.AvatarUrl = userAvatarUrl;
 
         var updatedResult = await userManager.UpdateAsync(user);
@@ -61,9 +62,9 @@ public class SignUpVenueCommandHandler(
                 string.Join(",", updatedResult.Errors.Select(e => e.Description).ToList())));
 
         // Kiểm tra xem người dùng có upload logo cho venue không, nếu có thì gọi API cloudinary và lưu Url vào db
-        if (command.SignUpVenueDto.VenueLogo != null)
+        if (command.SignUpVenueRequest.VenueLogo != null)
         {
-            venueLogoUrl = await cloudinaryService.UploadImage(command.SignUpVenueDto.VenueLogo);
+            venueLogoUrl = await cloudinaryService.UploadImage(command.SignUpVenueRequest.VenueLogo);
 
             if (venueLogoUrl == null)
                 return CloudinaryErrors.UploadVenueLogoFailed;
@@ -72,24 +73,28 @@ public class SignUpVenueCommandHandler(
         // Tạo một đối Venue mới và lưu vào db
         var venue = new Venue
         {
-            Name = command.SignUpVenueDto.VenueName,
-            VenueTypeId = command.SignUpVenueDto.VenueTypeId,
+            Name = command.SignUpVenueRequest.VenueName,
+            VenueTypeId = command.SignUpVenueRequest.VenueTypeId,
             VenueLogoUrl = venueLogoUrl,
-            Description = command.SignUpVenueDto.VenueDescription,
+            Description = command.SignUpVenueRequest.VenueDescription,
             HostId = user.Id,
 
             Address = new VenueAddress
             {
-                City = command.SignUpVenueDto.VenueCity,
-                District = command.SignUpVenueDto.VenueDistrict,
-                Street = command.SignUpVenueDto.VenueStreet,
-                Latitude = command.SignUpVenueDto.VenueLatitude,
-                Longitude = command.SignUpVenueDto.VenueLongitude,
+                City = command.SignUpVenueRequest.VenueCity,
+                District = command.SignUpVenueRequest.VenueDistrict,
+                Street = command.SignUpVenueRequest.VenueStreet,
+                Latitude = command.SignUpVenueRequest.VenueLatitude,
+                Longitude = command.SignUpVenueRequest.VenueLongitude,
             }
         };
         // Cập nhật địa chỉ đầy đủ cho Venue
         venue.Address.FullAddress = $"{venue.Address.Street}, {venue.Address.District}, {venue.Address.City}";
         await unitOfWork.Venue.Create(venue);
+
+        // Init GuestHour cho Venue
+        var guestHours = unitOfWork.GuestHour.GenerateDefaultGuestHours(venue);
+        await unitOfWork.GuestHour.AddRangeAsync(guestHours);
 
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();

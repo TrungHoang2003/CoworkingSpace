@@ -1,3 +1,4 @@
+using Domain.DTOs;
 using Domain.Entites;
 using Domain.Responses;
 using Infrastructure.Common;
@@ -8,8 +9,8 @@ namespace Infrastructure.Interfaces;
 
 public interface IAuthenticationRepository
 {
-    Task<Result> Register( UserRegisterDTO userRegisterDto);
-    Task<Result<LoginResponse>> Login(UserLoginDTO userLoginDto);
+    Task<Result> Register( UserRegisterRequest userRegisterRequest);
+    Task<Result<LoginResponse>> Login(UserLoginRequest userLoginRequest);
     Task<Result<string>> GoogleLogin();
     Task<Result<string>> GoogleCallBack(string code);
 }

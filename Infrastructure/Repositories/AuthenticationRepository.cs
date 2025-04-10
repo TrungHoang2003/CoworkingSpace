@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Domain.DTOs;
 using Domain.Entites;
 using Domain.Entities;
 using Domain.Responses;
@@ -7,7 +8,6 @@ using Infrastructure.Common;
 using Infrastructure.DTOs;
 using Infrastructure.Errors;
 using Infrastructure.Interfaces;
-using Infrastructure.Responses;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
@@ -16,14 +16,14 @@ namespace Infrastructure.Repositories;
 public class AuthenticationRepository(IConfiguration configuration, UserManager<User> userManager,
     RoleManager<Role> roleManager, JwtService jwtService, RedisService redis): IAuthenticationRepository
 {
-    public async Task<Result> GoogleRegister(UserRegisterDTO userRegisterDto)
+    public async Task<Result> GoogleRegister(UserRegisterRequest userRegisterRequest)
     {
         var user = new User
         {
-            UserName = userRegisterDto.UserName,
-            FullName = userRegisterDto.FullName,
-            Email = userRegisterDto.Email,
-            AvatarUrl = userRegisterDto.AvatarUrl,
+            UserName = userRegisterRequest.UserName,
+            FullName = userRegisterRequest.FullName,
+            Email = userRegisterRequest.Email,
+            AvatarUrl = userRegisterRequest.AvatarUrl,
             EmailConfirmed = true,
         };
 
@@ -44,16 +44,16 @@ public class AuthenticationRepository(IConfiguration configuration, UserManager<
 
         return Result.Success();
     }
-    public async Task<Result> Register(UserRegisterDTO userRegisterDto)
+    public async Task<Result> Register(UserRegisterRequest userRegisterRequest)
     {
         var user = new User
         {
-            UserName = userRegisterDto.UserName,
-            FullName = userRegisterDto.FullName,
-            Email = userRegisterDto.Email,
+            UserName = userRegisterRequest.UserName,
+            FullName = userRegisterRequest.FullName,
+            Email = userRegisterRequest.Email,
         };
         
-        var result = await userManager.CreateAsync(user, userRegisterDto.Password!);
+        var result = await userManager.CreateAsync(user, userRegisterRequest.Password!);
 
         if (!result.Succeeded)
         {
@@ -71,13 +71,13 @@ public class AuthenticationRepository(IConfiguration configuration, UserManager<
         return Result.Success();
     }
 
-    public async Task<Result<LoginResponse>> Login(UserLoginDTO userLoginDto)
+    public async Task<Result<LoginResponse>> Login(UserLoginRequest userLoginRequest)
     {
-        var user = await userManager.FindByNameAsync(userLoginDto.UserName!);
+        var user = await userManager.FindByNameAsync(userLoginRequest.UserName!);
         
         if(user == null) return Result<LoginResponse>.Failure(AuthenErrors.UserNotFound);
         
-        var result = await userManager.CheckPasswordAsync(user, userLoginDto.Password!);
+        var result = await userManager.CheckPasswordAsync(user, userLoginRequest.Password!);
         
         if(!result) return Result<LoginResponse>.Failure(AuthenErrors.WrongPassword);
         
@@ -164,7 +164,7 @@ public class AuthenticationRepository(IConfiguration configuration, UserManager<
 
         if (user == null)
         {
-            var userRegisterDto = new UserRegisterDTO
+            var userRegisterDto = new UserRegisterRequest
             { 
                 UserName = payload.Email,
                 Email = payload.Email,

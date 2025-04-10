@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
+using Domain.Entites;
 
-namespace Domain.Entites;
+namespace Domain.Entities;
 
 public class Amenity
 {

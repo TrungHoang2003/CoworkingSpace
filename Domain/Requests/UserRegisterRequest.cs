@@ -1,9 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using MySqlConnector;
 
-namespace Infrastructure.DTOs;
+namespace Domain.DTOs;
 
-public class UserRegisterDTO
+public class UserRegisterRequest
 {
     [Required]
     public string? UserName { get; set; }

@@ -1,4 +1,5 @@
 using Domain.Entites;
+using Domain.Entities;
 using Infrastructure.Common;
 
 namespace Infrastructure.Interfaces;

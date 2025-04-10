@@ -1,7 +1,6 @@
 using Infrastructure.Common;
-using Microsoft.AspNetCore.Http;
 
-namespace Infrastructure.Middlewares;
+namespace CoworkingSpace.Middlewares;
 
 public class TokenValidateMiddleware(RequestDelegate next, RedisService redisService)
 {

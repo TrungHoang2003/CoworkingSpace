@@ -29,9 +29,9 @@ public class VenueController(IVenueRepository repository, IMediator mediator): C
     }
     
     [HttpPost("SignUpVenue")]
-    public async Task<IActionResult> SignUpVenue([FromForm] SignUpVenueDTO signUpVenueDto)
+    public async Task<IActionResult> SignUpVenue([FromForm] SignUpVenueRequest signUpVenueRequest)
     {
-        var result = await mediator.Send(new SignUpVenueCommand(signUpVenueDto));
+        var result = await mediator.Send(new SignUpVenueCommand(signUpVenueRequest));
         if (result.IsFailure)
             return BadRequest(result.Error);
         
@@ -39,9 +39,9 @@ public class VenueController(IVenueRepository repository, IMediator mediator): C
     }
     
     [HttpPost("UpdateVenueDetails")]
-    public async Task<IActionResult> UpdateVenueDetails([FromBody] UpdateVenueDetailsDTO updateVenueDetailsDto)
+    public async Task<IActionResult> UpdateVenueDetails([FromBody] UpdateVenueDetailsRequest updateVenueDetailsRequest)
     {
-        var result = await mediator.Send(new UpdateVenueDetailsCommand(updateVenueDetailsDto));
+        var result = await mediator.Send(new UpdateVenueDetailsCommand(updateVenueDetailsRequest));
         if (result.IsFailure)
             return BadRequest(result.Error);
         

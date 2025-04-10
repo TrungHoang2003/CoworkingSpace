@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Domain.Entites;
+namespace Domain.Entities;
 
 public class VenueType
 {

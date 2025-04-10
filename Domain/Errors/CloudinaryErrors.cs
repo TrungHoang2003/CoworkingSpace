@@ -1,6 +1,7 @@
+
 using Infrastructure.Common;
 
-namespace Infrastructure.Errors;
+namespace Domain.Errors;
 
 public sealed record CloudinaryErrors
 {

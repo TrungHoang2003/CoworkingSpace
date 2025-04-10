@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Domain.Entites;
+namespace Domain.Entities;
 
 public class VenueAddress
 {

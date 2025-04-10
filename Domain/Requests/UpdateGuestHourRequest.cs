@@ -1,10 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Entites;
+using Domain.Entities;
 
 namespace Domain.DTOs;
 
-public class UpdateGuestHourDTO
+public class UpdateGuestHourRequest
 {
    [Key] public int GuestHourId { get; set; }
    public DayOfWeek DayOfWeek { get; set; }

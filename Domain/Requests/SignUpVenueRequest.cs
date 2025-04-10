@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Domain.DTOs;
 
-public class SignUpVenueDTO
+public class SignUpVenueRequest
 {
     public int VenueTypeId { get; set; }
     [Required]public string PhoneNumber { get; set; }

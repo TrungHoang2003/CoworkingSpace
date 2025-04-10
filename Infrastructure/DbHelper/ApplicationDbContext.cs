@@ -21,4 +21,5 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
    public DbSet<Amenity> Amenity { get; set; }
    public DbSet<VenueType> VenueType { get; set; }
    public DbSet<VenueAddress> VenueAddress { get; set; }
+   public DbSet<GuestHour> GuestHour { get; set; }
 }

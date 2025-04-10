@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Domain.Entites;
-using Domain.Entities.WorkingSpace;
 
 namespace Domain.Entities;
 
