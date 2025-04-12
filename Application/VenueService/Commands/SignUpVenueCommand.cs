@@ -26,7 +26,7 @@ public class SignUpVenueCommandHandler(
 
         // Kiểm tra xem loại văn phòng có tồn tại không
         var venueType = await unitOfWork.Venue.GetVenueTypeById(command.SignUpVenueRequest.VenueTypeId);
-        if (venueType == null) return VenueErrors.VenueNotFound;
+        if (venueType == null) return VenueErrors.VenueTypeNotFound;
 
         // Kiểm tra xem người dùng có upload avatar không, nếu có thì gọi API cloudinary và lưu Url vào db
         if (command.SignUpVenueRequest.UserAvatar != null)
@@ -46,11 +46,16 @@ public class SignUpVenueCommandHandler(
         // Kiểm tra đã có role Host chưa, nếu chưa tạo role Host và gán cho User
         var hostRole = await roleManager.RoleExistsAsync("Host");
         if (!hostRole) await roleManager.CreateAsync(new Role("Host"));
+        
+        var isHost = await userManager.IsInRoleAsync(user, "Host");
 
-        var addToRoleResult = await userManager.AddToRoleAsync(user, "Host");
-        if (!addToRoleResult.Succeeded)
-            return Result.Failure(new Error("Role assignment failed",
-                string.Join(",", addToRoleResult.Errors.Select(e => e.Description).ToList())));
+        if (!isHost)
+        {
+            var addToRoleResult = await userManager.AddToRoleAsync(user, "Host");
+            if (!addToRoleResult.Succeeded)
+                return Result.Failure(new Error("Role assignment failed",
+                    string.Join(",", addToRoleResult.Errors.Select(e => e.Description).ToList())));
+        }
 
         // Cập nhật thông tin người dùng
         user.PhoneNumber = command.SignUpVenueRequest.PhoneNumber;

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initDB : Migration
+    public partial class InitDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -388,12 +388,12 @@ namespace Infrastructure.Migrations
                 {
                     GuestHourId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    VenueId = table.Column<int>(type: "int", nullable: false),
                     DayOfWeek = table.Column<int>(type: "int", nullable: false),
-                    StartTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
-                    EndTime = table.Column<TimeSpan>(type: "time(6)", nullable: false),
+                    StartTime = table.Column<TimeSpan>(type: "time(6)", nullable: true),
+                    EndTime = table.Column<TimeSpan>(type: "time(6)", nullable: true),
                     IsOpen24Hours = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    IsClosed = table.Column<bool>(type: "tinyint(1)", nullable: false),
-                    VenueId = table.Column<int>(type: "int", nullable: false)
+                    IsClosed = table.Column<bool>(type: "tinyint(1)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -425,17 +425,11 @@ namespace Infrastructure.Migrations
                     Capacity = table.Column<int>(type: "int", nullable: false),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    UserId = table.Column<int>(type: "int", nullable: true)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Space", x => x.SpaceId);
-                    table.ForeignKey(
-                        name: "FK_Space_AspNetUsers_UserId",
-                        column: x => x.UserId,
-                        principalTable: "AspNetUsers",
-                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Space_BookingWindow_BookingWindowId",
                         column: x => x.BookingWindowId,
@@ -449,6 +443,28 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Space_Venue_VenueId",
+                        column: x => x.VenueId,
+                        principalTable: "Venue",
+                        principalColumn: "VenueId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "VenueHoliday",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    VenueId = table.Column<int>(type: "int", nullable: false),
+                    HolidayId = table.Column<int>(type: "int", nullable: false),
+                    IsObserved = table.Column<bool>(type: "tinyint(1)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_VenueHoliday", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VenueHoliday_Venue_VenueId",
                         column: x => x.VenueId,
                         principalTable: "Venue",
                         principalColumn: "VenueId",
@@ -623,27 +639,6 @@ namespace Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
-                name: "SpaceObservedHoliday",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    SpaceId = table.Column<int>(type: "int", nullable: false),
-                    HolidayId = table.Column<int>(type: "int", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SpaceObservedHoliday", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_SpaceObservedHoliday_Space_SpaceId",
-                        column: x => x.SpaceId,
-                        principalTable: "Space",
-                        principalColumn: "SpaceId",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
                 name: "Payment",
                 columns: table => new
                 {
@@ -768,11 +763,6 @@ namespace Infrastructure.Migrations
                 column: "SpaceTypeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Space_UserId",
-                table: "Space",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Space_VenueId",
                 table: "Space",
                 column: "VenueId");
@@ -803,11 +793,6 @@ namespace Infrastructure.Migrations
                 column: "SpaceId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_SpaceObservedHoliday_SpaceId",
-                table: "SpaceObservedHoliday",
-                column: "SpaceId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Venue_HostId",
                 table: "Venue",
                 column: "HostId");
@@ -821,6 +806,11 @@ namespace Infrastructure.Migrations
                 name: "IX_Venue_VenueTypeId",
                 table: "Venue",
                 column: "VenueTypeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_VenueHoliday_VenueId",
+                table: "VenueHoliday",
+                column: "VenueId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_VenueImage_VenueId",
@@ -868,7 +858,7 @@ namespace Infrastructure.Migrations
                 name: "SpaceImage");
 
             migrationBuilder.DropTable(
-                name: "SpaceObservedHoliday");
+                name: "VenueHoliday");
 
             migrationBuilder.DropTable(
                 name: "VenueImage");

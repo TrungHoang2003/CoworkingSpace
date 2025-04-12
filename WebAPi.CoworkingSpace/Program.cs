@@ -1,5 +1,6 @@
 using System.Text;
 using Application;
+using CoworkingSpace.Middlewares;
 using CoworkingSpace.Transformer;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -75,6 +76,7 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 app.UseCors("AllowAll");
 app.UseAuthentication();
+app.UseMiddleware<ExceptionHandlerMiddleWare>();
 //app.UseMiddleware<TokenValidateMiddleware>();
 app.UseAuthorization();
 app.MapControllers();

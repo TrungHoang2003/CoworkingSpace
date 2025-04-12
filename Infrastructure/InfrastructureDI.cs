@@ -37,5 +37,6 @@ public static class InfrastructureDi
         services.AddScoped<IVenueTypeRepository, VenueTypeRepository>();
         services.AddScoped<IVenueRepository, VenueRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
+        services.AddScoped<IGuestHourRepository, GuestHourRepository>();
     }
 }
