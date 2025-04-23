@@ -17,6 +17,9 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
 
    public DbSet<Space> Space { get; set; }
    public DbSet<Venue> Venue { get; set; }
+   public DbSet<Holiday> Holiday { get; set; }
+   public DbSet<VenueHoliday> VenueHoliday { get; set; }
+   public DbSet<HolidayDate> HolidayDate { get; set; }
    public DbSet<Collection> Collection { get; set; }
    public DbSet<Amenity> Amenity { get; set; }
    public DbSet<VenueType> VenueType { get; set; }

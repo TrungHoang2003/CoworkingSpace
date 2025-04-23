@@ -3,10 +3,17 @@ using Domain.Entites;
 using Domain.Entities;
 using Infrastructure.Common;
 using Infrastructure.DbHelper;
-using Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Repositories;
+
+public interface IVenueRepository: IGenericRepository<Venue>
+{
+   Task<IEnumerable<VenueType>> GetVenueTypes();
+   Task<Venue?> GetVenuesByTypeId(int venueTypeId);
+   Task<VenueType?> GetVenueTypeById(int venueTypeId);
+   Task<Venue?> GetById(int venueId);
+}
 
 public class VenueRepository(ApplicationDbContext dbContext, IConfiguration configuration) : GenericRepository<Venue>(dbContext), IVenueRepository
 {
@@ -58,7 +65,7 @@ public class VenueRepository(ApplicationDbContext dbContext, IConfiguration conf
         }
     }
 
-    public async Task<Venue?> GetVenueById(int venueId)
+    public async Task<Venue?> GetById(int venueId)
     {
         var cnn = new MySqlServer(configuration).OpenConnection();
 

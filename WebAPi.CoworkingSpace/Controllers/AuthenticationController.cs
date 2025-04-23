@@ -2,7 +2,7 @@ using System.Net;
 using Domain.DTOs;
 using Infrastructure.Common;
 using Infrastructure.DTOs;
-using Infrastructure.Interfaces;
+using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoworkingSpace.Controllers;

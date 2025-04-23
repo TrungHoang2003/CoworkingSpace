@@ -7,11 +7,18 @@ using Google.Apis.Auth;
 using Infrastructure.Common;
 using Infrastructure.DTOs;
 using Infrastructure.Errors;
-using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Repositories;
+
+public interface IAuthenticationRepository
+{
+    Task<Result> Register( UserRegisterRequest userRegisterRequest);
+    Task<Result<LoginResponse>> Login(UserLoginRequest userLoginRequest);
+    Task<Result<string>> GoogleLogin();
+    Task<Result<string>> GoogleCallBack(string code);
+}
 
 public class AuthenticationRepository(IConfiguration configuration, UserManager<User> userManager,
     RoleManager<Role> roleManager, JwtService jwtService, RedisService redis): IAuthenticationRepository

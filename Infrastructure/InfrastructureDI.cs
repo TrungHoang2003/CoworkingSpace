@@ -1,9 +1,9 @@
 using System.Collections.Immutable;
 using System.Reflection;
 using Domain.Entites;
+using Domain.Entities;
 using Infrastructure.Common;
 using Infrastructure.DbHelper;
-using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -32,6 +32,8 @@ public static class InfrastructureDi
         services.AddSingleton<RedisService>();
         services.AddSingleton<CloudinaryService>();
         services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
+        services.AddScoped<IVenueHolidayRepository, VenueHolidayRepository>();
+        services.AddScoped<IHolidayRepository, HolidayRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IVenueAddressRepository, VenueAddressRepository>();
         services.AddScoped<IVenueTypeRepository, VenueTypeRepository>();

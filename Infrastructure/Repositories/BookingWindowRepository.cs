@@ -1,9 +1,12 @@
 using Domain.Entities;
 using Infrastructure.DbHelper;
-using Infrastructure.Interfaces;
 
 namespace Infrastructure.Repositories;
 
+public interface IBookingWindowRepository : IGenericRepository<BookingWindow>
+{
+    // Add any additional methods specific to BookingWindow here
+}
 public class BookingWindowRepository(ApplicationDbContext dbContext) : GenericRepository<BookingWindow>(dbContext), IBookingWindowRepository
 {
     

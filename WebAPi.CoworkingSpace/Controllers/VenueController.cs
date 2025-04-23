@@ -1,7 +1,7 @@
 using Application.VenueService.Commands;
 using Domain.DTOs;
 using Domain.Entites;
-using Infrastructure.Interfaces;
+using Infrastructure.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;

@@ -16,3 +16,14 @@ public class Collection
    
    public ICollection<SpaceCollection>? Spaces { get; set; } // Bộ sưu tập có thể chứa 1 hoặc nhiều không gian
 }
+
+public class SpaceCollection
+{
+   [Key] public int SpaceCollectionId { get; set; }
+   
+   public int SpaceId { get; set; }
+   [ForeignKey("SpaceId")] Space? Space { get; set; }
+   
+   public int CollectionId { get; set; }
+   [ForeignKey("CollectionId")] Collection? Collection { get; set; }
+}

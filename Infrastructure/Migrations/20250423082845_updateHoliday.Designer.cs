@@ -4,6 +4,7 @@ using Infrastructure.DbHelper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250423082845_updateHoliday")]
+    partial class updateHoliday
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -295,30 +298,6 @@ namespace Infrastructure.Migrations
                     b.HasKey("HolidayId");
 
                     b.ToTable("Holiday");
-                });
-
-            modelBuilder.Entity("Domain.Entities.HolidayDate", b =>
-                {
-                    b.Property<int>("HolidayDateId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("HolidayDateId"));
-
-                    b.Property<DateTime?>("EndDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("HolidayId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("StartDate")
-                        .HasColumnType("datetime(6)");
-
-                    b.HasKey("HolidayDateId");
-
-                    b.HasIndex("HolidayId");
-
-                    b.ToTable("HolidayDate");
                 });
 
             modelBuilder.Entity("Domain.Entities.PaymentInfo", b =>
@@ -866,17 +845,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Venue");
-                });
-
-            modelBuilder.Entity("Domain.Entities.HolidayDate", b =>
-                {
-                    b.HasOne("Domain.Entities.Holiday", "Holiday")
-                        .WithMany()
-                        .HasForeignKey("HolidayId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Holiday");
                 });
 
             modelBuilder.Entity("Domain.Entities.PaymentInfo", b =>

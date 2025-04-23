@@ -5,11 +5,16 @@ using Domain.Errors;
 using Infrastructure.Common;
 using Infrastructure.DbHelper;
 using Infrastructure.Errors;
-using Infrastructure.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
 namespace Infrastructure.Repositories;
+
+public interface IUserRepository: IGenericRepository<User>
+{
+    Task<Result> UpdateAvatar(IFormFile file);
+    Result<int> GetUserIdFromJwt();
+}
 
 public class UserRepository(CloudinaryService cloudinaryService, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor, ApplicationDbContext dbContext) : GenericRepository<User>(dbContext), IUserRepository
 {

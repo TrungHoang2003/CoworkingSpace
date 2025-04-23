@@ -2,10 +2,16 @@ using Dapper;
 using Domain.Entites;
 using Domain.Entities;
 using Infrastructure.DbHelper;
-using Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Repositories;
+
+public interface IVenueAddressRepository: IGenericRepository<VenueAddress>
+{
+    void UpdateVenueFullAddress(VenueAddress venueAddress);
+    
+    Task<VenueAddress?> GetVenueAddressById(int venueAddressId);
+}
 
 public class VenueAddressRepository(ApplicationDbContext dbContext, IConfiguration configuration) : GenericRepository<VenueAddress>(dbContext), IVenueAddressRepository
 {

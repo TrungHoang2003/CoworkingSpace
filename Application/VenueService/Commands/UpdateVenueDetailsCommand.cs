@@ -2,7 +2,7 @@ using Domain.DTOs;
 using Domain.Errors;
 using Infrastructure.Common;
 using Infrastructure.Errors;
-using Infrastructure.Interfaces;
+using Infrastructure.Repositories;
 using MediatR;
 
 namespace Application.VenueService.Commands;
@@ -14,7 +14,7 @@ public class UpdateVenueDetailsCommandHandler(IUnitOfWork unitOfWork)
 {
     public async Task<Result> Handle(UpdateVenueDetailsCommand command, CancellationToken cancellationToken)
     {
-        var venue = await unitOfWork.Venue.GetVenueById(command.UpdateVenueDetailsRequest.VenueId);
+        var venue = await unitOfWork.Venue.GetById(command.UpdateVenueDetailsRequest.VenueId);
         if (venue == null) return VenueErrors.VenueNotFound;
         
         var venueAddress = await unitOfWork.VenueAddress.GetVenueAddressById(venue.VenueAddressId);

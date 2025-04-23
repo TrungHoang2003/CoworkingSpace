@@ -4,10 +4,9 @@ using Domain.Entities;
 using Domain.Errors;
 using Infrastructure.Common;
 using Infrastructure.Errors;
-using Infrastructure.Interfaces;
+using Infrastructure.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace Application.VenueService.Commands;
 
@@ -92,6 +91,8 @@ public class SignUpVenueCommandHandler(
                 Latitude = command.SignUpVenueRequest.VenueLatitude,
                 Longitude = command.SignUpVenueRequest.VenueLongitude,
             }
+            
+            
         };
         // Cập nhật địa chỉ đầy đủ cho Venue
         venue.Address.FullAddress = $"{venue.Address.Street}, {venue.Address.District}, {venue.Address.City}";
@@ -101,6 +102,10 @@ public class SignUpVenueCommandHandler(
         var guestHours = unitOfWork.GuestHour.GenerateDefaultGuestHours(venue);
         await unitOfWork.GuestHour.AddRangeAsync(guestHours);
 
+        // add Holiday cho Venue
+        var holidays = await unitOfWork.Holiday.GetAllHolidays();
+        await unitOfWork.VenueHoliday.GenerateDefaultHolidays(holidays, venue);
+        
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

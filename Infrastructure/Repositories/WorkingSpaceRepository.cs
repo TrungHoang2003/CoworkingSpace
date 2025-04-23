@@ -2,11 +2,14 @@ using Dapper;
 using Domain.Entites;
 using Infrastructure.Common;
 using Infrastructure.DbHelper;
-using Infrastructure.Interfaces;
 using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Repositories;
 
+public interface IWorkingSpaceRepository: IGenericRepository<Space>
+{
+   Task<Result<IEnumerable<Space>>> GetAllWorkingSpacesAsync();
+}
 public class WorkingSpaceRepository(ApplicationDbContext dbContext, IConfiguration configuration) : GenericRepository<Space>(dbContext), IWorkingSpaceRepository
 {
     public async Task<Result<IEnumerable<Space>>> GetAllWorkingSpacesAsync()

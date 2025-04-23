@@ -1,8 +1,13 @@
 using Infrastructure.DbHelper;
-using Infrastructure.Interfaces;
-using Microsoft.EntityFrameworkCore;
 
 namespace Infrastructure.Repositories;
+
+public interface IGenericRepository<T> where T : class
+{
+    public Task Create(T entity);
+    public Task Update(T entity);
+    public Task Delete(T entity);
+} 
 
 public class GenericRepository<T>(ApplicationDbContext dbContext): IGenericRepository<T> where T : class
 {
