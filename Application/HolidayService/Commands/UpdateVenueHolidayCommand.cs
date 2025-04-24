@@ -21,11 +21,13 @@ public class UpdateVenueHolidayCommandHandler(IUnitOfWork unitOfWork) : IRequest
                 return HolidayErrors.HolidayNotFound;
             
             // Lấy ra venueHoliday và cập nhật observed thành true
-            var venueHoliday = await unitOfWork.VenueHoliday.GetByVenueIdAndHolidayId(command.UpdateHolidayRequest.VenueId, holidayId);
+            var venueHoliday = await unitOfWork.VenueHoliday.GetByVenueIdAndHolidayId(holidayId, command.UpdateHolidayRequest.VenueId);
             if (venueHoliday == null)
                 return HolidayErrors.VenueHolidayNotFound;
             venueHoliday.IsObserved = true;
+            await unitOfWork.VenueHoliday.Update(venueHoliday);
         } 
+        await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }
 }
