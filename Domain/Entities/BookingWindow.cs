@@ -7,7 +7,7 @@ public class BookingWindow
 {
    [Key]public int BookingWindowId { get; set; }
    public int MinNotice { get; set; }
-   public int MaxNoticeDays { get; set; }
+   public int? MaxNoticeDays { get; set; }
    
    public BookingTimeUnit Unit { get; set; }
    
@@ -16,6 +16,6 @@ public class BookingWindow
 
 public enum BookingTimeUnit
 {
-   Hours,
-   Days
+   Hours, // 0
+   Days   // 1
 }

@@ -1,3 +1,4 @@
+using System.Runtime.CompilerServices;
 using Dapper;
 using Domain.Entities;
 using Infrastructure.DbHelper;
@@ -56,10 +57,16 @@ public class GuestHourRepository(ApplicationDbContext dbContext, IConfiguration 
     public async Task<List<GuestHour>> GetGuestHoursByVenueId(int venueId)
     {
         var cnn = new MySqlServer(configuration).OpenConnection();
-        
-        var sql = $"select * from GuestHour where VenueId = {venueId}";
-        var result = await cnn.QueryAsync<GuestHour>(sql, new {VenueId = venueId});
+        try
+        {
+            var sql = $"select * from GuestHour where VenueId = {venueId}";
+            var result = await cnn.QueryAsync<GuestHour>(sql, new { VenueId = venueId });
 
-        return result.ToList();
+            return result.ToList();
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Error getting guest hours", e);
+        }
     }
 }

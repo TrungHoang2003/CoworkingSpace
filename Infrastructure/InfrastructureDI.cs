@@ -32,8 +32,10 @@ public static class InfrastructureDi
         services.AddSingleton<RedisService>();
         services.AddSingleton<CloudinaryService>();
         services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
+        services.AddScoped<ISpaceRepository, SpaceRepository>();
         services.AddScoped<IVenueHolidayRepository, VenueHolidayRepository>();
         services.AddScoped<IHolidayRepository, HolidayRepository>();
+        services.AddScoped<IBookingWindowRepository, BookingWindowRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IVenueAddressRepository, VenueAddressRepository>();
         services.AddScoped<IVenueTypeRepository, VenueTypeRepository>();

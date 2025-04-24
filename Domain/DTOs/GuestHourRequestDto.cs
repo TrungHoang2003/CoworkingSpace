@@ -5,11 +5,11 @@ namespace Domain.DTOs;
 
 public class GuestHourRequestDto
 {
-   public DayOfWeek DayOfWeek { get; set; }
+   [Required] public DayOfWeek DayOfWeek { get; set; }
    public TimeSpan? StartTime { get; set; }
    public TimeSpan? EndTime { get; set; }
-   public bool IsOpen24Hours { get; set; }
-   public bool IsClosed { get; set; }
+    public bool IsOpen24Hours { get; set; }
+    public bool IsClosed { get; set; }
 
    public void Normalize()
    {
@@ -25,7 +25,7 @@ public class GuestHourRequestDto
 
 public class UpdateGuestHoursRequest
 {
-   public int VenueId { get; set; }
+   [Required] public int VenueId { get; set; }
    [Required] public List<GuestHourRequestDto> GuestHours { get; set; } = [];
 
    public void Validate()

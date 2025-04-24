@@ -6,11 +6,12 @@ using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Repositories;
 
-public interface IWorkingSpaceRepository: IGenericRepository<Space>
+public interface ISpaceRepository: IGenericRepository<Space>
 {
    Task<Result<IEnumerable<Space>>> GetAllWorkingSpacesAsync();
+   Task<Space?> GetById(int spaceId);
 }
-public class WorkingSpaceRepository(ApplicationDbContext dbContext, IConfiguration configuration) : GenericRepository<Space>(dbContext), IWorkingSpaceRepository
+public class SpaceRepository(ApplicationDbContext dbContext, IConfiguration configuration) : GenericRepository<Space>(dbContext), ISpaceRepository
 {
     public async Task<Result<IEnumerable<Space>>> GetAllWorkingSpacesAsync()
     {
@@ -28,5 +29,14 @@ public class WorkingSpaceRepository(ApplicationDbContext dbContext, IConfigurati
             throw new Exception("Error while getting all working spaces", e);
         }
     }
-    
+
+    public async Task<Space?> GetById(int spaceId)
+    {
+        var cnn = new MySqlServer(configuration).OpenConnection();
+        
+        var sql = "Select * from Spaces where SpaceId = @spaceId";
+        var result = await cnn.QueryFirstOrDefaultAsync<Space>(sql, new { SpaceId = spaceId });
+
+        return result;
+    }
 }
