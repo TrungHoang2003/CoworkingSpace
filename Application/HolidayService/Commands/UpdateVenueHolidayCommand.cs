@@ -1,3 +1,4 @@
+using Application.HolidayService.DTOs;
 using Domain.DTOs;
 using Domain.Entities;
 using Domain.Errors;

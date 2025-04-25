@@ -1,4 +1,5 @@
 using Application.GuestHoursService.Commands;
+using Application.GuestHoursService.DTOs;
 using Domain.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

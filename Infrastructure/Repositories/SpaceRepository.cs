@@ -19,7 +19,7 @@ public class SpaceRepository(ApplicationDbContext dbContext, IConfiguration conf
 
         try
         {
-            var sql = $"select * from Spaces";
+            var sql = $"select * from Space";
             var result = await connection.QueryAsync<Space>(sql);
             
            return Result<IEnumerable<Space>>.Success(result); 
@@ -34,7 +34,7 @@ public class SpaceRepository(ApplicationDbContext dbContext, IConfiguration conf
     {
         var cnn = new MySqlServer(configuration).OpenConnection();
         
-        var sql = "Select * from Spaces where SpaceId = @spaceId";
+        var sql = "Select * from Space where SpaceId = @spaceId";
         var result = await cnn.QueryFirstOrDefaultAsync<Space>(sql, new { SpaceId = spaceId });
 
         return result;

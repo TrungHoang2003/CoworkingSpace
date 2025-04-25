@@ -1,3 +1,5 @@
+using Application.GuestHoursService.DTOs;
+using AutoMapper;
 using Domain.DTOs;
 using Domain.Entities;
 using Domain.Errors;
@@ -10,7 +12,7 @@ namespace Application.GuestHoursService.Commands;
 
 public sealed record UpdateGuestHoursCommand(UpdateGuestHoursRequest UpdateGuestHoursRequest) : IRequest<Result>;
 
-public class UpdateGuestHoursCommandHandler(IUnitOfWork unitOfWork): IRequestHandler<UpdateGuestHoursCommand, Result>
+public class UpdateGuestHoursCommandHandler(IMapper mapper, IUnitOfWork unitOfWork): IRequestHandler<UpdateGuestHoursCommand, Result>
 {
     public async Task<Result> Handle(UpdateGuestHoursCommand command, CancellationToken cancellationToken)
     {

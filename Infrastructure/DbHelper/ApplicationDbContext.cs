@@ -12,7 +12,6 @@ public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options
    protected override void OnModelCreating(ModelBuilder modelBuilder)
    {
       base.OnModelCreating(modelBuilder);
-
    }
 
    public DbSet<Space> Space { get; set; }

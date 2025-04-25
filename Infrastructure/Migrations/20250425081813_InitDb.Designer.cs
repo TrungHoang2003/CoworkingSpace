@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250421101110_InitDB")]
-    partial class InitDB
+    [Migration("20250425081813_InitDb")]
+    partial class InitDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -111,29 +111,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("VenueId");
 
                     b.ToTable("Space");
-                });
-
-            modelBuilder.Entity("Domain.Entites.SpaceAmenity", b =>
-                {
-                    b.Property<int>("SpaceAmenityId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("SpaceAmenityId"));
-
-                    b.Property<int>("AmenityId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SpaceId")
-                        .HasColumnType("int");
-
-                    b.HasKey("SpaceAmenityId");
-
-                    b.HasIndex("AmenityId");
-
-                    b.HasIndex("SpaceId");
-
-                    b.ToTable("SpaceAmenity");
                 });
 
             modelBuilder.Entity("Domain.Entites.User", b =>
@@ -236,7 +213,7 @@ namespace Infrastructure.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("BookingWindowId"));
 
-                    b.Property<int>("MaxNoticeDays")
+                    b.Property<int?>("MaxNoticeDays")
                         .HasColumnType("int");
 
                     b.Property<int>("MinNotice")
@@ -305,6 +282,46 @@ namespace Infrastructure.Migrations
                     b.HasIndex("VenueId");
 
                     b.ToTable("GuestHour");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Holiday", b =>
+                {
+                    b.Property<int>("HolidayId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("HolidayId"));
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("HolidayId");
+
+                    b.ToTable("Holiday");
+                });
+
+            modelBuilder.Entity("Domain.Entities.HolidayDate", b =>
+                {
+                    b.Property<int>("HolidayDateId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("HolidayDateId"));
+
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("HolidayId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("StartDate")
+                        .HasColumnType("datetime(6)");
+
+                    b.HasKey("HolidayDateId");
+
+                    b.HasIndex("HolidayId");
+
+                    b.ToTable("HolidayDate");
                 });
 
             modelBuilder.Entity("Domain.Entities.PaymentInfo", b =>
@@ -451,6 +468,29 @@ namespace Infrastructure.Migrations
                         .HasDatabaseName("RoleNameIndex");
 
                     b.ToTable("AspNetRoles", (string)null);
+                });
+
+            modelBuilder.Entity("Domain.Entities.SpaceAmenity", b =>
+                {
+                    b.Property<int>("SpaceAmenityId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("SpaceAmenityId"));
+
+                    b.Property<int>("AmenityId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SpaceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SpaceAmenityId");
+
+                    b.HasIndex("AmenityId");
+
+                    b.HasIndex("SpaceId");
+
+                    b.ToTable("SpaceAmenity");
                 });
 
             modelBuilder.Entity("Domain.Entities.SpaceCollection", b =>
@@ -608,6 +648,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("HolidayId");
 
                     b.HasIndex("VenueId");
 
@@ -807,25 +849,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Venue");
                 });
 
-            modelBuilder.Entity("Domain.Entites.SpaceAmenity", b =>
-                {
-                    b.HasOne("Domain.Entities.Amenity", "Amenity")
-                        .WithMany("SpaceAmenities")
-                        .HasForeignKey("AmenityId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entites.Space", "Space")
-                        .WithMany("Amenities")
-                        .HasForeignKey("SpaceId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Amenity");
-
-                    b.Navigation("Space");
-                });
-
             modelBuilder.Entity("Domain.Entities.Collection", b =>
                 {
                     b.HasOne("Domain.Entites.User", "User")
@@ -846,6 +869,17 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("Venue");
+                });
+
+            modelBuilder.Entity("Domain.Entities.HolidayDate", b =>
+                {
+                    b.HasOne("Domain.Entities.Holiday", "Holiday")
+                        .WithMany()
+                        .HasForeignKey("HolidayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Holiday");
                 });
 
             modelBuilder.Entity("Domain.Entities.PaymentInfo", b =>
@@ -895,6 +929,25 @@ namespace Infrastructure.Migrations
                     b.Navigation("Customer");
 
                     b.Navigation("WorkingSpace");
+                });
+
+            modelBuilder.Entity("Domain.Entities.SpaceAmenity", b =>
+                {
+                    b.HasOne("Domain.Entities.Amenity", "Amenity")
+                        .WithMany("SpaceAmenities")
+                        .HasForeignKey("AmenityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entites.Space", "Space")
+                        .WithMany("Amenities")
+                        .HasForeignKey("SpaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Amenity");
+
+                    b.Navigation("Space");
                 });
 
             modelBuilder.Entity("Domain.Entities.SpaceCollection", b =>
@@ -950,11 +1003,19 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.VenueHoliday", b =>
                 {
-                    b.HasOne("Domain.Entities.Venue", null)
+                    b.HasOne("Domain.Entities.Holiday", null)
+                        .WithMany("Venues")
+                        .HasForeignKey("HolidayId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Venue", "Venue")
                         .WithMany("Holidays")
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Venue");
                 });
 
             modelBuilder.Entity("Domain.Entities.VenueImage", b =>
@@ -1060,6 +1121,11 @@ namespace Infrastructure.Migrations
             modelBuilder.Entity("Domain.Entities.Collection", b =>
                 {
                     b.Navigation("Spaces");
+                });
+
+            modelBuilder.Entity("Domain.Entities.Holiday", b =>
+                {
+                    b.Navigation("Venues");
                 });
 
             modelBuilder.Entity("Domain.Entities.Reservation", b =>

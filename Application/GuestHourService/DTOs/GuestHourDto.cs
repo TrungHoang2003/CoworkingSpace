@@ -1,9 +1,8 @@
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.InteropServices;
 
-namespace Domain.DTOs;
+namespace Application.GuestHoursService.DTOs;
 
-public class GuestHourRequestDto
+public class GuestHourDto
 {
    [Required] public DayOfWeek DayOfWeek { get; set; }
    public TimeSpan? StartTime { get; set; }
@@ -26,7 +25,7 @@ public class GuestHourRequestDto
 public class UpdateGuestHoursRequest
 {
    [Required] public int VenueId { get; set; }
-   [Required] public List<GuestHourRequestDto> GuestHours { get; set; } = [];
+   [Required] public List<GuestHourDto> GuestHours { get; set; } = [];
 
    public void Validate()
    {

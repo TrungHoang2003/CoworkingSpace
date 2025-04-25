@@ -210,7 +210,7 @@ namespace Infrastructure.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("BookingWindowId"));
 
-                    b.Property<int>("MaxNoticeDays")
+                    b.Property<int?>("MaxNoticeDays")
                         .HasColumnType("int");
 
                     b.Property<int>("MinNotice")
@@ -1006,11 +1006,13 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Venue", null)
+                    b.HasOne("Domain.Entities.Venue", "Venue")
                         .WithMany("Holidays")
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Venue");
                 });
 
             modelBuilder.Entity("Domain.Entities.VenueImage", b =>

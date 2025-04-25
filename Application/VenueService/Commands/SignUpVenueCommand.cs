@@ -1,4 +1,5 @@
-using Domain.DTOs;
+using Application.VenueService.DTOs;
+using AutoMapper;
 using Domain.Entites;
 using Domain.Entities;
 using Domain.Errors;
@@ -16,21 +17,22 @@ public class SignUpVenueCommandHandler(
     CloudinaryService cloudinaryService,
     UserManager<User> userManager,
     RoleManager<Role> roleManager,
+    IMapper mapper,
     IUnitOfWork unitOfWork) : IRequestHandler<SignUpVenueCommand, Result>
 {
     public async Task<Result> Handle(SignUpVenueCommand command, CancellationToken cancellationToken)
     {
         string? userAvatarUrl = null;
-        string? venueLogoUrl = null;
+        string? venueLogoUrl;
 
         // Kiểm tra xem loại văn phòng có tồn tại không
         var venueType = await unitOfWork.Venue.GetVenueTypeById(command.SignUpVenueRequest.VenueTypeId);
         if (venueType == null) return VenueErrors.VenueTypeNotFound;
 
         // Kiểm tra xem người dùng có upload avatar không, nếu có thì gọi API cloudinary và lưu Url vào db
-        if (command.SignUpVenueRequest.UserAvatar != null)
+        if (command.SignUpVenueRequest.HostInformation.UserAvatar != null)
         {
-            userAvatarUrl = await cloudinaryService.UploadImage(command.SignUpVenueRequest.UserAvatar);
+            userAvatarUrl = await cloudinaryService.UploadImage(command.SignUpVenueRequest.HostInformation.UserAvatar);
             if (userAvatarUrl == null) return CloudinaryErrors.UploadUserAvatarFailed;
         }
 
@@ -57,7 +59,7 @@ public class SignUpVenueCommandHandler(
         }
 
         // Cập nhật thông tin người dùng
-        user.PhoneNumber = command.SignUpVenueRequest.PhoneNumber;
+        user.PhoneNumber = command.SignUpVenueRequest.HostInformation.PhoneNumber;
         user.AvatarUrl = userAvatarUrl;
 
         var updatedResult = await userManager.UpdateAsync(user);
@@ -66,36 +68,19 @@ public class SignUpVenueCommandHandler(
                 string.Join(",", updatedResult.Errors.Select(e => e.Description).ToList())));
 
         // Kiểm tra xem người dùng có upload logo cho venue không, nếu có thì gọi API cloudinary và lưu Url vào db
-        if (command.SignUpVenueRequest.VenueLogo != null)
+        if (command.SignUpVenueRequest.Logo!= null)
         {
-            venueLogoUrl = await cloudinaryService.UploadImage(command.SignUpVenueRequest.VenueLogo);
+            venueLogoUrl = await cloudinaryService.UploadImage(command.SignUpVenueRequest.Logo);
 
             if (venueLogoUrl == null)
                 return CloudinaryErrors.UploadVenueLogoFailed;
         }
 
-        // Tạo một đối Venue mới và lưu vào db
-        var venue = new Venue
-        {
-            Name = command.SignUpVenueRequest.VenueName,
-            VenueTypeId = command.SignUpVenueRequest.VenueTypeId,
-            VenueLogoUrl = venueLogoUrl,
-            Description = command.SignUpVenueRequest.VenueDescription,
-            HostId = user.Id,
-
-            Address = new VenueAddress
-            {
-                City = command.SignUpVenueRequest.VenueCity,
-                District = command.SignUpVenueRequest.VenueDistrict,
-                Street = command.SignUpVenueRequest.VenueStreet,
-                Latitude = command.SignUpVenueRequest.VenueLatitude,
-                Longitude = command.SignUpVenueRequest.VenueLongitude,
-            }
-            
-            
-        };
+        // Tạo Venue mới và lưu vào db
+        var venue = mapper.Map<Venue>(command.SignUpVenueRequest);
+        
         // Cập nhật địa chỉ đầy đủ cho Venue
-        venue.Address.FullAddress = $"{venue.Address.Street}, {venue.Address.District}, {venue.Address.City}";
+        venue.Address.UpdateFullAddress();
         await unitOfWork.Venue.Create(venue);
 
         // Init GuestHour cho Venue

@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitDB : Migration
+    public partial class InitDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -97,12 +97,27 @@ namespace Infrastructure.Migrations
                     BookingWindowId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     MinNotice = table.Column<int>(type: "int", nullable: false),
-                    MaxNoticeDays = table.Column<int>(type: "int", nullable: false),
+                    MaxNoticeDays = table.Column<int>(type: "int", nullable: true),
                     Unit = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_BookingWindow", x => x.BookingWindowId);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "Holiday",
+                columns: table => new
+                {
+                    HolidayId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Holiday", x => x.HolidayId);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -129,16 +144,16 @@ namespace Infrastructure.Migrations
                 {
                     VenueAddressId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Street = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     District = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Street = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     City = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    FullAddress = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Latitude = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
-                    Longitude = table.Column<decimal>(type: "decimal(65,30)", nullable: true)
+                    Longitude = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    FullAddress = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
                 {
@@ -341,6 +356,28 @@ namespace Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "HolidayDate",
+                columns: table => new
+                {
+                    HolidayDateId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    HolidayId = table.Column<int>(type: "int", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime(6)", nullable: false),
+                    EndDate = table.Column<DateTime>(type: "datetime(6)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_HolidayDate", x => x.HolidayDateId);
+                    table.ForeignKey(
+                        name: "FK_HolidayDate_Holiday_HolidayId",
+                        column: x => x.HolidayId,
+                        principalTable: "Holiday",
+                        principalColumn: "HolidayId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Venue",
                 columns: table => new
                 {
@@ -463,6 +500,12 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_VenueHoliday", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_VenueHoliday_Holiday_HolidayId",
+                        column: x => x.HolidayId,
+                        principalTable: "Holiday",
+                        principalColumn: "HolidayId",
+                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_VenueHoliday_Venue_VenueId",
                         column: x => x.VenueId,
@@ -717,6 +760,11 @@ namespace Infrastructure.Migrations
                 column: "VenueId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_HolidayDate_HolidayId",
+                table: "HolidayDate",
+                column: "HolidayId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Payment_CustomerId",
                 table: "Payment",
                 column: "CustomerId");
@@ -808,6 +856,11 @@ namespace Infrastructure.Migrations
                 column: "VenueTypeId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_VenueHoliday_HolidayId",
+                table: "VenueHoliday",
+                column: "HolidayId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_VenueHoliday_VenueId",
                 table: "VenueHoliday",
                 column: "VenueId");
@@ -838,6 +891,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "GuestHour");
+
+            migrationBuilder.DropTable(
+                name: "HolidayDate");
 
             migrationBuilder.DropTable(
                 name: "Payment");
@@ -874,6 +930,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "Collection");
+
+            migrationBuilder.DropTable(
+                name: "Holiday");
 
             migrationBuilder.DropTable(
                 name: "Space");

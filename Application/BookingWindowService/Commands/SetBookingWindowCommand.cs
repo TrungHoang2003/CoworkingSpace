@@ -1,4 +1,5 @@
 using Application.BookingWindowService.DTOs;
+using AutoMapper;
 using Domain.Entities;
 using Domain.Errors;
 using Infrastructure.Common;
@@ -9,24 +10,23 @@ namespace Application.BookingWindowService.Commands;
 
 public sealed record SetBookingWindowCommand(SetBookingWindowRequest SetBookingWindowRequest) : IRequest<Result>;
 
-public class SetBookingWindowCommandHandler(IUnitOfWork unitOfWork): IRequestHandler<SetBookingWindowCommand, Result>
+public class SetBookingWindowCommandHandler(IUnitOfWork unitOfWork, IMapper mapper): IRequestHandler<SetBookingWindowCommand, Result>
 {
     public async Task<Result> Handle(SetBookingWindowCommand command, CancellationToken cancellationToken)
     {
+        //Validate du lieu tu request
         command.SetBookingWindowRequest.Validate();
         
+        //Cheking xem venue co ton tai khong
        var venue = await unitOfWork.Venue.GetById(command.SetBookingWindowRequest.VenueId);
        if (venue == null)
            return VenueErrors.VenueNotFound;
-
-       var bookingWindow = new BookingWindow
-       {
-            MaxNoticeDays = command.SetBookingWindowRequest.MaxNoticeDays,
-            MinNotice = command.SetBookingWindowRequest.MinNotice,
-            Unit = command.SetBookingWindowRequest.Unit,
-       };
+       
+       //Tao moi booking window
+       var bookingWindow = mapper.Map<BookingWindow>(command.SetBookingWindowRequest);
        await unitOfWork.BookingWindow.Create(bookingWindow);
        
+       //Them booking window cho cac space
        foreach (var spaceId in command.SetBookingWindowRequest.SpaceIds)
        {
            var space = await unitOfWork.Space.GetById(spaceId);

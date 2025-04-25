@@ -1,10 +1,8 @@
 using Application.VenueService.Commands;
+using Application.VenueService.DTOs;
 using Domain.DTOs;
-using Domain.Entites;
 using Infrastructure.Repositories;
 using MediatR;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoworkingSpace.Controllers;
@@ -39,9 +37,9 @@ public class VenueController(IVenueRepository repository, IMediator mediator): C
     }
     
     [HttpPost("UpdateVenueDetails")]
-    public async Task<IActionResult> UpdateVenueDetails([FromBody] UpdateVenueDetailsRequest updateVenueDetailsRequest)
+    public async Task<IActionResult> UpdateVenueDetails([FromBody] UpdateVenueRequest request)
     {
-        var result = await mediator.Send(new UpdateVenueDetailsCommand(updateVenueDetailsRequest));
+        var result = await mediator.Send(new UpdateVenueCommand(request));
         if (result.IsFailure)
             return BadRequest(result.Error);
         
