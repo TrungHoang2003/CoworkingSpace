@@ -8,7 +8,6 @@ public class Amenity
 {
     [Key]
     public int AmenityId { get; set; }
-
     public string? Name { get; set; }
     public string? Description { get; set; }
 
@@ -31,3 +30,4 @@ public class SpaceAmenity
     [ForeignKey("AmenityId")]
     public Amenity Amenity { get; set; }
 }
+

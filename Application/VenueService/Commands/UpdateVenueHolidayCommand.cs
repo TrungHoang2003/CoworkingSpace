@@ -1,12 +1,10 @@
 using Application.HolidayService.DTOs;
-using Domain.DTOs;
-using Domain.Entities;
 using Domain.Errors;
 using Infrastructure.Common;
 using Infrastructure.Repositories;
 using MediatR;
 
-namespace Application.HolidayService.Commands;
+namespace Application.VenueService.Commands;
 
 public sealed record UpdateVenueHolidayCommand(UpdateHolidayRequest UpdateHolidayRequest): IRequest<Result>;
 
@@ -19,12 +17,13 @@ public class UpdateVenueHolidayCommandHandler(IUnitOfWork unitOfWork) : IRequest
         {
             var holiday = await unitOfWork.Holiday.GetById(holidayId);
             if (holiday == null)
-                return HolidayErrors.HolidayNotFound;
+                return Result.Failure(new Error("Holiday Error", "Cannot find holiday with Id = " + holidayId + ""));
             
             // Lấy ra venueHoliday và cập nhật observed thành true
             var venueHoliday = await unitOfWork.VenueHoliday.GetByVenueIdAndHolidayId(holidayId, command.UpdateHolidayRequest.VenueId);
             if (venueHoliday == null)
-                return HolidayErrors.VenueHolidayNotFound;
+                return Result.Failure(new Error("VenueHoliday Error", "Cannot find venueHoliday with Id = " + holidayId + ""));
+            
             venueHoliday.IsObserved = true;
             await unitOfWork.VenueHoliday.Update(venueHoliday);
         } 

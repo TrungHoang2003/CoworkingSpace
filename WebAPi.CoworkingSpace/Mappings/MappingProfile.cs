@@ -1,4 +1,6 @@
 using Application.BookingWindowService.DTOs;
+using Application.DTOs;
+using Application.ExceptionService.DTOs;
 using Application.VenueService.DTOs;
 using AutoMapper;
 using Domain.Entities;
@@ -13,5 +15,7 @@ public class MappingProfile : Profile
         CreateMap<UpdateVenueRequest, Venue>();
         CreateMap<SetBookingWindowRequest, BookingWindow>();
         CreateMap<SignUpVenueRequest, Venue>();
+        CreateMap<SetUpExceptionRequest, ExceptionRule>();
+        CreateMap<SetHourlySpaceRequest, Space>();
     }
 }

@@ -4,6 +4,7 @@ using Infrastructure.DbHelper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250428042852_AddExceptionRule")]
+    partial class AddExceptionRule
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -56,6 +59,63 @@ namespace Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Payment");
+                });
+
+            modelBuilder.Entity("Domain.Entites.Space", b =>
+                {
+                    b.Property<int>("SpaceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("SpaceId"));
+
+                    b.Property<int?>("BookingWindowId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Capacity")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("longtext");
+
+                    b.Property<int?>("ExceptionId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal>("PricePerHour")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<decimal>("PricePerMonth")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("SpaceTypeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime(6)");
+
+                    b.Property<int>("VenueId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SpaceId");
+
+                    b.HasIndex("BookingWindowId");
+
+                    b.HasIndex("ExceptionId");
+
+                    b.HasIndex("SpaceTypeId");
+
+                    b.HasIndex("VenueId");
+
+                    b.ToTable("Space");
                 });
 
             modelBuilder.Entity("Domain.Entites.User", b =>
@@ -205,22 +265,14 @@ namespace Infrastructure.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ExceptionId"));
 
                     b.PrimitiveCollection<string>("Days")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Description")
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime?>("EndDate")
+                    b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<TimeSpan?>("EndTime")
-                        .HasColumnType("time(6)");
-
-                    b.Property<DateTime?>("StartDate")
+                    b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<TimeSpan?>("StartTime")
-                        .HasColumnType("time(6)");
 
                     b.Property<int>("Unit")
                         .HasColumnType("int");
@@ -341,31 +393,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("PaymentInfo");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Price", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<decimal>("Amount")
-                        .HasColumnType("decimal(10, 2)");
-
-                    b.Property<decimal?>("DiscountPercentage")
-                        .HasColumnType("decimal(10, 2)");
-
-                    b.Property<decimal?>("SetupFee")
-                        .HasColumnType("decimal(10,2)");
-
-                    b.Property<int>("TimeUnit")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Price");
-                });
-
             modelBuilder.Entity("Domain.Entities.Reservation", b =>
                 {
                     b.Property<int>("ReservationId")
@@ -474,77 +501,6 @@ namespace Infrastructure.Migrations
                     b.ToTable("AspNetRoles", (string)null);
                 });
 
-            modelBuilder.Entity("Domain.Entities.Space", b =>
-                {
-                    b.Property<int>("SpaceId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("SpaceId"));
-
-                    b.Property<int?>("BookingWindowId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Capacity")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int?>("Deposit")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("longtext");
-
-                    b.Property<int?>("ExceptionId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ListingType")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("longtext");
-
-                    b.Property<int?>("PriceId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SpaceTypeId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("VenueId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("VideoUrl")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("VirtualVideoUrl")
-                        .HasColumnType("longtext");
-
-                    b.HasKey("SpaceId");
-
-                    b.HasIndex("BookingWindowId");
-
-                    b.HasIndex("ExceptionId");
-
-                    b.HasIndex("PriceId");
-
-                    b.HasIndex("SpaceTypeId");
-
-                    b.HasIndex("VenueId");
-
-                    b.ToTable("Space");
-                });
-
             modelBuilder.Entity("Domain.Entities.SpaceAmenity", b =>
                 {
                     b.Property<int>("SpaceAmenityId")
@@ -624,10 +580,6 @@ namespace Infrastructure.Migrations
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("SpaceTypeId"));
 
                     b.Property<string>("Description")
-                        .HasColumnType("longtext");
-
-                    b.Property<string>("ListingType")
-                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
@@ -903,6 +855,37 @@ namespace Infrastructure.Migrations
                     b.Navigation("Reservation");
                 });
 
+            modelBuilder.Entity("Domain.Entites.Space", b =>
+                {
+                    b.HasOne("Domain.Entities.BookingWindow", "BookingWindow")
+                        .WithMany("Spaces")
+                        .HasForeignKey("BookingWindowId");
+
+                    b.HasOne("Domain.Entities.ExceptionRule", "Exception")
+                        .WithMany("Spaces")
+                        .HasForeignKey("ExceptionId");
+
+                    b.HasOne("Domain.Entities.SpaceType", "SpaceType")
+                        .WithMany("WorkingSpaces")
+                        .HasForeignKey("SpaceTypeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Domain.Entities.Venue", "Venue")
+                        .WithMany("Spaces")
+                        .HasForeignKey("VenueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("BookingWindow");
+
+                    b.Navigation("Exception");
+
+                    b.Navigation("SpaceType");
+
+                    b.Navigation("Venue");
+                });
+
             modelBuilder.Entity("Domain.Entities.Collection", b =>
                 {
                     b.HasOne("Domain.Entites.User", "User")
@@ -955,7 +938,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Space", "Space")
+                    b.HasOne("Domain.Entites.Space", "WorkingSpace")
                         .WithMany("Reservations")
                         .HasForeignKey("SpaceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -963,7 +946,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Customer");
 
-                    b.Navigation("Space");
+                    b.Navigation("WorkingSpace");
                 });
 
             modelBuilder.Entity("Domain.Entities.Review", b =>
@@ -974,7 +957,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Space", "WorkingSpace")
+                    b.HasOne("Domain.Entites.Space", "WorkingSpace")
                         .WithMany("Reviews")
                         .HasForeignKey("SpaceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -985,43 +968,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("WorkingSpace");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Space", b =>
-                {
-                    b.HasOne("Domain.Entities.BookingWindow", "BookingWindow")
-                        .WithMany("Spaces")
-                        .HasForeignKey("BookingWindowId");
-
-                    b.HasOne("Domain.Entities.ExceptionRule", "Exception")
-                        .WithMany("Spaces")
-                        .HasForeignKey("ExceptionId");
-
-                    b.HasOne("Domain.Entities.Price", "Price")
-                        .WithMany()
-                        .HasForeignKey("PriceId");
-
-                    b.HasOne("Domain.Entities.SpaceType", "SpaceType")
-                        .WithMany()
-                        .HasForeignKey("SpaceTypeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Domain.Entities.Venue", "Venue")
-                        .WithMany("Spaces")
-                        .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("BookingWindow");
-
-                    b.Navigation("Exception");
-
-                    b.Navigation("Price");
-
-                    b.Navigation("SpaceType");
-
-                    b.Navigation("Venue");
-                });
-
             modelBuilder.Entity("Domain.Entities.SpaceAmenity", b =>
                 {
                     b.HasOne("Domain.Entities.Amenity", "Amenity")
@@ -1030,7 +976,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Space", "Space")
+                    b.HasOne("Domain.Entites.Space", "Space")
                         .WithMany("Amenities")
                         .HasForeignKey("SpaceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1049,7 +995,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Space", null)
+                    b.HasOne("Domain.Entites.Space", null)
                         .WithMany("Collections")
                         .HasForeignKey("SpaceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1058,7 +1004,7 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.SpaceImage", b =>
                 {
-                    b.HasOne("Domain.Entities.Space", null)
+                    b.HasOne("Domain.Entites.Space", null)
                         .WithMany("SpaceImages")
                         .HasForeignKey("SpaceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -1171,6 +1117,19 @@ namespace Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Domain.Entites.Space", b =>
+                {
+                    b.Navigation("Amenities");
+
+                    b.Navigation("Collections");
+
+                    b.Navigation("Reservations");
+
+                    b.Navigation("Reviews");
+
+                    b.Navigation("SpaceImages");
+                });
+
             modelBuilder.Entity("Domain.Entites.User", b =>
                 {
                     b.Navigation("Collections");
@@ -1216,17 +1175,9 @@ namespace Infrastructure.Migrations
                     b.Navigation("Payment");
                 });
 
-            modelBuilder.Entity("Domain.Entities.Space", b =>
+            modelBuilder.Entity("Domain.Entities.SpaceType", b =>
                 {
-                    b.Navigation("Amenities");
-
-                    b.Navigation("Collections");
-
-                    b.Navigation("Reservations");
-
-                    b.Navigation("Reviews");
-
-                    b.Navigation("SpaceImages");
+                    b.Navigation("WorkingSpaces");
                 });
 
             modelBuilder.Entity("Domain.Entities.Venue", b =>

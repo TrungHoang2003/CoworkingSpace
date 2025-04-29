@@ -3,7 +3,7 @@ using CloudinaryDotNet.Actions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
-namespace Infrastructure.Common;
+namespace Infrastructure.Services;
 
 public class CloudinaryService()
 {

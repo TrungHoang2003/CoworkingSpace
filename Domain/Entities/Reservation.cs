@@ -25,7 +25,7 @@ public class Reservation
     public int SpaceId { get; set; }
 
     [ForeignKey("SpaceId")]
-    public Space? WorkingSpace { get; set; }
+    public Space? Space { get; set; }
 
     public DateTime ReservationDate { get; set; }
 

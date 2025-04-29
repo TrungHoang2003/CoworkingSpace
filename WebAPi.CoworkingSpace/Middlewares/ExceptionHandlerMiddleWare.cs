@@ -23,9 +23,20 @@ public class ExceptionHandlerMiddleWare(RequestDelegate next, ILogger<ExceptionH
            };
 
            httpContext.Response.StatusCode = statusCode;
-           var response = new Error("Internal Server Error", ex.Message);
+           var response = new ExceptionResponse
+           {
+               Message = ex.Message,
+               StackTrace = ex.StackTrace
+           };
 
            await httpContext.Response.WriteAsJsonAsync(response);
         }
     }
+}
+
+public class ExceptionResponse
+{
+    public string Code { get; set; } = "Internal Server Error";
+    public string Message { get; set; }
+    public string? StackTrace { get; set; }
 }

@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Domain.Entities;
 
-namespace Domain.Entites;
+namespace Domain.Entities;
 
 public enum SpaceStatus
 {
@@ -27,12 +26,23 @@ public class Space
     [ForeignKey("BookingWindowId")] public BookingWindow? BookingWindow { get; set; }
     public int? BookingWindowId { get; set; }
     
+    // Ngoại lệ
+    public int? ExceptionId{ get; set; }
+    [ForeignKey("ExceptionId")] public ExceptionRule? Exception{ get; set; }
+    
+    // Thông tin giá thuê, đặt cọc, phí setup, giảm giá
+    public int? PriceId { get; set; }
+    [ForeignKey("PriceId")] public Price? Price { get; set; }
+    
     // Thông tin chi tiết của không gian làm việc
     public string? Name { get; set; }
     public string? Description { get; set; }
-    [Column(TypeName = "decimal(10,2)")] public decimal PricePerHour { get; set; }
-    [Column(TypeName = "decimal(10,2)")] public decimal PricePerMonth { get; set; }
-    public int Capacity { get; set; }
+    public ListingType ListingType { get; set; }
+    public string? VideoUrl { get; set; }
+    public string? VirtualVideoUrl { get; set; }
+    public int? Capacity { get; set; }
+    public int? Quantity { get; set; } 
+    public int? Deposit { get; set; } 
     public SpaceStatus Status { get; set; } = SpaceStatus.Pending;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
@@ -43,4 +53,11 @@ public class Space
     public ICollection<SpaceImage>? SpaceImages { get; set; } // Các ảnh mô tả
     public ICollection<Reservation>? Reservations { get; set; } // 
     public ICollection<Review>? Reviews { get; set; } // Các đánh giá không gian
+}
+
+public enum ListingType
+{
+    Hourly,
+    Monthly,
+    Daily
 }

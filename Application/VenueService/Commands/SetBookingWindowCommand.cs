@@ -6,7 +6,7 @@ using Infrastructure.Common;
 using Infrastructure.Repositories;
 using MediatR;
 
-namespace Application.BookingWindowService.Commands;
+namespace Application.VenueService.Commands;
 
 public sealed record SetBookingWindowCommand(SetBookingWindowRequest SetBookingWindowRequest) : IRequest<Result>;
 
@@ -27,15 +27,22 @@ public class SetBookingWindowCommandHandler(IUnitOfWork unitOfWork, IMapper mapp
        await unitOfWork.BookingWindow.Create(bookingWindow);
        
        //Them booking window cho cac space
-       foreach (var spaceId in command.SetBookingWindowRequest.SpaceIds)
+       if (command.SetBookingWindowRequest.ApplyAll)
        {
-           var space = await unitOfWork.Space.GetById(spaceId);
+           var spaces = await unitOfWork.Space.GetVenueWorkingSpacesAsync(command.SetBookingWindowRequest.VenueId);
+           foreach (var space in spaces)
+           {
+               space.BookingWindow = bookingWindow;
+               await unitOfWork.Space.Update(space);
+           }
+       }
+       
+       foreach (var spaceId in command.SetBookingWindowRequest.SpaceIds!)
+       {
+           var space = await unitOfWork.Space.GetByIdAndVenue(spaceId, command.SetBookingWindowRequest.VenueId);
            if (space == null)
                return SpaceErrors.SpaceNotFound;
            
-           if (space.VenueId != venue.VenueId)
-               return SpaceErrors.SpaceNotFoundInVenue;
-        
            space.BookingWindow = bookingWindow;
            await unitOfWork.Space.Update(space);
        }

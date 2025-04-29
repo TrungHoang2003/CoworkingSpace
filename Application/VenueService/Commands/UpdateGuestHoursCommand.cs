@@ -1,14 +1,12 @@
 using Application.GuestHoursService.DTOs;
 using AutoMapper;
-using Domain.DTOs;
 using Domain.Entities;
 using Domain.Errors;
 using Infrastructure.Common;
 using Infrastructure.Repositories;
 using MediatR;
-using static System.Enum;
 
-namespace Application.GuestHoursService.Commands;
+namespace Application.VenueService.Commands;
 
 public sealed record UpdateGuestHoursCommand(UpdateGuestHoursRequest UpdateGuestHoursRequest) : IRequest<Result>;
 

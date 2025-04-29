@@ -12,7 +12,8 @@ public class SetBookingWindowRequest
     [Required] public BookingTimeUnit Unit { get; set; }
 
     [Required] public int VenueId { get; set; }
-    [Required] public List<int> SpaceIds { get; set; } = []; 
+    public List<int>? SpaceIds { get; set; } = []; 
+    public bool ApplyAll { get; set; } = true;
     
     public void Validate()
     {
@@ -20,5 +21,9 @@ public class SetBookingWindowRequest
         
         if(MaxNoticeDays == null) 
             throw new Exception("If unit is days, max notice days must be provided.");
+
+        if (ApplyAll) return;
+        if(SpaceIds == null || SpaceIds.Count == 0)
+            throw new Exception("At least 1 space is required when ApplyAll is false.");
     }
 }

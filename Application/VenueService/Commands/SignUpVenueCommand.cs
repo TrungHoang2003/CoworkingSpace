@@ -6,6 +6,7 @@ using Domain.Errors;
 using Infrastructure.Common;
 using Infrastructure.Errors;
 using Infrastructure.Repositories;
+using Infrastructure.Services;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 

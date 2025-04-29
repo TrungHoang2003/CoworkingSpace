@@ -1,5 +1,5 @@
-using Application.BookingWindowService.Commands;
 using Application.BookingWindowService.DTOs;
+using Application.VenueService.Commands;
 using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

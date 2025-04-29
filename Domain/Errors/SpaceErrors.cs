@@ -6,4 +6,5 @@ public sealed record SpaceErrors
 {
    public static readonly Error SpaceNotFound = new Error("SpaceError", "Space not found");
    public static readonly Error SpaceNotFoundInVenue = new Error("SpaceError", "Space not found in venue");
+   public static readonly Error SpaceTypeNotFound  = new Error("SpaceError", "Space type not found");
 }
