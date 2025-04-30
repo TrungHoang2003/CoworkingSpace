@@ -3,7 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Application;
 
-public static class ApplicationDI
+public static class ApplicationDi
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
     {

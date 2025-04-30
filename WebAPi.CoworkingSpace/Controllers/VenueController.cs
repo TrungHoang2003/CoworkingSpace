@@ -35,12 +35,12 @@ public class VenueController(IVenueRepository repository, IMediator mediator): C
         
         return Ok(result);
     }
-    
-    [HttpPost("UpdateVenueDetails")]
-    public async Task<IActionResult> UpdateVenueDetails([FromBody] UpdateVenueRequest request)
+
+    [HttpPost("SetUpVenue")]
+    public async Task<IActionResult> SetUpVenue([FromForm] SetUpVenueRequest setupVenueRequest)
     {
-        var result = await mediator.Send(new UpdateVenueCommand(request));
-        if (result.IsFailure)
+        var result = await mediator.Send(new SetUpVenueCommand(setupVenueRequest));
+        if(!result.IsSuccess)
             return BadRequest(result.Error);
         
         return Ok(result);

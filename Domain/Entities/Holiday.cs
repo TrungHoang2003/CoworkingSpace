@@ -35,7 +35,6 @@ public class VenueHoliday
    [ForeignKey("VenueId")] public Venue Venue { get; set; }
    
    public int HolidayId { get; set; }
-   [ForeignKey("HolidayId")] Holiday Holiday { get; set; }
-
+   [ForeignKey("HolidayId")] Holiday Holiday { get; set; } 
    public bool IsObserved { get; set; }
 }

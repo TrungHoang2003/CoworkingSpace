@@ -10,7 +10,7 @@ public interface IVenueAddressRepository: IGenericRepository<VenueAddress>
 {
     void UpdateVenueFullAddress(VenueAddress venueAddress);
     
-    Task<VenueAddress?> GetVenueAddressById(int venueAddressId);
+    Task<VenueAddress?> GetById(int venueAddressId);
 }
 
 public class VenueAddressRepository(ApplicationDbContext dbContext, IConfiguration configuration) : GenericRepository<VenueAddress>(dbContext), IVenueAddressRepository
@@ -23,7 +23,7 @@ public class VenueAddressRepository(ApplicationDbContext dbContext, IConfigurati
         _dbContext.Update(venueAddress);
     }
 
-    public Task<VenueAddress?> GetVenueAddressById(int venueAddressId)
+    public Task<VenueAddress?> GetById(int venueAddressId)
     {
         var cnn = new MySqlServer(configuration).OpenConnection();
 

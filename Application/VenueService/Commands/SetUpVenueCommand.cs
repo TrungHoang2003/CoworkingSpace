@@ -29,8 +29,20 @@ public class SetUpVenueCommandHandler(IMapper mapper, IUnitOfWork unitOfWork)
         // Update Venue Address
         if (request.Address != null)
         {
-            mapper.Map(request.Address, venue);
-            await unitOfWork.Venue.Update(venue);
+            // Check if Venue has address, if not create address and update Venue, if yes update Venue's address
+            var venueAddress = await unitOfWork.VenueAddress.GetById(venue.VenueAddressId);
+            if(venueAddress is null)
+            {
+                var newVenueAddress = mapper.Map<VenueAddress>(request.Address);
+                await unitOfWork.VenueAddress.Create(newVenueAddress);
+                venue.Address = newVenueAddress;
+                await unitOfWork.Venue.Update(venue);
+            }
+            else
+            {
+                mapper.Map(request.Address, venueAddress);
+                await unitOfWork.VenueAddress.Update(venueAddress);
+            }
         }
 
         // Update GuestHours
