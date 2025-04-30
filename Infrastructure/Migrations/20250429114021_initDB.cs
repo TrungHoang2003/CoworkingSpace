@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitDb : Migration
+    public partial class initDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -107,6 +107,28 @@ namespace Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ExceptionRule",
+                columns: table => new
+                {
+                    ExceptionId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    Unit = table.Column<int>(type: "int", nullable: false),
+                    StartDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    EndDate = table.Column<DateTime>(type: "datetime(6)", nullable: true),
+                    StartTime = table.Column<TimeSpan>(type: "time(6)", nullable: true),
+                    EndTime = table.Column<TimeSpan>(type: "time(6)", nullable: true),
+                    Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Days = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExceptionRule", x => x.ExceptionId);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "Holiday",
                 columns: table => new
                 {
@@ -122,6 +144,23 @@ namespace Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "Price",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    TimeUnit = table.Column<int>(type: "int", nullable: false),
+                    DiscountPercentage = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
+                    Amount = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    SetupFee = table.Column<decimal>(type: "decimal(10,2)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Price", x => x.Id);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "SpaceType",
                 columns: table => new
                 {
@@ -130,6 +169,8 @@ namespace Infrastructure.Migrations
                     Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Description = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ListingType = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -453,13 +494,20 @@ namespace Infrastructure.Migrations
                     SpaceTypeId = table.Column<int>(type: "int", nullable: false),
                     VenueId = table.Column<int>(type: "int", nullable: false),
                     BookingWindowId = table.Column<int>(type: "int", nullable: true),
+                    ExceptionId = table.Column<int>(type: "int", nullable: true),
+                    PriceId = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Description = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    PricePerHour = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    PricePerMonth = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    Capacity = table.Column<int>(type: "int", nullable: false),
+                    ListingType = table.Column<int>(type: "int", nullable: false),
+                    VideoUrl = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    VirtualVideoUrl = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Capacity = table.Column<int>(type: "int", nullable: true),
+                    Quantity = table.Column<int>(type: "int", nullable: true),
+                    Deposit = table.Column<int>(type: "int", nullable: true),
                     Status = table.Column<int>(type: "int", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
@@ -472,6 +520,16 @@ namespace Infrastructure.Migrations
                         column: x => x.BookingWindowId,
                         principalTable: "BookingWindow",
                         principalColumn: "BookingWindowId");
+                    table.ForeignKey(
+                        name: "FK_Space_ExceptionRule_ExceptionId",
+                        column: x => x.ExceptionId,
+                        principalTable: "ExceptionRule",
+                        principalColumn: "ExceptionId");
+                    table.ForeignKey(
+                        name: "FK_Space_Price_PriceId",
+                        column: x => x.PriceId,
+                        principalTable: "Price",
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Space_SpaceType_SpaceTypeId",
                         column: x => x.SpaceTypeId,
@@ -806,6 +864,16 @@ namespace Infrastructure.Migrations
                 column: "BookingWindowId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Space_ExceptionId",
+                table: "Space",
+                column: "ExceptionId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Space_PriceId",
+                table: "Space",
+                column: "PriceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Space_SpaceTypeId",
                 table: "Space",
                 column: "SpaceTypeId");
@@ -939,6 +1007,12 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "BookingWindow");
+
+            migrationBuilder.DropTable(
+                name: "ExceptionRule");
+
+            migrationBuilder.DropTable(
+                name: "Price");
 
             migrationBuilder.DropTable(
                 name: "SpaceType");

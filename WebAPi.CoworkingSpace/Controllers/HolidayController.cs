@@ -1,4 +1,4 @@
-using Application.HolidayService.DTOs;
+using Application.DTOs;
 using Application.VenueService.Commands;
 using Domain.DTOs;
 using Infrastructure.Repositories;
@@ -12,13 +12,4 @@ namespace CoworkingSpace.Controllers;
 [Route("[controller]")]
 public class HolidayController(IMediator mediator) : Controller
 {
-    [HttpPut("SetObservedHolidayForVenue")]
-    public async Task<IActionResult> SetObservedHolidayForVenue([FromBody] UpdateHolidayRequest request)
-    {
-        var result = await mediator.Send(new UpdateVenueHolidayCommand(request));
-        if (result.IsFailure)
-            return BadRequest(result.Error);
-        
-        return Ok(result);
-    }
 }

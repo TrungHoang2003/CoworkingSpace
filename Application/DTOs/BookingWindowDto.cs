@@ -1,11 +1,9 @@
 using System.ComponentModel.DataAnnotations;
-using AutoMapper;
-using Domain.Entites;
 using Domain.Entities;
 
-namespace Application.BookingWindowService.DTOs;
+namespace Application.DTOs;
 
-public class SetBookingWindowRequest
+public class BookingWindowDto
 {
     [Required] public int MinNotice { get; set; }
     public int? MaxNoticeDays { get; set; }

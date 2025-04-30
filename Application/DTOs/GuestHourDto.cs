@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Application.GuestHoursService.DTOs;
+namespace Application.DTOs;
 
 public class GuestHourDto
 {
@@ -19,20 +19,5 @@ public class GuestHourDto
       }
       else if (StartTime == null || EndTime == null)
          throw new Exception("Start and end times must be provided if not closed or open 24 hours.");
-   }
-}
-
-public class UpdateGuestHoursRequest
-{
-   [Required] public int VenueId { get; set; }
-   [Required] public List<GuestHourDto> GuestHours { get; set; } = [];
-
-   public void Validate()
-   {
-      if (GuestHours.Count != 7 || GuestHours.Select(x => x.DayOfWeek).Distinct().Count() != 7)
-         throw new Exception("Guest hours must be provided for all 7 days of the week.");
-
-      foreach (var guestHour in GuestHours)
-         guestHour.Normalize();
    }
 }

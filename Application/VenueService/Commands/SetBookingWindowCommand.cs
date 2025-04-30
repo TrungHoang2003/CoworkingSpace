@@ -1,4 +1,4 @@
-using Application.BookingWindowService.DTOs;
+using Application.DTOs;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Errors;
@@ -8,28 +8,28 @@ using MediatR;
 
 namespace Application.VenueService.Commands;
 
-public sealed record SetBookingWindowCommand(SetBookingWindowRequest SetBookingWindowRequest) : IRequest<Result>;
+public sealed record SetBookingWindowCommand(BookingWindowDto BookingWindowDto) : IRequest<Result>;
 
 public class SetBookingWindowCommandHandler(IUnitOfWork unitOfWork, IMapper mapper): IRequestHandler<SetBookingWindowCommand, Result>
 {
     public async Task<Result> Handle(SetBookingWindowCommand command, CancellationToken cancellationToken)
     {
         //Validate du lieu tu request
-        command.SetBookingWindowRequest.Validate();
+        command.BookingWindowDto.Validate();
         
         //Cheking xem venue co ton tai khong
-       var venue = await unitOfWork.Venue.GetById(command.SetBookingWindowRequest.VenueId);
+       var venue = await unitOfWork.Venue.GetById(command.BookingWindowDto.VenueId);
        if (venue == null)
            return VenueErrors.VenueNotFound;
        
        //Tao moi booking window
-       var bookingWindow = mapper.Map<BookingWindow>(command.SetBookingWindowRequest);
+       var bookingWindow = mapper.Map<BookingWindow>(command.BookingWindowDto);
        await unitOfWork.BookingWindow.Create(bookingWindow);
        
        //Them booking window cho cac space
-       if (command.SetBookingWindowRequest.ApplyAll)
+       if (command.BookingWindowDto.ApplyAll)
        {
-           var spaces = await unitOfWork.Space.GetVenueWorkingSpacesAsync(command.SetBookingWindowRequest.VenueId);
+           var spaces = await unitOfWork.Space.GetVenueWorkingSpacesAsync(command.BookingWindowDto.VenueId);
            foreach (var space in spaces)
            {
                space.BookingWindow = bookingWindow;
@@ -37,9 +37,9 @@ public class SetBookingWindowCommandHandler(IUnitOfWork unitOfWork, IMapper mapp
            }
        }
        
-       foreach (var spaceId in command.SetBookingWindowRequest.SpaceIds!)
+       foreach (var spaceId in command.BookingWindowDto.SpaceIds!)
        {
-           var space = await unitOfWork.Space.GetByIdAndVenue(spaceId, command.SetBookingWindowRequest.VenueId);
+           var space = await unitOfWork.Space.GetByIdAndVenue(spaceId, command.BookingWindowDto.VenueId);
            if (space == null)
                return SpaceErrors.SpaceNotFound;
            

@@ -1,4 +1,4 @@
-using Application.GuestHoursService.DTOs;
+using Application.DTOs;
 using Application.VenueService.Commands;
 using Domain.DTOs;
 using MediatR;
@@ -10,13 +10,4 @@ namespace CoworkingSpace.Controllers;
 [Route("[controller]")]
 public class GuestHourController(IMediator mediator): Controller
 {
-   [HttpPut("UpdateGuestHours")]
-   public async Task<IActionResult> UpdateGuestHours([FromBody] UpdateGuestHoursRequest updateGuestHoursRequest)
-   {
-       var result = await mediator.Send(new UpdateGuestHoursCommand(updateGuestHoursRequest));
-       if (result.IsFailure)
-           return BadRequest(result.Error);
-       
-       return Ok(result);
-   }
 }

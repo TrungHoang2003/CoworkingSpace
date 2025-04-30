@@ -1,4 +1,4 @@
-using Application.VenueService.DTOs;
+using Application.DTOs;
 using AutoMapper;
 using Domain.Entites;
 using Domain.Entities;

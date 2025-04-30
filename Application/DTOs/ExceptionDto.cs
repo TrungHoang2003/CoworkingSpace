@@ -1,9 +1,9 @@
 using System.ComponentModel.DataAnnotations;
 using Domain.Entities;
 
-namespace Application.ExceptionService.DTOs;
+namespace Application.DTOs;
 
-public class SetUpExceptionRequest
+public class ExceptionDto
 {
     [Required] public ExceptionUnit Unit { get; set; }
     public int VenueId { get; set; }

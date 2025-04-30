@@ -1,4 +1,4 @@
-using Application.HolidayService.DTOs;
+using Application.DTOs;
 using Domain.Errors;
 using Infrastructure.Common;
 using Infrastructure.Repositories;

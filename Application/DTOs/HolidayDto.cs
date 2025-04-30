@@ -1,4 +1,4 @@
-namespace Application.HolidayService.DTOs;
+namespace Application.DTOs;
 
 public class UpdateHolidayRequest
 {

@@ -1,4 +1,4 @@
-using Application.BookingWindowService.DTOs;
+using Application.DTOs;
 using Application.VenueService.Commands;
 using Domain.Entities;
 using MediatR;
@@ -11,9 +11,9 @@ namespace CoworkingSpace.Controllers;
 public class BookingWindowController(IMediator mediator): Controller
 {
    [HttpPost("SetUpBookingWindow")]
-   public async Task<IActionResult> SetUpBookingWindow([FromBody] SetBookingWindowRequest request)
+   public async Task<IActionResult> SetUpBookingWindow([FromBody] BookingWindowDto dto)
    {
-      var result = await mediator.Send(new SetBookingWindowCommand(request));
+      var result = await mediator.Send(new SetBookingWindowCommand(dto));
       
       if (!result.IsSuccess)
          return Ok(result.Error);
