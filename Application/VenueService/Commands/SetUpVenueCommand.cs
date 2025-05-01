@@ -120,36 +120,6 @@ public class SetUpVenueCommandHandler(IMapper mapper, IUnitOfWork unitOfWork)
             }
         }
 
-        // Set Booking Window
-        if (request.BookingWindow != null)
-        {
-            //Validate du lieu tu request
-            request.BookingWindow.Validate();
-
-            //Tao moi booking window
-            var bookingWindow = mapper.Map<BookingWindow>(request.BookingWindow);
-            await unitOfWork.BookingWindow.Create(bookingWindow);
-
-            //Them booking window cho cac space
-            if (request.BookingWindow.ApplyAll)
-            {
-                var spaces = await unitOfWork.Space.GetVenueWorkingSpacesAsync(request.VenueId);
-                foreach (var space in spaces)
-                {
-                    space.BookingWindow = bookingWindow;
-                    await unitOfWork.Space.Update(space);
-                }
-            }
-            foreach (var spaceId in request.BookingWindow.SpaceIds!)
-            {
-                var space = await unitOfWork.Space.GetByIdAndVenue(spaceId, request.VenueId);
-                if (space == null)
-                    return Result.Failure(new Error("Space Error", "Cannot find space with Id = " + spaceId + ""));
-
-                space.BookingWindow = bookingWindow;
-                await unitOfWork.Space.Update(space);
-            }
-        }
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

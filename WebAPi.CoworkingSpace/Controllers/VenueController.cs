@@ -37,7 +37,7 @@ public class VenueController(IVenueRepository repository, IMediator mediator): C
     }
 
     [HttpPost("SetUpVenue")]
-    public async Task<IActionResult> SetUpVenue([FromForm] SetUpVenueRequest setupVenueRequest)
+    public async Task<IActionResult> SetUpVenue([FromBody] SetUpVenueRequest setupVenueRequest)
     {
         var result = await mediator.Send(new SetUpVenueCommand(setupVenueRequest));
         if(!result.IsSuccess)

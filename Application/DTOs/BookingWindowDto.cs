@@ -8,10 +8,9 @@ public class BookingWindowDto
     [Required] public int MinNotice { get; set; }
     public int? MaxNoticeDays { get; set; }
     [Required] public BookingTimeUnit Unit { get; set; }
-
-    [Required] public int VenueId { get; set; }
-    public List<int>? SpaceIds { get; set; } = []; 
+    public bool? DisplayOnCalendar { get; set; } = false;
     public bool ApplyAll { get; set; } = true;
+    public List<int>? SpaceIds { get; set; } = []; 
     
     public void Validate()
     {
@@ -24,4 +23,14 @@ public class BookingWindowDto
         if(SpaceIds == null || SpaceIds.Count == 0)
             throw new Exception("At least 1 space is required when ApplyAll is false.");
     }
+}
+
+public class UpdateBookingWindowRequest: BookingWindowDto
+{
+    public int BookingWindowId { get; set; }
+}
+
+public class AddBookingWindowRequest: BookingWindowDto
+{
+    public int VenueId { get; set; }
 }

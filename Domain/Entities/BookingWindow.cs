@@ -8,6 +8,7 @@ public class BookingWindow
    [Key]public int BookingWindowId { get; set; }
    public int MinNotice { get; set; }
    public int? MaxNoticeDays { get; set; }
+    public bool? DisplayOnCalendar { get; set; } = false;
    
    public BookingTimeUnit Unit { get; set; }
    

@@ -16,5 +16,7 @@ public class MappingProfile : Profile
         CreateMap<SetHourlySpaceRequest, Space>();
         CreateMap<GuestHourDto, GuestHour>();
         CreateMap<VenueAddressDto, VenueAddress>();
+        CreateMap<AddBookingWindowRequest, BookingWindow>();
+        CreateMap<UpdateBookingWindowRequest, BookingWindow>();
     }
 }

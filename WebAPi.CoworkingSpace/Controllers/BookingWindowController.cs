@@ -1,3 +1,4 @@
+using Application.BookingWindowService;
 using Application.DTOs;
 using Application.VenueService.Commands;
 using Domain.Entities;
@@ -10,5 +11,23 @@ namespace CoworkingSpace.Controllers;
 [Route("[controller]")]
 public class BookingWindowController(IMediator mediator): Controller
 {
- 
+    [HttpPost("AddBookingWindow")]
+    public async Task<IActionResult> AddBookingWindow([FromBody] AddBookingWindowRequest addBookingWindowRequest)
+    {
+        var result = await mediator.Send(new AddBookingWindowCommand(addBookingWindowRequest));
+        if (result.IsFailure)
+            return BadRequest(result.Error);
+        
+        return Ok(result);
+    }
+    
+    [HttpPut("UpdateBookingWindow")]
+    public async Task<IActionResult> UpdateBookingWindow([FromBody] UpdateBookingWindowRequest updateBookingWindowRequest)
+    {
+        var result = await mediator.Send(new UpdateBookingWindowCommand(updateBookingWindowRequest));
+        if (result.IsFailure)
+            return BadRequest(result.Error);
+        
+        return Ok(result);
+    }
 }
