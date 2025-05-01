@@ -51,3 +51,13 @@ public class ExceptionDto
            throw new Exception("At least 1 space is required when ApplyAll is false.");
    }
 }
+
+public class AddExceptionRequest : ExceptionDto
+{
+    
+}
+
+public class UpdateExceptionRequest : ExceptionDto
+{
+    
+}

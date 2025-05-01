@@ -66,36 +66,7 @@ public class SetUpVenueCommandHandler(IMapper mapper, IUnitOfWork unitOfWork)
                 await unitOfWork.GuestHour.AddRangeAsync(newGuestHours);
             }
         }
-
-        // Set Exception
-        if (request.Exception != null)
-        {
-            request.Exception.Validate();
-
-            var exceptionRule = mapper.Map<ExceptionRule>(request);
-            await unitOfWork.Exception.Create(exceptionRule);
-
-            if (request.Exception.ApplyAll)
-            {
-                var spaces = await unitOfWork.Space.GetVenueWorkingSpacesAsync(request.VenueId);
-                foreach (var space in spaces)
-                {
-                    space.Exception = exceptionRule;
-                    await unitOfWork.Space.Update(space);
-                }
-            }
-
-            foreach (var spaceId in request.Exception.SpaceIds!)
-            {
-                var space = await unitOfWork.Space.GetByIdAndVenue(spaceId, request.VenueId);
-                if (space == null)
-                    return Result.Failure(new Error("Space Error", "Cannot find space with Id = " + spaceId + ""));
-
-                space.Exception = exceptionRule;
-                await unitOfWork.Space.Update(space);
-            }
-        }
-
+        
         // Set Observed Holidays
         if (request.HolidayIds is { Count: > 0 })
         {
