@@ -10,7 +10,6 @@ public class MappingProfile : Profile
     {
         CreateMap<VenueAddressDto, VenueAddress>();
         CreateMap<VenueDetailsDto, Venue>();
-        CreateMap<UpdateVenueRequest, Venue>();
         CreateMap<BookingWindowDto, BookingWindow>();
         CreateMap<SignUpVenueRequest, Venue>();
         CreateMap<SetHourlySpaceRequest, Space>();
@@ -18,5 +17,7 @@ public class MappingProfile : Profile
         CreateMap<VenueAddressDto, VenueAddress>();
         CreateMap<AddBookingWindowRequest, BookingWindow>();
         CreateMap<UpdateBookingWindowRequest, BookingWindow>();
+        CreateMap<AddExceptionRequest, ExceptionRule>();
+        CreateMap<UpdateExceptionRequest, ExceptionRule>();
     }
 }

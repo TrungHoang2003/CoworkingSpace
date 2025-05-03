@@ -5,8 +5,8 @@ namespace Application.DTOs;
 
 public class ExceptionDto
 {
-    [Required] public ExceptionUnit Unit { get; set; }
     public int VenueId { get; set; }
+    [Required] public ExceptionUnit Unit { get; set; }
     public DateTime? StartDate { get; set; }
     public DateTime? EndDate { get; set; }
     public TimeSpan? StartTime { get; set; }
@@ -17,7 +17,7 @@ public class ExceptionDto
     
    public List<int>? SpaceIds { get; set; } = [];
 
-   public void Validate()
+   public virtual void Validate()
    {
        switch (Unit)
        {
@@ -45,19 +45,17 @@ public class ExceptionDto
            default:
                throw new ArgumentOutOfRangeException();
        }
-
        if (ApplyAll) return;
-       if(SpaceIds is null || SpaceIds.Count == 0)
+       if (SpaceIds is null || SpaceIds.Count == 0)
            throw new Exception("At least 1 space is required when ApplyAll is false.");
    }
 }
 
 public class AddExceptionRequest : ExceptionDto
 {
-    
 }
 
 public class UpdateExceptionRequest : ExceptionDto
 {
-    
+    public int ExceptionId { get; set; }
 }

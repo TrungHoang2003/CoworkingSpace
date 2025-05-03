@@ -2,6 +2,7 @@ using System.Text.Json;
 using Domain.DTOs;
 using Domain.Entites;
 using Domain.Entities;
+using Domain.Errors;
 using Domain.Responses;
 using Google.Apis.Auth;
 using Infrastructure.Common;

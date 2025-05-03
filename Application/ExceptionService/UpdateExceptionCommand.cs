@@ -8,27 +8,28 @@ using MediatR;
 
 namespace Application.ExceptionService;
 
-public sealed record AddExceptionCommand(AddExceptionRequest AddExceptionRequest) : IRequest<Result>;
+public sealed record UpdateExceptionCommand(UpdateExceptionRequest UpdateExceptionRequest) : IRequest<Result>;
 
-public class AddExceptionCommandHandler(IUnitOfWork unitOfWork, IMapper mapper) : IRequestHandler<AddExceptionCommand, Result>
+public class UpdateExceptionCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+    : IRequestHandler<UpdateExceptionCommand, Result>
 {
-    public async Task<Result> Handle(AddExceptionCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateExceptionCommand command, CancellationToken cancellationToken)
     {
-        var request = command.AddExceptionRequest;
+        var request = command.UpdateExceptionRequest;
         request.Validate();
-        
-        var exist = await unitOfWork.Venue.FindById(request.VenueId);
-        if (!exist) return VenueErrors.VenueNotFound;
-        
-        var exceptionRule = mapper.Map<ExceptionRule>(request);
-        await unitOfWork.Exception.Create(exceptionRule);
 
+        var exception = await unitOfWork.Exception.GetById(request.ExceptionId);
+        if (exception == null) return ExceptionErrors.ExceptionNotFound;
+        
+        mapper.Map(exception, request);
+        await unitOfWork.Exception.Update(exception);
+        
         if (request.ApplyAll)
         {
             var spaces = await unitOfWork.Space.GetVenueWorkingSpacesAsync(request.VenueId);
             foreach (var space in spaces)
             {
-                space.Exception = exceptionRule;
+                space.Exception = exception;
                 await unitOfWork.Space.Update(space);
             }
         }
@@ -39,7 +40,7 @@ public class AddExceptionCommandHandler(IUnitOfWork unitOfWork, IMapper mapper) 
             if (space == null)
                 return Result.Failure(new Error("Space Error", "Cannot find space with Id = " + spaceId + ""));
 
-            space.Exception = exceptionRule;
+            space.Exception = exception;
             await unitOfWork.Space.Update(space);
         }
         
@@ -47,3 +48,4 @@ public class AddExceptionCommandHandler(IUnitOfWork unitOfWork, IMapper mapper) 
         return Result.Success();
     }
 }
+    

@@ -21,7 +21,7 @@ public class BookingWindowController(IMediator mediator): Controller
         return Ok(result);
     }
     
-    [HttpPut("UpdateBookingWindow")]
+    [HttpPost("UpdateBookingWindow")]
     public async Task<IActionResult> UpdateBookingWindow([FromBody] UpdateBookingWindowRequest updateBookingWindowRequest)
     {
         var result = await mediator.Send(new UpdateBookingWindowCommand(updateBookingWindowRequest));

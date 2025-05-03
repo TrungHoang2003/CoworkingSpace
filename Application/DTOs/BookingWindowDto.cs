@@ -5,6 +5,7 @@ namespace Application.DTOs;
 
 public class BookingWindowDto
 {
+    public int VenueId { get; set; }
     [Required] public int MinNotice { get; set; }
     public int? MaxNoticeDays { get; set; }
     [Required] public BookingTimeUnit Unit { get; set; }
@@ -32,5 +33,4 @@ public class UpdateBookingWindowRequest: BookingWindowDto
 
 public class AddBookingWindowRequest: BookingWindowDto
 {
-    public int VenueId { get; set; }
 }

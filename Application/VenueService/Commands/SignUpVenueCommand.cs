@@ -24,7 +24,6 @@ public class SignUpVenueCommandHandler(
     public async Task<Result> Handle(SignUpVenueCommand command, CancellationToken cancellationToken)
     {
         string? userAvatarUrl = null;
-        string? venueLogoUrl;
 
         // Kiểm tra xem loại văn phòng có tồn tại không
         var venueType = await unitOfWork.Venue.GetVenueTypeById(command.SignUpVenueRequest.VenueTypeId);
@@ -43,7 +42,7 @@ public class SignUpVenueCommandHandler(
 
         // Tìm kiếm người dùng trong db
         var user = await userManager.FindByIdAsync(result.Value.ToString());
-        if (user == null) return AuthenErrors.UserNotFound;
+        if (user == null) return AuthenErrors.NotLoggedIn;
 
         // Kiểm tra đã có role Host chưa, nếu chưa tạo role Host và gán cho User
         var hostRole = await roleManager.RoleExistsAsync("Host");
@@ -71,16 +70,21 @@ public class SignUpVenueCommandHandler(
         // Kiểm tra xem người dùng có upload logo cho venue không, nếu có thì gọi API cloudinary và lưu Url vào db
         if (command.SignUpVenueRequest.Logo!= null)
         {
-            venueLogoUrl = await cloudinaryService.UploadImage(command.SignUpVenueRequest.Logo);
+            var venueLogoUrl = await cloudinaryService.UploadImage(command.SignUpVenueRequest.Logo);
 
             if (venueLogoUrl == null)
                 return CloudinaryErrors.UploadVenueLogoFailed;
         }
 
-        // Tạo Venue mới và lưu vào db
+        // Tạo Venue mới
         var venue = mapper.Map<Venue>(command.SignUpVenueRequest);
         
+        // Đăng ký Host cho Venue
+        venue.HostId = user.Id;
+        
         // Cập nhật địa chỉ đầy đủ cho Venue
+        var venueAddress = mapper.Map<VenueAddress>(command.SignUpVenueRequest.Address);
+        venue.Address = venueAddress;
         venue.Address.UpdateFullAddress();
         await unitOfWork.Venue.Create(venue);
 
