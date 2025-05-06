@@ -1,5 +1,5 @@
 
-using Infrastructure.Common;
+using Domain.ResultPattern;
 
 namespace Domain.Errors;
 

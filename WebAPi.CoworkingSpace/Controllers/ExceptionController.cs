@@ -1,6 +1,4 @@
-using Application.DTOs;
-using Application.ExceptionService;
-using Application.VenueService.Commands;
+using Application.ExceptionService.CQRS.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,9 +9,9 @@ namespace CoworkingSpace.Controllers;
 public class ExceptionController(IMediator mediator): Controller
 {
     [HttpPost("UpdateException")]
-    public async Task<IActionResult> UpdateException([FromBody] UpdateExceptionRequest updateExceptionRequest)
+    public async Task<IActionResult> UpdateException([FromBody] UpdateExceptionCommand command)
     {
-        var result = await mediator.Send(new UpdateExceptionCommand(updateExceptionRequest));
+        var result = await mediator.Send(command);
         if (result.IsFailure)
             return BadRequest(result.Error);
         
@@ -21,9 +19,9 @@ public class ExceptionController(IMediator mediator): Controller
     }
     
     [HttpPost("AddException")]
-    public async Task<IActionResult> AddException([FromBody] AddExceptionRequest addExceptionRequest)
+    public async Task<IActionResult> AddException([FromBody] AddExceptionCommand command)
     {
-        var result = await mediator.Send(new AddExceptionCommand(addExceptionRequest));
+        var result = await mediator.Send(command);
         if (result.IsFailure)
             return BadRequest(result.Error);
         

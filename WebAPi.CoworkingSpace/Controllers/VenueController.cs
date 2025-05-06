@@ -1,5 +1,6 @@
 using Application.DTOs;
-using Application.VenueService.Commands;
+using Application.VenueService.CQRS.Commands;
+using Application.VenueService.DTOs;
 using Domain.DTOs;
 using Infrastructure.Repositories;
 using MediatR;
@@ -27,9 +28,9 @@ public class VenueController(IVenueRepository repository, IMediator mediator): C
     }
     
     [HttpPost("SignUpVenue")]
-    public async Task<IActionResult> SignUpVenue([FromForm] SignUpVenueRequest signUpVenueRequest)
+    public async Task<IActionResult> SignUpVenue([FromForm] SignUpVenueCommand command)
     {
-        var result = await mediator.Send(new SignUpVenueCommand(signUpVenueRequest));
+        var result = await mediator.Send(command);
         if (result.IsFailure)
             return BadRequest(result.Error);
         
@@ -37,9 +38,9 @@ public class VenueController(IVenueRepository repository, IMediator mediator): C
     }
 
     [HttpPost("SetUpVenue")]
-    public async Task<IActionResult> SetUpVenue([FromBody] SetUpVenueRequest setupVenueRequest)
+    public async Task<IActionResult> SetUpVenue([FromBody] SetUpVenueCommand command)
     {
-        var result = await mediator.Send(new SetUpVenueCommand(setupVenueRequest));
+        var result = await mediator.Send(command);
         if(!result.IsSuccess)
             return BadRequest(result.Error);
         

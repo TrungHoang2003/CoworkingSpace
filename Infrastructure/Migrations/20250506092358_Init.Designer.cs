@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250429114021_initDB")]
-    partial class initDB
+    [Migration("20250506092358_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -161,6 +161,9 @@ namespace Infrastructure.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("BookingWindowId"));
 
+                    b.Property<bool?>("DisplayOnCalendar")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<int?>("MaxNoticeDays")
                         .HasColumnType("int");
 
@@ -207,9 +210,6 @@ namespace Infrastructure.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ExceptionId"));
 
-                    b.PrimitiveCollection<string>("Days")
-                        .HasColumnType("longtext");
-
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
@@ -231,6 +231,27 @@ namespace Infrastructure.Migrations
                     b.HasKey("ExceptionId");
 
                     b.ToTable("ExceptionRule");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ExceptionRuleDay", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ExceptionRuleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ExceptionRuleId");
+
+                    b.ToTable("ExceptionRuleDay");
                 });
 
             modelBuilder.Entity("Domain.Entities.GuestHour", b =>
@@ -658,14 +679,14 @@ namespace Infrastructure.Migrations
                     b.Property<int>("HostId")
                         .HasColumnType("int");
 
+                    b.Property<string>("LogoUrl")
+                        .HasColumnType("longtext");
+
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
                     b.Property<int>("VenueAddressId")
                         .HasColumnType("int");
-
-                    b.Property<string>("VenueLogoUrl")
-                        .HasColumnType("longtext");
 
                     b.Property<int>("VenueTypeId")
                         .HasColumnType("int");
@@ -915,6 +936,17 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Domain.Entities.ExceptionRuleDay", b =>
+                {
+                    b.HasOne("Domain.Entities.ExceptionRule", "ExceptionRule")
+                        .WithMany("ExceptionRuleDays")
+                        .HasForeignKey("ExceptionRuleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("ExceptionRule");
                 });
 
             modelBuilder.Entity("Domain.Entities.GuestHour", b =>
@@ -1206,6 +1238,8 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.ExceptionRule", b =>
                 {
+                    b.Navigation("ExceptionRuleDays");
+
                     b.Navigation("Spaces");
                 });
 

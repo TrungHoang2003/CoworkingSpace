@@ -1,8 +1,7 @@
 using System.ComponentModel.DataAnnotations;
-using Domain.Entities;
 using Microsoft.AspNetCore.Http;
 
-namespace Application.DTOs;
+namespace Application.SpaceService.DTOs;
 
 
 public class SetHourlySpaceRequest

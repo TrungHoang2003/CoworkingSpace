@@ -1,5 +1,4 @@
 using Application.DTOs;
-using Application.VenueService.Commands;
 using Domain.DTOs;
 using Infrastructure.Repositories;
 using MediatR;

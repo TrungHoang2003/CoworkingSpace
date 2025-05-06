@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class initDB : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -98,6 +98,7 @@ namespace Infrastructure.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     MinNotice = table.Column<int>(type: "int", nullable: false),
                     MaxNoticeDays = table.Column<int>(type: "int", nullable: true),
+                    DisplayOnCalendar = table.Column<bool>(type: "tinyint(1)", nullable: true),
                     Unit = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -118,8 +119,6 @@ namespace Infrastructure.Migrations
                     StartTime = table.Column<TimeSpan>(type: "time(6)", nullable: true),
                     EndTime = table.Column<TimeSpan>(type: "time(6)", nullable: true),
                     Description = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Days = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
                 },
                 constraints: table =>
@@ -397,6 +396,27 @@ namespace Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "ExceptionRuleDay",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    ExceptionRuleId = table.Column<int>(type: "int", nullable: false),
+                    DayOfWeek = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ExceptionRuleDay", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ExceptionRuleDay_ExceptionRule_ExceptionRuleId",
+                        column: x => x.ExceptionRuleId,
+                        principalTable: "ExceptionRule",
+                        principalColumn: "ExceptionId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "HolidayDate",
                 columns: table => new
                 {
@@ -431,7 +451,7 @@ namespace Infrastructure.Migrations
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Description = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    VenueLogoUrl = table.Column<string>(type: "longtext", nullable: true)
+                    LogoUrl = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Floor = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4")
@@ -813,6 +833,11 @@ namespace Infrastructure.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ExceptionRuleDay_ExceptionRuleId",
+                table: "ExceptionRuleDay",
+                column: "ExceptionRuleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_GuestHour_VenueId",
                 table: "GuestHour",
                 column: "VenueId");
@@ -956,6 +981,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUserTokens");
+
+            migrationBuilder.DropTable(
+                name: "ExceptionRuleDay");
 
             migrationBuilder.DropTable(
                 name: "GuestHour");

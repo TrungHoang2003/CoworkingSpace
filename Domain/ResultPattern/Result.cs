@@ -1,4 +1,4 @@
-namespace Infrastructure.Common;
+namespace Domain.ResultPattern;
 
 public class Result(bool isSuccess, Error error)
 {

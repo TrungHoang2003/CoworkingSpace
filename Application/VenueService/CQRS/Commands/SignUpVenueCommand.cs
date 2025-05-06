@@ -1,47 +1,53 @@
-using System.ComponentModel.DataAnnotations;
-using Application.DTOs;
-using AutoMapper;
+using Application.VenueAddressService.DTOs;
+using Application.VenueService.Mappings;
 using Domain.Entites;
 using Domain.Entities;
 using Domain.Errors;
-using Infrastructure.Common;
+using Domain.ResultPattern;
+using FluentValidation;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
-namespace Application.VenueService.Commands;
+namespace Application.VenueService.CQRS.Commands;
 
-public sealed record SignUpVenueCommand : IRequest<Result>
-{
-    [Required] public int VenueTypeId;
-    public IFormFile? Logo;
-    [Required] public string? Name;
-    [Required] public string? Description;
-    [Required] public VenueAddressDto? Address;
-    [Required] public HostInformationDto? HostInformation;
-}
+public sealed record SignUpVenueCommand(
+    IFormFile? UserAvatar,
+    int VenueTypeId,
+    string Name,
+    string Description,
+    string Floor,
+    string PhoneNumber,
+    IFormFile? Logo,
+    SignUpVenueAddressDto Address
+) : IRequest<Result>;
 
 public class SignUpVenueCommandHandler(
     CloudinaryService cloudinaryService,
     UserManager<User> userManager,
     RoleManager<Role> roleManager,
-    IMapper mapper,
+    IValidator<SignUpVenueCommand> validator,
     IUnitOfWork unitOfWork) : IRequestHandler<SignUpVenueCommand, Result>
 {
-    public async Task<Result> Handle(SignUpVenueCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(SignUpVenueCommand request, CancellationToken cancellationToken)
     {
+        var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+        if(!validatorResult.IsValid)
+            return Result.Failure(new Error("Validation Errors", string.Join("; ",validatorResult.Errors.Select(x => x.ErrorMessage).ToList())));
+        
         string? userAvatarUrl = null;
+        string? venueLogoUrl= null;
 
         // Kiểm tra xem loại văn phòng có tồn tại không
-        var venueType = await unitOfWork.Venue.GetVenueTypeById(command.VenueTypeId);
+        var venueType = await unitOfWork.Venue.GetVenueTypeById(request.VenueTypeId);
         if (venueType == null) return VenueErrors.VenueTypeNotFound;
 
         // Kiểm tra xem người dùng có upload avatar không, nếu có thì gọi API cloudinary và lưu Url vào db
-        if (command.HostInformation.UserAvatar != null)
+        if (request.UserAvatar != null)
         {
-            userAvatarUrl = await cloudinaryService.UploadImage(command.HostInformation.UserAvatar);
+            userAvatarUrl = await cloudinaryService.UploadImage(request.UserAvatar);
             if (userAvatarUrl == null) return CloudinaryErrors.UploadUserAvatarFailed;
         }
 
@@ -58,7 +64,6 @@ public class SignUpVenueCommandHandler(
         if (!hostRole) await roleManager.CreateAsync(new Role("Host"));
         
         var isHost = await userManager.IsInRoleAsync(user, "Host");
-
         if (!isHost)
         {
             var addToRoleResult = await userManager.AddToRoleAsync(user, "Host");
@@ -68,7 +73,7 @@ public class SignUpVenueCommandHandler(
         }
 
         // Cập nhật thông tin người dùng
-        user.PhoneNumber = command.HostInformation.PhoneNumber;
+        user.PhoneNumber = request.PhoneNumber;
         user.AvatarUrl = userAvatarUrl;
 
         var updatedResult = await userManager.UpdateAsync(user);
@@ -77,23 +82,20 @@ public class SignUpVenueCommandHandler(
                 string.Join(",", updatedResult.Errors.Select(e => e.Description).ToList())));
 
         // Kiểm tra xem người dùng có upload logo cho venue không, nếu có thì gọi API cloudinary và lưu Url vào db
-        if (command.Logo!= null)
+        if (request.Logo!= null)
         {
-            var venueLogoUrl = await cloudinaryService.UploadImage(command.Logo);
-
+            venueLogoUrl = await cloudinaryService.UploadImage(request.Logo);
             if (venueLogoUrl == null)
                 return CloudinaryErrors.UploadVenueLogoFailed;
         }
 
         // Tạo Venue mới
-        var venue = mapper.Map<Venue>(command);
+        var venue = request.ToVenue(venueLogoUrl);
         
         // Đăng ký Host cho Venue
         venue.HostId = user.Id;
         
         // Cập nhật địa chỉ đầy đủ cho Venue
-        var venueAddress = mapper.Map<VenueAddress>(command.Address);
-        venue.Address = venueAddress;
         venue.Address.UpdateFullAddress();
         await unitOfWork.Venue.Create(venue);
 

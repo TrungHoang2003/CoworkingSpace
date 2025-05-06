@@ -1,7 +1,6 @@
 using System.Reflection;
 using System.Text;
 using Application;
-using CoworkingSpace.Mappings;
 using CoworkingSpace.Middlewares;
 using CoworkingSpace.Transformer;
 using Infrastructure;
@@ -21,7 +20,6 @@ builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("My
                                    throw new Exception("Chuoi ket noi chua duoc thiet lap"));
 
 builder.Services.AddOpenApi("v1", options => { options.AddDocumentTransformer<BearerSercuritySchemeTransformer>();});
-builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddAuthentication(options =>
     {

@@ -23,8 +23,7 @@ public class Venue
     // Thông tin văn phòng
     public string? Name { get; set; }
     public string? Description { get; set; }
-    public string? VenueLogoUrl { get; set; }
-    
+    public string? LogoUrl { get; set; }
     public string? Floor { get; set; }
 
     public ICollection<VenueImage>? VenueImages { get; set; } // Hình ảnh văn phòng

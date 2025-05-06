@@ -13,8 +13,8 @@ public class ExceptionRule
     public TimeSpan? StartTime { get; set; }
     public TimeSpan? EndTime { get; set; }
     public string? Description { get; set; }
-    public List<DayOfWeek>? Days { get; set; }
-
+    
+    public ICollection<ExceptionRuleDay>? ExceptionRuleDays { get; set; } // Quan hệ 1-nhiều
     public ICollection<Space>? Spaces { get; set; }
 }
 

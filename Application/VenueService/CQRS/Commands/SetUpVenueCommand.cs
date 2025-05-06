@@ -1,56 +1,43 @@
-using Application.DTOs;
-using AutoMapper;
+using Application.GuestHourService.DTOs;
+using Application.VenueAddressService.DTOs;
+using Application.VenueService.DTOs;
+using Application.VenueService.Mappings;
 using Domain.Entities;
 using Domain.Errors;
-using Infrastructure.Common;
+using Domain.ResultPattern;
+using FluentValidation;
 using Infrastructure.Repositories;
 using MediatR;
 
-namespace Application.VenueService.Commands;
+namespace Application.VenueService.CQRS.Commands;
 
-public sealed record SetUpVenueCommand(SetUpVenueRequest SetUpVenueRequest):IRequest<Result>;
+public sealed record SetUpVenueCommand(
+    int VenueId,
+    SetUpVenueDetailsDto? Details,
+    SetUpVenueAddressDto? Address,
+    List<SetUpVenueGuestHourDto>? GuestHours,
+    List<int>? HolidayIds
+) : IRequest<Result>;
 
-public class SetUpVenueCommandHandler(IMapper mapper, IUnitOfWork unitOfWork)
+public class SetUpVenueCommandHandler(IUnitOfWork unitOfWork, IValidator<SetUpVenueCommand> validator)
     : IRequestHandler<SetUpVenueCommand, Result>
 {
-    public async Task<Result> Handle(SetUpVenueCommand command, CancellationToken cancellationToken)
+    public async Task<Result> Handle(SetUpVenueCommand request, CancellationToken cancellationToken)
     {
-        var request = command.SetUpVenueRequest;
+        var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+        if(!validatorResult.IsValid)
+            return Result.Failure(new Error("Validation Errors", string.Join("\n",validatorResult.Errors.Select(x => x.ErrorMessage).ToList())));
+        
         var venue = await unitOfWork.Venue.GetById(request.VenueId);
         if (venue == null) return VenueErrors.VenueNotFound;
-
-        // Update Venue Basic Informations
-        if (request.Details != null)
-        {
-            mapper.Map(request.Details, venue);
-            await unitOfWork.Venue.Update(venue);
-        }
-
-        // Update Venue Address
-        if (request.Address != null)
-        {
-            // Check if Venue has address, if not create address and update Venue, if yes update Venue's address
-            var venueAddress = await unitOfWork.VenueAddress.GetById(venue.VenueAddressId);
-            if(venueAddress is null)
-            {
-                var newVenueAddress = mapper.Map<VenueAddress>(request.Address);
-                await unitOfWork.VenueAddress.Create(newVenueAddress);
-                venue.Address = newVenueAddress;
-                await unitOfWork.Venue.Update(venue);
-            }
-            else
-            {
-                mapper.Map(request.Address, venueAddress);
-                await unitOfWork.VenueAddress.Update(venueAddress);
-            }
-        }
-
+        
+        // Update Venue 
+        venue = request.ToVenue(venue);
+        await unitOfWork.Venue.Update(venue);
+        
         // Update GuestHours
         if (request.GuestHours is { Count: > 0 })
         {
-            // Validate Request (Đảm bảo chỉ có 7 ngày trong tuần)
-            request.GuestHoursValidate();
-
             var existingGuestHours =
                 await unitOfWork.GuestHour.GetGuestHoursByVenueId(request.VenueId);
 
@@ -90,7 +77,6 @@ public class SetUpVenueCommandHandler(IMapper mapper, IUnitOfWork unitOfWork)
                 await unitOfWork.VenueHoliday.Update(venueHoliday);
             }
         }
-
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

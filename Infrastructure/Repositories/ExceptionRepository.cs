@@ -16,7 +16,7 @@ public class ExceptionRepository(ApplicationDbContext dbContext, IConfiguration 
     {
         var cnn = new MySqlServer(configuration).OpenConnection();
         
-        var sql = $"Select * from ExcetionRule where ExceptionId = {id}";
+        var sql = $"Select * from ExceptionRule where ExceptionId = {id}";
         var result = await cnn.QueryFirstOrDefaultAsync<ExceptionRule>(sql);
         return result;
     }

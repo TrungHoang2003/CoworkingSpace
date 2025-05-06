@@ -1,6 +1,6 @@
-namespace Application.DTOs;
+namespace Application.VenueAddressService.DTOs;
 
-public class VenueAddressDto
+public class SetUpVenueAddressDto
 {
     public string? Street { get; set; }
     public string? District { get; set; }
