@@ -1,5 +1,3 @@
-using Application.DTOs;
-using Domain.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

@@ -2,7 +2,6 @@
 
 using Application.AuthService.CQRS.Commands;
 using Application.AuthService.CQRS.Queries;
-using Domain.DTOs;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

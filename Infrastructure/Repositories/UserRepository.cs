@@ -12,6 +12,7 @@ namespace Infrastructure.Repositories;
 
 public interface IUserRepository: IGenericRepository<User>
 {
+    Task<User?> GetById(int id);
     Task<User?> FindByNameAsync(string userName);
     Task<IList<string>> GetRolesAsync(User user);
     Task<bool> CheckPasswordAsync(User user, string password);
@@ -22,6 +23,11 @@ public interface IUserRepository: IGenericRepository<User>
 
 public class UserRepository(UserManager<User> userManager, ApplicationDbContext dbContext) : GenericRepository<User>(dbContext), IUserRepository
 {
+    public async Task<User?> GetById(int id)
+    {
+        return await userManager.FindByIdAsync(id.ToString());
+    }
+
     public async Task<User?> FindByNameAsync(string userName)
     {
         return await userManager.FindByNameAsync(userName);

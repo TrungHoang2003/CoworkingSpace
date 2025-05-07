@@ -1,7 +1,4 @@
-using Application.DTOs;
 using Application.VenueService.CQRS.Commands;
-using Application.VenueService.DTOs;
-using Domain.DTOs;
 using Infrastructure.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -42,6 +39,16 @@ public class VenueController(IVenueRepository repository, IMediator mediator): C
     {
         var result = await mediator.Send(command);
         if(!result.IsSuccess)
+            return BadRequest(result.Error);
+        
+        return Ok(result);
+    }
+    
+    [HttpPost("UpdateLogo")]
+    public async Task<IActionResult> UpdateVenueLogo([FromForm] UpdateVenueLogoCommand command)
+    {
+        var result = await mediator.Send(command);
+        if (result.IsFailure)
             return BadRequest(result.Error);
         
         return Ok(result);
