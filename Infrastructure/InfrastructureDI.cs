@@ -2,7 +2,6 @@ using System.Collections.Immutable;
 using System.Reflection;
 using Domain.Entites;
 using Domain.Entities;
-using Infrastructure.Common;
 using Infrastructure.DbHelper;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
@@ -32,7 +31,8 @@ public static class InfrastructureDi
         services.AddSingleton<JwtService>();
         services.AddSingleton<RedisService>();
         services.AddSingleton<CloudinaryService>();
-        services.AddScoped<IAuthenticationRepository, AuthenticationRepository>();
+        services.AddSingleton<GoogleAuthService>();
+        services.AddSingleton<HttpClient>();
         services.AddScoped<ISpaceRepository, SpaceRepository>();
         services.AddScoped<IAmenityRepository, AmenityRepository>();
         services.AddScoped<IVenueHolidayRepository, VenueHolidayRepository>();
@@ -49,5 +49,6 @@ public static class InfrastructureDi
         services.AddScoped<IVenueRepository, VenueRepository>();
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IGuestHourRepository, GuestHourRepository>();
+        services.AddScoped<IRoleRepository, RoleRepository>();
     }
 }

@@ -20,7 +20,7 @@ public class SetUpVenueCommandValidator: AbstractValidator<SetUpVenueCommand>
          .WithMessage("Guest hours must be provided for all 7 days of the week.");
 
       RuleForEach(x => x.GuestHours)
-         .SetValidator(new GuestHourDtoValidator());
+         .SetValidator(new SetUpVenueGuestHourDtoValidator());
 
       RuleFor(x => x.HolidayIds)
          .Must(holidayIds => holidayIds == null || holidayIds.Count > 0)

@@ -1,59 +1,51 @@
-using System.Net;
+// API/Controllers/AuthenticationController.cs
+
+using Application.AuthService.CQRS.Commands;
+using Application.AuthService.CQRS.Queries;
 using Domain.DTOs;
-using Infrastructure.Common;
-using Infrastructure.DTOs;
-using Infrastructure.Repositories;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CoworkingSpace.Controllers;
 
-[ApiController]
 [Route("[controller]")]
-public class AuthenticationController(IAuthenticationRepository repository): Controller
+[ApiController]
+public class AuthenticationController : ControllerBase
 {
-   [HttpPost("Register")]
-   public async Task<IActionResult> Register([FromBody] UserRegisterRequest userRegisterRequest)
-   {
-      var response = await repository.Register(userRegisterRequest);
-      
-      if (!response.IsSuccess)
-         return BadRequest(response.Error);
-      
-      return Ok("Register successfully");
-   }
-   
-   [HttpPost("Login")]
-   public async Task<IActionResult> Login([FromBody] UserLoginRequest userLoginRequest)
-   {
-      var response = await repository.Login(userLoginRequest);
-      
-      if (!response.IsSuccess)
-         return BadRequest(response.Error);
-      
-      return Ok(response.Value);
-   }
+    private readonly IMediator _mediator;
 
-   [HttpGet("GoogleLogin")]
-   public async Task<IActionResult> GoogleLogin()
-   {
-      var response= repository.GoogleLogin();
-      
-      if(response.Result.IsFailure) return BadRequest(response.Result.Error);
-      
-      var url = response.Result.Value;
-      
-      return Redirect(url);
-   }
+    public AuthenticationController(IMediator mediator)
+    {
+        _mediator = mediator;
+    }
 
-   [HttpGet("GoogleCallBack")]
-   public async Task<IActionResult> GoogleCallBack([FromQuery] string code)
-   {
-      var result = await repository.GoogleCallBack(code);
-      if(!result.IsSuccess)
-         return BadRequest(result.Error);
+    [HttpPost("Register")]
+    public async Task<IActionResult> Register([FromBody] RegisterCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return result.IsSuccess ? Ok() : BadRequest(result.Error);
+    }
 
-      var url = result.Value;
-      
-      return Redirect(url);
-   }
+    [HttpPost("Login")]
+    public async Task<IActionResult> Login([FromBody] LoginCommand command)
+    {
+        var result = await _mediator.Send(command);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
+    }
+
+    [HttpGet("GoogleLogin")]
+    public async Task<IActionResult> GoogleLogin()
+    {
+        var query = new GetGoogleAuthUrlQuery();
+        var result = await _mediator.Send(query);
+        return result.IsSuccess ? Redirect(result.Value) : BadRequest(result.Error);
+    }
+
+    [HttpGet("GoogleCallBack")]
+    public async Task<IActionResult> GoogleCallback([FromQuery] string code)
+    {
+        var command = new GoogleCallbackCommand(code);
+        var result = await _mediator.Send(command);
+        return result.IsSuccess ? Redirect(result.Value) : BadRequest(result.Error);
+    }
 }

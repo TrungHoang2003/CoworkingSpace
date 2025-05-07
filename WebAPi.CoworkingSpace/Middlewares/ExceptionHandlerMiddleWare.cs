@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using System.Net;
-using Infrastructure.Common;
 
 namespace CoworkingSpace.Middlewares;
 

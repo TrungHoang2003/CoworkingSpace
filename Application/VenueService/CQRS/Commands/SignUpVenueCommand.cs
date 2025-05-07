@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Application.VenueAddressService.DTOs;
 using Application.VenueService.Mappings;
 using Domain.Entites;
@@ -29,6 +30,7 @@ public class SignUpVenueCommandHandler(
     UserManager<User> userManager,
     RoleManager<Role> roleManager,
     IValidator<SignUpVenueCommand> validator,
+    IHttpContextAccessor httpContextAccessor,
     IUnitOfWork unitOfWork) : IRequestHandler<SignUpVenueCommand, Result>
 {
     public async Task<Result> Handle(SignUpVenueCommand request, CancellationToken cancellationToken)
@@ -52,11 +54,12 @@ public class SignUpVenueCommandHandler(
         }
 
         // Lấy userId từ JWT
-        var result = unitOfWork.User.GetUserIdFromJwt();
-        if (result.IsFailure) return result.Error;
+        var userId = httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userId))
+            return AuthenErrors.UserIdNotFoundInJwt;
 
         // Tìm kiếm người dùng trong db
-        var user = await userManager.FindByIdAsync(result.Value.ToString());
+        var user = await userManager.FindByIdAsync(userId);
         if (user == null) return AuthenErrors.NotLoggedIn;
 
         // Kiểm tra đã có role Host chưa, nếu chưa tạo role Host và gán cho User

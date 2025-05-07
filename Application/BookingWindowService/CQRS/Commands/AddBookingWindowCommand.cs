@@ -3,7 +3,6 @@ using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
 using FluentValidation;
-using Infrastructure.Common;
 using Infrastructure.Repositories;
 using MediatR;
 

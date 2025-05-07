@@ -1,4 +1,5 @@
 using Application.GuestHourService.DTOs;
+using Application.GuestHourService.Mappings;
 using Application.VenueAddressService.DTOs;
 using Application.VenueService.DTOs;
 using Application.VenueService.Mappings;
@@ -48,7 +49,7 @@ public class SetUpVenueCommandHandler(IUnitOfWork unitOfWork, IValidator<SetUpVe
             foreach (var guestHourDto in request.GuestHours)
             {
                 var newGuestHours = new List<GuestHour>();
-                var guestHour = mapper.Map<GuestHour>(guestHourDto);
+                var guestHour = guestHourDto.ToGuestHour();
                 newGuestHours.Add(guestHour);
                 await unitOfWork.GuestHour.AddRangeAsync(newGuestHours);
             }

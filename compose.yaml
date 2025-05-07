@@ -21,21 +21,6 @@
     networks:
       - coworking-network
       
-  ngrok:
-    image: ngrok/ngrok:latest
-    container_name: coworking-ngrok
-    environment:
-      NGROK_AUTHTOKEN: 2v1Cl4mGHAdU3dAcLIWIDDFUesC_3A3Chfhc1KkrYp9u6yAWd
-    command:
-      - "http"
-      - "host.docker.internal:5196"
-      - "--domain"
-      - "noted-rhino-humbly.ngrok-free.app"
-    ports:
-      - "4040:4040"
-    networks:
-      - coworking-network
-        
 networks:
   coworking-network:
     driver: bridge

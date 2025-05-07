@@ -3,10 +3,8 @@ using System.Security.Claims;
 using Domain.Entites;
 using Domain.Errors;
 using Domain.ResultPattern;
-using Infrastructure.Common;
 using Infrastructure.DbHelper;
 using Infrastructure.Errors;
-using Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
@@ -14,45 +12,45 @@ namespace Infrastructure.Repositories;
 
 public interface IUserRepository: IGenericRepository<User>
 {
-    Task<Result> UpdateAvatar(IFormFile file);
-    Result<int> GetUserIdFromJwt();
+    Task<User?> FindByNameAsync(string userName);
+    Task<IList<string>> GetRolesAsync(User user);
+    Task<bool> CheckPasswordAsync(User user, string password);
+    Task<IdentityResult> CreateAsync(User user, string? password = null);
+    Task<User?> FindByEmailAsync(string email);
+    Task<IdentityResult> AddToRoleAsync(User user, string role);
 }
 
-public class UserRepository(CloudinaryService cloudinaryService, UserManager<User> userManager, IHttpContextAccessor httpContextAccessor, ApplicationDbContext dbContext) : GenericRepository<User>(dbContext), IUserRepository
+public class UserRepository(UserManager<User> userManager, ApplicationDbContext dbContext) : GenericRepository<User>(dbContext), IUserRepository
 {
-    public async Task<Result> UpdateAvatar(IFormFile file)
+    public async Task<User?> FindByNameAsync(string userName)
     {
-        var userId = GetUserIdFromJwt().Value;
-
-        var user = await userManager.FindByIdAsync(userId.ToString());
-
-        if (user == null)
-            return Result.Failure(AuthenErrors.UserNotFound);
-
-        var imageUrl = await cloudinaryService.UploadImage(file);
-
-        if (imageUrl == null)
-            return CloudinaryErrors.UploadUserAvatarFailed;
-        
-        user.AvatarUrl = imageUrl;
-        
-        var updatedResult = await userManager.UpdateAsync(user);
-        if(!updatedResult.Succeeded)
-            return Result.Failure( new Error("Update user failed", string.Join(",", updatedResult.Errors.Select(e=>e.Description).ToList())));
-
-        return Result.Success();
+        return await userManager.FindByNameAsync(userName);
     }
 
-    public Result<int> GetUserIdFromJwt()
+    public async Task<User?> FindByEmailAsync(string email)
     {
-        var stringUserId = httpContextAccessor.HttpContext?.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        return await userManager.FindByEmailAsync(email);
+    }
 
-        if (stringUserId == null)
-            return Result<int>.Failure(AuthenErrors.UserNotFound);
+    public async Task<IdentityResult> CreateAsync(User user, string? password = null)
+    {
+        return password == null
+            ? await userManager.CreateAsync(user)
+            : await userManager.CreateAsync(user, password);
+    }
 
-        if(!int.TryParse(stringUserId, out var userId)) 
-            Result<int>.Failure(ParseErrors.ParseError);
+    public async Task<bool> CheckPasswordAsync(User user, string password)
+    {
+        return await userManager.CheckPasswordAsync(user, password);
+    }
 
-        return Result<int>.Success(userId);
+    public async Task<IList<string>> GetRolesAsync(User user)
+    {
+        return await userManager.GetRolesAsync(user);
+    }
+
+    public async Task<IdentityResult> AddToRoleAsync(User user, string role)
+    {
+        return await userManager.AddToRoleAsync(user, role);
     }
 }

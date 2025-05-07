@@ -1,8 +1,8 @@
-using Infrastructure.Common;
+using Infrastructure.Services;
 
 namespace CoworkingSpace.Middlewares;
 
-public class TokenValidateMiddleware(RequestDelegate next, RedisService redisService)
+public class TokenValidateMiddleware(RequestDelegate next, RedisService redisService, JwtService jwtService)
 {
     public async Task Invoke(HttpContext context)
     {
@@ -39,7 +39,7 @@ public class TokenValidateMiddleware(RequestDelegate next, RedisService redisSer
 
         try
         {
-            var userId = JwtService.getUserIdFromToken(token);
+            var userId = jwtService.GetUserIdFromToken(token);
 
             // Kiểm tra token lưu trong Redis
             var redisKey = $"accessToken:{userId}";

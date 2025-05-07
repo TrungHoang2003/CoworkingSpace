@@ -3,14 +3,17 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Domain.Entites;
+using Domain.Errors;
+using Domain.ResultPattern;
+using Infrastructure.Errors;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace Infrastructure.Common;
+namespace Infrastructure.Services;
 
 public class JwtService(IConfiguration configuration)
 {
-    public static int getUserIdFromToken(string token)
+    public int GetUserIdFromToken(string token)
     {
         try
         {
@@ -39,33 +42,6 @@ public class JwtService(IConfiguration configuration)
         }
     }
 
-    public static string getRoleFromToken(string token)
-    {
-        try
-        {
-            var handler = new JwtSecurityTokenHandler();
-           
-            if(!handler.CanReadToken(token))
-                throw new Exception("Invalid token");
-           
-            var jwtToken = handler.ReadJwtToken(token);
-           
-            var role = jwtToken.Claims.First(c=>c.Type == ClaimTypes.Role)?.Value;
-            
-            if (string.IsNullOrEmpty(role))
-            {
-                throw new Exception("Cant find roleName");
-            }
-
-            return role;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Lỗi lấy userId từ token: {ex.Message}");
-            throw;
-        } 
-    }
-    
     public string? GenerateJwtToken(User user, string? role)
     {
         var accesstokenValidity = getAccessTokenValidity();
@@ -91,7 +67,7 @@ public class JwtService(IConfiguration configuration)
         return new JwtSecurityTokenHandler().WriteToken(accessToken); 
     }
     
-    public string? GenerateRefreshToken()
+    public string GenerateRefreshToken()
     {
         var randomNumber = new byte[32];
         using var rng = RandomNumberGenerator.Create();

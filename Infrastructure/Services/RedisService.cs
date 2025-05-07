@@ -1,6 +1,6 @@
 using StackExchange.Redis;
 
-namespace Infrastructure.Common;
+namespace Infrastructure.Services;
 
 public class RedisService(IConnectionMultiplexer redis)
 {

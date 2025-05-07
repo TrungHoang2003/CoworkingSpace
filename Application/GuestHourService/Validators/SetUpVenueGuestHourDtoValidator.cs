@@ -4,9 +4,9 @@ using FluentValidation;
 
 namespace Application.GuestHourService.Validators;
 
-public class GuestHourDtoValidator: AbstractValidator<SetUpVenueGuestHourDto>
+public class SetUpVenueGuestHourDtoValidator: AbstractValidator<SetUpVenueGuestHourDto>
 {
-    public GuestHourDtoValidator()
+    public SetUpVenueGuestHourDtoValidator()
     {
         RuleFor(x => x.DayOfWeek)
             .NotNull()
