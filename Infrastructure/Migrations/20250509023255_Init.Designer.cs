@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250506092358_Init")]
+    [Migration("20250509023255_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -536,6 +536,9 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("Quantity")
                         .HasColumnType("int");
 
+                    b.Property<int?>("Size")
+                        .HasColumnType("int");
+
                     b.Property<int>("SpaceTypeId")
                         .HasColumnType("int");
 
@@ -650,9 +653,8 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("ListingType")
-                        .IsRequired()
-                        .HasColumnType("longtext");
+                    b.Property<bool>("IsHourLySpaceTypeOnly")
+                        .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
                         .HasColumnType("longtext");

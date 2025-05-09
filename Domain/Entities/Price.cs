@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace Domain.Entities;
 public enum TimeUnit
 {
-    Hour,
     Day,
     Month,
 }

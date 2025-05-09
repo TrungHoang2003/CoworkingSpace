@@ -18,6 +18,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="AmenityService\DTOs\" />
       <Folder Include="VenueService\CQRS\" />
     </ItemGroup>
 

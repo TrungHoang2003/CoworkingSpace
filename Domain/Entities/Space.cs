@@ -41,6 +41,7 @@ public class Space
     public string? VideoUrl { get; set; }
     public string? VirtualVideoUrl { get; set; }
     public int? Capacity { get; set; }
+    public int? Size { get; set; } 
     public int? Quantity { get; set; } 
     public int? Deposit { get; set; } 
     public SpaceStatus Status { get; set; } = SpaceStatus.Pending;
@@ -57,7 +58,6 @@ public class Space
 
 public enum ListingType
 {
-    Hourly,
-    Monthly,
-    Daily
+    Monthly =0,
+    Daily = 1,
 }
