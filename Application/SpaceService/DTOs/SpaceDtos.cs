@@ -23,3 +23,9 @@ public class SpaceImagesDto
     public bool isCreate;
 }
 
+public class SpaceAmenityDto
+{
+   public int AmenityId;
+   public bool IsRemove = false;
+}
+

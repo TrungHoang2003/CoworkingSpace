@@ -16,7 +16,7 @@ public sealed record SetUpDailySpaceCommand(
     SpaceInfos? SpaceInfos,
     List<SpaceImagesDto>? SpaceImages,
     DailySpacePriceDto? SpacePrice,
-    List<int>? AmenityIds
+    SpaceAmenityDto? Amenities
 ) : IRequest<Result>;
 
 public class SetUpDailySpaceCommandHandler(IUnitOfWork unitOfWork, CloudinaryService cloudinaryService)
@@ -27,40 +27,103 @@ public class SetUpDailySpaceCommandHandler(IUnitOfWork unitOfWork, CloudinarySer
         var venueExists = await unitOfWork.Venue.GetById(request.VenueId);
         if (venueExists is null) return VenueErrors.VenueNotFound;
 
-        if (request.SpaceId is not null)
+        Space space;
+        
+        if(request.SpaceId != null)
         {
-            if (request.SpaceInfos is not null)
+            var spaceExists = await unitOfWork.Space.GetById(request.SpaceId.Value);
+            if (spaceExists is null) return SpaceErrors.SpaceNotFound;
+            space = spaceExists; 
+            
+        }
+        else
+        {
+            space = new Space
             {
-                var spaceInfos = request.SpaceInfos;
-                var existingSpace = await unitOfWork.Space.GetById(request.SpaceId.Value);
-                if (existingSpace is null) return SpaceErrors.SpaceNotFound;
-                
-                string? videoUrl = null;
-                string? virtualVideoUrl = null;
-                string? pdfFlyerUrl = null;
+                VenueId = request.VenueId
+            };
+        }
+        
+        if (request.SpaceInfos != null)
+        {
+            var spaceInfos = request.SpaceInfos;
+            string? videoUrl = null;
+            string? virtualVideoUrl = null;
+            string? pdfFlyerUrl = null;
 
-                if (spaceInfos.VirtualVideo != null)
-                {
-                    virtualVideoUrl = await cloudinaryService.UploadImage(spaceInfos.VirtualVideo);
-                }
-                if (spaceInfos.Video != null)
-                {
-                    videoUrl = await cloudinaryService.UploadImage(spaceInfos.Video);
-                }
-                if (spaceInfos.PdfFlyer != null)
-                {
-                    pdfFlyerUrl = await cloudinaryService.UploadImage(spaceInfos.PdfFlyer);
-                }
-                
-                existingSpace = spaceInfos.ToSpace(existingSpace, videoUrl, virtualVideoUrl, pdfFlyerUrl);
-                await unitOfWork.Space.Update(existingSpace);
+            if (spaceInfos.VirtualVideo != null)
+            {
+                virtualVideoUrl = await cloudinaryService.UploadImage(spaceInfos.VirtualVideo);
             }
 
-            if (request.SpaceImages is not null)
+            if (spaceInfos.Video != null)
             {
-                var spaceImages = request.SpaceImages;
+                videoUrl = await cloudinaryService.UploadImage(spaceInfos.Video);
+            }
+
+            if (spaceInfos.PdfFlyer != null)
+            {
+                pdfFlyerUrl = await cloudinaryService.UploadImage(spaceInfos.PdfFlyer);
+            }
+
+            space = spaceInfos.ToSpace(space, videoUrl, virtualVideoUrl, pdfFlyerUrl);
+            await unitOfWork.Space.Update(space);
+        }
+
+        if (request.SpaceImages is { Count: > 0 })
+        {
+            var spaceImagesDto = request.SpaceImages;
+            foreach (var image in spaceImagesDto)
+            {
+                if (image.isCreate)
+                {
+                    var newImage = image.ToSpaceImage();
+                    newImage.SpaceId = request.SpaceId.Value;
+                    await unitOfWork.SpaceImage.Create(newImage);
+                }
+                else
+                {
+                    var existingImage = await unitOfWork.SpaceImage.GetById(image.ImageId!.Value);
+                    if (existingImage is null) return SpaceErrors.SpaceImageNotFound;
+                    existingImage.Type = image.Type;
+                }
             }
         }
-    }
 
+        if (request.SpacePrice != null)
+        {
+            var spacePriceDto = request.SpacePrice;
+            if(spacePriceDto.IsFree)
+                spacePriceDto.Amount = 0;
+            space.Price = new Price
+            {
+                Amount = spacePriceDto.Amount,
+            }; 
+            await unitOfWork.Space.Update(space);
+        }
+
+        if (request.Amenities!= null)
+        {
+            foreach (var amenityId in request.Amenities.Ids)
+            {
+                var amenity = await unitOfWork.Amenity.GetById(amenityId);
+                if(amenity is null) return AmenityErrors.AmenityNotFound;
+                    
+                if (request.Amenities.IsRemove)
+                {
+                    var existingSpaceAmenity = await unitOfWork.SpaceAmenity.Get(amenityId, space.SpaceId);
+                    if(existingSpaceAmenity is null) return AmenityErrors.SpaceAmenityNotFound;
+                    await unitOfWork.SpaceAmenity.Delete(existingSpaceAmenity);
+                }
+                  
+                var spaceAmenity =  new SpaceAmenity
+                {
+                    SpaceId = space.SpaceId,
+                    AmenityId = amenityId
+                };
+                await unitOfWork.SpaceAmenity.Create(spaceAmenity);
+            }
+        }
+        return Result.Success();
+    }
 }
