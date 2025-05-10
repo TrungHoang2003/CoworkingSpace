@@ -3,7 +3,7 @@ using Domain.Entities;
 
 namespace Application.VenueService.Mappings;
 
-public static class VenueMappingExtensions
+public static class VenueMapping
 {
     // Ánh xạ từ SignUpVenueCommand sang Venue
     public static Venue ToVenue(this SignUpVenueCommand command, string? logoUrl = null)
@@ -31,7 +31,6 @@ public static class VenueMappingExtensions
         existingVenue.Name = command.Details?.Name;
         existingVenue.Description = command.Details?.Description;
         existingVenue.Floor = command.Details?.Floor;
-        
         existingVenue.Address.Street = command.Address?.Street;
         existingVenue.Address.District = command.Address?.District;
         existingVenue.Address.City = command.Address?.City;

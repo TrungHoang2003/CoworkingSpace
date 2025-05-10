@@ -40,6 +40,7 @@ public class Space
     public ListingType ListingType { get; set; }
     public string? VideoUrl { get; set; }
     public string? VirtualVideoUrl { get; set; }
+    public string? PdfFlyerUrl { get; set; }
     public int? Capacity { get; set; }
     public int? Size { get; set; } 
     public int? Quantity { get; set; } 
