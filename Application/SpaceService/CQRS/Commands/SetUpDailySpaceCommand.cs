@@ -16,7 +16,7 @@ public sealed record SetUpDailySpaceCommand(
     SpaceInfos? SpaceInfos,
     List<SpaceImagesDto>? SpaceImages,
     DailySpacePriceDto? SpacePrice,
-    SpaceAmenityDto? Amenities
+    List<SpaceAmenityDto>? Amenities
 ) : IRequest<Result>;
 
 public class SetUpDailySpaceCommandHandler(IUnitOfWork unitOfWork, CloudinaryService cloudinaryService)
@@ -104,24 +104,24 @@ public class SetUpDailySpaceCommandHandler(IUnitOfWork unitOfWork, CloudinarySer
 
         if (request.Amenities!= null)
         {
-            foreach (var amenityId in request.Amenities.Ids)
+            foreach (var amenityDto in request.Amenities)
             {
-                var amenity = await unitOfWork.Amenity.GetById(amenityId);
-                if(amenity is null) return AmenityErrors.AmenityNotFound;
+                var amenityExists = await unitOfWork.Amenity.FindById(amenityDto.AmenityId);
+                if(!amenityExists) return AmenityErrors.AmenityNotFound;
                     
-                if (request.Amenities.IsRemove)
+                if (amenityDto.IsRemove)
                 {
-                    var existingSpaceAmenity = await unitOfWork.SpaceAmenity.Get(amenityId, space.SpaceId);
+                    var existingSpaceAmenity = await unitOfWork.SpaceAmenity.Get(amenityDto.AmenityId, space.SpaceId);
                     if(existingSpaceAmenity is null) return AmenityErrors.SpaceAmenityNotFound;
                     await unitOfWork.SpaceAmenity.Delete(existingSpaceAmenity);
                 }
                   
-                var spaceAmenity =  new SpaceAmenity
+                var newSpaceAmenity =  new SpaceAmenity
                 {
                     SpaceId = space.SpaceId,
-                    AmenityId = amenityId
+                    AmenityId = amenityDto.AmenityId
                 };
-                await unitOfWork.SpaceAmenity.Create(spaceAmenity);
+                await unitOfWork.SpaceAmenity.Create(newSpaceAmenity);
             }
         }
         return Result.Success();
