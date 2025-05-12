@@ -8,6 +8,8 @@ namespace Infrastructure.Repositories;
 public interface ISpaceAmenityRepository : IGenericRepository<SpaceAmenity>
 {
     Task<SpaceAmenity?> Get(int amenityId, int spaceId);
+    void RemoveRange(List<SpaceAmenity> spaceAmenities);
+    Task AddRange(List<SpaceAmenity> spaceAmenities);
 }
 
 public class SpaceAmenityRepository(ApplicationDbContext dbContext, IConfiguration configuration) : GenericRepository<SpaceAmenity>(dbContext), ISpaceAmenityRepository
@@ -19,5 +21,15 @@ public class SpaceAmenityRepository(ApplicationDbContext dbContext, IConfigurati
         var sql = $"select * from SpaceAmenity where AmenityId = {amenityId} and SpaceId = {spaceId}";
         var result = await cnn.QueryFirstOrDefaultAsync(sql, new {amenityId, spaceId});
         return result;
+    }
+
+    public void RemoveRange(List<SpaceAmenity> spaceAmenities)
+    {
+        dbContext.RemoveRange(spaceAmenities);
+    }
+
+    public async Task AddRange(List<SpaceAmenity> spaceAmenities)
+    {
+        await dbContext.AddRangeAsync(spaceAmenities);
     }
 }

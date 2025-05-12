@@ -13,12 +13,12 @@ public class SpaceImage
     [ForeignKey("SpaceId")] Space? Space { get; set; }
 
     public string? ImageUrl { get; set; }
-    public SpaceImageType Type{ get; set; }
+    public SpaceImageType? Type{ get; set; }
     public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
 }
 
 public enum SpaceImageType
 {
-    Workspace,
-    CommonArea
+    Workspace = 0,
+    CommonArea = 1
 }

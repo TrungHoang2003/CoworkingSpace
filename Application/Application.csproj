@@ -19,7 +19,6 @@
 
     <ItemGroup>
       <Folder Include="AmenityService\DTOs\" />
-      <Folder Include="SpaceService\Validators\" />
       <Folder Include="VenueService\CQRS\" />
     </ItemGroup>
 

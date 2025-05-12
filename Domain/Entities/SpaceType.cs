@@ -9,7 +9,7 @@ public class SpaceType
 
     public string? Name { get; set; }
     public string? Description { get; set; }
-    public bool IsHourLySpaceTypeOnly{ get; set; }
+    public bool IsDaiLySpaceType{ get; set; }
 }
 
     

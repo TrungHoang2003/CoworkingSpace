@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250509023255_Init")]
-    partial class Init
+    [Migration("20250512091642_config")]
+    partial class config
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -530,6 +530,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
+                    b.Property<string>("PdfFlyerUrl")
+                        .HasColumnType("longtext");
+
                     b.Property<int?>("PriceId")
                         .HasColumnType("int");
 
@@ -632,6 +635,9 @@ namespace Infrastructure.Migrations
                     b.Property<int>("SpaceId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("Type")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("UploadedAt")
                         .HasColumnType("datetime(6)");
 
@@ -653,7 +659,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("IsHourLySpaceTypeOnly")
+                    b.Property<bool>("IsDaiLySpaceType")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
