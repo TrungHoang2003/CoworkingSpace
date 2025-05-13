@@ -23,7 +23,7 @@ RUN dotnet tool install --global dotnet-ef
 
 RUN dotnet publish "WebAPi.CoworkingSpace.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 # Thêm migration
-RUN dotnet ef database update --project ../Infrastructure --startup-project . --no-build --no-restore
+RUN dotnet ef database update --project .\Infrastructure\ --startup-project .\WebAPi.CoworkingSpace\
 
 FROM base AS final
 WORKDIR /app
