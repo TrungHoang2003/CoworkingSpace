@@ -2,7 +2,6 @@
 USER $APP_UID
 WORKDIR /app
 EXPOSE 8080
-EXPOSE 8081
 
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
@@ -19,6 +18,8 @@ RUN dotnet build "WebAPi.CoworkingSpace.csproj" -c $BUILD_CONFIGURATION -o /app/
 FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "WebAPi.CoworkingSpace.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+# Thêm migration
+RUN dotnet ef database update --project ../Infrastructure --startup-project . --no-build --no-restore
 
 FROM base AS final
 WORKDIR /app
