@@ -122,35 +122,35 @@ builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Conn
 
 var app = builder.Build();
 
-// // Chạy migration với retry logic
-// using (var scope = app.Services.CreateScope())
-// {
-//     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-//     int maxRetries = 10;
-//     int delaySeconds = 2;
-//
-//     for (int retry = 1; retry <= maxRetries; retry++)
-//     {
-//         try
-//         {
-//             Console.WriteLine($"Attempting migration (Attempt {retry}/{maxRetries})...");
-//             dbContext.Database.Migrate();
-//             Console.WriteLine("Migration completed successfully.");
-//             break; // Thoát vòng lặp nếu thành công
-//         }
-//         catch (Exception ex)
-//         {
-//             Console.WriteLine($"Migration failed: {ex.Message}");
-//             if (retry == maxRetries)
-//             {
-//                 Console.WriteLine("Max retries reached. Migration failed.");
-//                 throw; // Ném lỗi sau khi hết số lần retry
-//             }
-//             Console.WriteLine($"Retrying in {delaySeconds} seconds...");
-//             Thread.Sleep(delaySeconds * 1000); // Chờ trước khi thử lại
-//         }
-//     }
-// }
+// Chạy migration với retry logic
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    int maxRetries = 10;
+    int delaySeconds = 2;
+
+    for (int retry = 1; retry <= maxRetries; retry++)
+    {
+        try
+        {
+            Console.WriteLine($"Attempting migration (Attempt {retry}/{maxRetries})...");
+            dbContext.Database.Migrate();
+            Console.WriteLine("Migration completed successfully.");
+            break; // Thoát vòng lặp nếu thành công
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Migration failed: {ex.Message}");
+            if (retry == maxRetries)
+            {
+                Console.WriteLine("Max retries reached. Migration failed.");
+                throw; // Ném lỗi sau khi hết số lần retry
+            }
+            Console.WriteLine($"Retrying in {delaySeconds} seconds...");
+            Thread.Sleep(delaySeconds * 1000); // Chờ trước khi thử lại
+        }
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
