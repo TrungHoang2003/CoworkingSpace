@@ -747,7 +747,7 @@ namespace Infrastructure.Migrations
                     SpaceId = table.Column<int>(type: "int", nullable: false),
                     ImageUrl = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    Type = table.Column<int>(type: "int", nullable: false),
+                    Type = table.Column<int>(type: "int", nullable: true),
                     UploadedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
                 },
                 constraints: table =>
