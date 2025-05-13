@@ -24,4 +24,4 @@ RUN dotnet ef database update --project ../Infrastructure --startup-project . --
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "WebAPi.CoworkingSpace.dll"]
+ENTRYPOINT ["dotnet", "WebAPi.CoworkingSpace.dll    "]
