@@ -23,6 +23,9 @@ RUN dotnet tool install --global dotnet-ef
 
 RUN dotnet publish "WebAPi.CoworkingSpace.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 
+# Chạy migration trước khi khởi động ứng dụng
+RUN until dotnet ef database update --project ../Infrastructure --startup-project . --no-build --no-restore; do echo "Migration failed, retrying in 2 seconds..."; sleep 2; done || true
+
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
