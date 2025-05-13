@@ -4,7 +4,9 @@ using CoworkingSpace.Middlewares;
 using CoworkingSpace.Transformer;
 using dotenv.net;
 using Infrastructure;
+using Infrastructure.DbHelper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Scalar.AspNetCore;
 using StackExchange.Redis;
@@ -70,6 +72,13 @@ var options = new ConfigurationOptions
 builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(options));
 
 var app = builder.Build();
+
+// Chạy migration sau khi build ứng dụng
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+    dbContext.Database.Migrate();
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
