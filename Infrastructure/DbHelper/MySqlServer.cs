@@ -8,13 +8,14 @@ public abstract class DbConnection<T>
 {
    public abstract T OpenConnection();
 }
-public class MySqlServer(IConfiguration configuration): DbConnection<MySqlConnection>
+
+public class MySqlServer(IConfiguration configuration) : DbConnection<MySqlConnection>
 {
     public override MySqlConnection OpenConnection()
     {
         var cnn = new MySqlConnection(configuration.GetConnectionString("MySqlConnectionStr"));
-        
-        if(cnn.State == ConnectionState.Closed)
+
+        if (cnn.State == ConnectionState.Closed)
             cnn.Open();
         return cnn;
     }
