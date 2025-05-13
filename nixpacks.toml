@@ -1,0 +1,11 @@
+[phases.setup]
+nixPkgs = ['dotnet-sdk_9']
+workingDirectory = 'src/Presentation'
+
+[phases.build]
+cmds = ['dotnet restore src/Presentation/Presentation.csproj', 'dotnet publish src/Presentation/Presentation.csproj -c Release -o out']
+workingDirectory = 'src/Presentation'
+
+[phases.start]
+cmds = ['dotnet out/Presentation.dll']
+workingDirectory = 'src/Presentation'

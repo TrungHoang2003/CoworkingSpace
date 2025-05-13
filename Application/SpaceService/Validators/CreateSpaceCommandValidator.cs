@@ -46,23 +46,6 @@ public class CreateSpaceCommandValidator : AbstractValidator<CreateSpaceCommand>
             .NotEmpty()
             .WithMessage("Space description cannot be empty.");
 
-        RuleFor(x => x.SpaceImages)
-            .ForEach(imageDto => imageDto.ChildRules(image =>
-            {
-               image.RuleFor(i=>i.Type)
-                   .NotNull()
-                   .WithMessage("Space image type must be provided.");
-               
-               image.RuleFor(i=>i.Type)
-                   .IsInEnum()
-                   .WithMessage("Space image type must be either CommonArea(1) or Workspace(0).");
-               
-               image.RuleFor(i => i.Image)
-                   .NotNull()
-                   .WithMessage("Space image must be provided.");
-            }))
-            .When(x => x.SpaceImages is { Count: > 0 });
-
         RuleFor(x => x.SpacePrice)
             .NotNull()
             .WithMessage("Space price information must be provided.");
