@@ -17,17 +17,31 @@ public static class InfrastructureDi
 {
     public static void AddInfrastructure(this IServiceCollection services, string? connectionString)
     {
+        if (string.IsNullOrEmpty(connectionString))
+        {
+            Console.WriteLine("Connection string is not set in environment variables.");
+            throw new Exception("Chuoi ket noi chua duoc thiet lap");
+        }
+
+        Console.WriteLine($"Using connection string: {connectionString}");
+
+        try
+        {
+            services.AddDbContext<ApplicationDbContext>(options =>
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Failed to configure ApplicationDbContext: {ex.Message}");
+            throw;
+        }
+        
         services.AddIdentity<User, Role>(options =>
         {
             options.User.AllowedUserNameCharacters =
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
         }).AddEntityFrameworkStores<ApplicationDbContext>();
 
-        services.AddDbContext<ApplicationDbContext>(options =>
-        {
-           options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)); 
-        });
-        
         services.AddSingleton<JwtService>();
         services.AddSingleton<RedisService>();
         services.AddSingleton<CloudinaryService>();
