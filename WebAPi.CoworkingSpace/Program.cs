@@ -82,7 +82,7 @@ app.UseMiddleware<ExceptionHandlerMiddleWare>();
 //app.UseMiddleware<TokenValidateMiddleware>();
 app.MapControllers();
 
-var port = Environment.GetEnvironmentVariable("PORT") ?? "5000";
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
 app.Urls.Add($"http://0.0.0.0:{port}");
 
 app.Run();
