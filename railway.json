@@ -1,9 +1,15 @@
 {
   "$schema": "https://railway.com/railway.schema.json",
   "build": {
-    "builder": "NIXPACKS",  // Railway không hỗ trợ builder Dockerfile trực tiếp, giữ Nixpacks nhưng ghi đè bằng buildCommand
+    "builder": "NIXPACKS",
     "buildCommand": "docker build -f WebAPi.CoworkingSpace/Dockerfile -t myapp .",
-    "watchPaths": ["WebAPi.CoworkingSpace/Dockerfile", "WebAPi.CoworkingSpace/**/*", "Application/**/*", "Domain/**/*", "Infrastructure/**/*"]
+    "watchPaths": [
+      "WebAPi.CoworkingSpace/Dockerfile",
+      "WebAPi.CoworkingSpace/**/*",
+      "Application/**/*",
+      "Domain/**/*",
+      "Infrastructure/**/*"
+    ]
   },
   "deploy": {
     "runTime": "V2",
@@ -19,6 +25,6 @@
   "restartPolicyMaxRetries": 10,
   "variables": {
     "RAILWAY_DOCKERFILE_PATH": "WebAPi.CoworkingSpace/Dockerfile",
-    "NIXPACKS_NO_BUILD": "1"  // Vô hiệu hóa build mặc định của Nixpacks
+    "NIXPACKS_NO_BUILD": "1"
   }
 }
