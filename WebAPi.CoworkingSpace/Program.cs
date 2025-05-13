@@ -1,8 +1,8 @@
-using System.Reflection;
 using System.Text;
 using Application;
 using CoworkingSpace.Middlewares;
 using CoworkingSpace.Transformer;
+using dotenv.net;
 using Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -11,13 +11,22 @@ using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
+DotEnv.Load();
+
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddApplication();
 
-builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("MySqlConnectionStr")?? throw new Exception("Chuoi ket noi chua duoc thiet lap"));
+var connectionString = Environment.GetEnvironmentVariable("MYSQL_URL");
+if (string.IsNullOrEmpty(connectionString))
+{
+    // Nếu không có, đọc từ file appsettings.json
+    connectionString = builder.Configuration.GetConnectionString("MySqlConnectionStr");
+}
+
+builder.Services.AddInfrastructure(connectionString);
 
 builder.Services.AddOpenApi("v1", options => { options.AddDocumentTransformer<BearerSercuritySchemeTransformer>();});
 
