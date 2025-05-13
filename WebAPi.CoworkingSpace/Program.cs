@@ -21,14 +21,31 @@ builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddApplication();
 
+// Lấy MYSQL_URL từ biến môi trường
 var mysqlUrl = Environment.GetEnvironmentVariable("MYSQL_URL");
 Console.WriteLine($"MYSQL_URL from Environment: {mysqlUrl}");
 
-// Lấy MYSQL_URL từ biến môi trường
-var connectionString = Environment.GetEnvironmentVariable("MYSQL_URL");
-Console.WriteLine($"MYSQL_URL from Environment: {connectionString}");
+string? connectionString;
+if (!string.IsNullOrEmpty(mysqlUrl))
+{
+    // Chuyển đổi từ URI-style sang ADO.NET
+    if (mysqlUrl.StartsWith("mysql://"))
+    {
+        var uri = new Uri(mysqlUrl);
+        var host = uri.Host;
+        var portt = uri.Port;
+        var user = uri.UserInfo.Split(':')[0];
+        var password = uri.UserInfo.Split(':')[1];
+        var database = uri.PathAndQuery.TrimStart('/');
 
-if (string.IsNullOrEmpty(connectionString))
+        connectionString = $"Server={host};Port={portt};Database={database};User Id={user};Password={password};";
+    }
+    else
+    {
+        connectionString = mysqlUrl; // Sử dụng trực tiếp nếu đã ở định dạng ADO.NET
+    }
+}
+else
 {
     Console.WriteLine("Falling back to Configuration (e.g., appsettings.json).");
     connectionString = builder.Configuration.GetConnectionString("MySqlConnectionStr");
@@ -40,6 +57,8 @@ if (string.IsNullOrEmpty(connectionString))
     Console.WriteLine("No valid connection string found.");
     throw new Exception("Chuoi ket noi chua duoc thiet lap");
 }
+
+Console.WriteLine($"Using connection string: {connectionString}");
 
 try
 {
