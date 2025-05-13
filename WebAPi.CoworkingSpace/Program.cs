@@ -16,7 +16,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddApplication();
-builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("MySqlConnectionStr")??
+//builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("MySqlConnectionStr")?? throw new Exception("Chuoi ket noi chua duoc thiet lap"));
+
+builder.Services.AddInfrastructure(builder.Configuration.GetConnectionString("MySqlRailway")??
                                    throw new Exception("Chuoi ket noi chua duoc thiet lap"));
 
 builder.Services.AddOpenApi("v1", options => { options.AddDocumentTransformer<BearerSercuritySchemeTransformer>();});

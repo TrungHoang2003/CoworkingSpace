@@ -15,7 +15,7 @@ namespace Infrastructure;
 
 public static class InfrastructureDi
 {
-    public static void AddInfrastructure(this IServiceCollection services, string connectionString)
+    public static void AddInfrastructure(this IServiceCollection services, string? connectionString)
     {
         services.AddIdentity<User, Role>(options =>
         {
