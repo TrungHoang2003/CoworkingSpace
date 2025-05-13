@@ -1,5 +1,6 @@
 [phases.setup]
 nixPkgs = ['dotnet-sdk_9']
+nixpkgsArchive = 'latest' # Sử dụng kênh Nixpkgs mới nhất
 workingDirectory = 'src/Presentation'
 
 [phases.build]
