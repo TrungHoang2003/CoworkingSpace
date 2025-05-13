@@ -90,4 +90,8 @@ app.UseAuthorization();
 app.UseMiddleware<ExceptionHandlerMiddleWare>();
 //app.UseMiddleware<TokenValidateMiddleware>();
 app.MapControllers();
+
+var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+app.Urls.Add($"http://0.0.0.0:{port}"); // Đảm bảo lắng nghe trên 0.0.0.0
+
 app.Run();
