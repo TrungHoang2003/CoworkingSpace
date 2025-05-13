@@ -20,6 +20,8 @@ ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "WebAPi.CoworkingSpace.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
 # Thêm migration
 RUN dotnet ef database update --project ../Infrastructure --startup-project . --no-build --no-restore
+ENV PATH="${PATH}:/root/.dotnet/tools"
+RUN dotnet tool install --global dotnet-ef
 
 FROM base AS final
 WORKDIR /app
