@@ -115,11 +115,27 @@ builder.Services.AddCors(option =>
 });
 
 // Redis
-var redisOptions = new ConfigurationOptions
+var redisUrl = Environment.GetEnvironmentVariable("REDIS_URL");
+ConfigurationOptions redisOptions;
+if (!string.IsNullOrEmpty(redisUrl))
 {
-    EndPoints = { "localhost:6379" },
-    AbortOnConnectFail = false,
-};
+    var uri = new Uri(redisUrl);
+    redisOptions = new ConfigurationOptions
+    {
+        EndPoints = { $"{uri.Host}:{uri.Port}" },
+        Password = uri.UserInfo.Split(":")[1],
+        AbortOnConnectFail = false,
+    };
+}
+else
+{
+    // Local
+    redisOptions = new ConfigurationOptions
+    {
+        EndPoints = { "localhost:6379" },
+        AbortOnConnectFail = false,
+    };
+}
 builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisOptions));
 
 var app = builder.Build();
