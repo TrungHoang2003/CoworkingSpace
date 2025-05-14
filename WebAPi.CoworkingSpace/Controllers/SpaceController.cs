@@ -11,7 +11,42 @@ namespace CoworkingSpace.Controllers;
 public class SpaceController(IMediator mediator): Controller
 {
     [HttpPost("CreateSpace")]
-    public async Task<IActionResult> SetUpDailySpacePrice([FromForm] CreateSpaceCommand command)
+    public async Task<IActionResult> CreateSpace([FromForm] CreateSpaceCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
+    }
+    
+    [HttpPost("UpdateSpace")]
+    public async Task<IActionResult> UpdateSpace([FromBody] UpdateSpaceCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpDelete("DeleteSpaceAsset")]
+    public async Task<IActionResult> DeleteSpaceImage([FromBody] DeleteSpaceAssetCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
+    }
+
+    [HttpPost("UpdateSpaceVideo")]
+    public async Task<IActionResult> UpdateSpaceVideo([FromForm] UpdateSpaceVideoCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
+    }
+    
+    [HttpPost("UpdateVirtualSpaceVideo")]
+    public async Task<IActionResult> UpdateVirtualSpaceVideo([FromForm] UpdateSpaceVirtualVideoCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? Ok(result) : BadRequest(result);
+    }
+    
+    [HttpPost("AddSpaceImage")]
+    public async Task<IActionResult> AddSpaceImage([FromForm] AddSpaceImageCommand command)
     {
         var result = await mediator.Send(command);
         return result.IsSuccess ? Ok(result) : BadRequest(result);

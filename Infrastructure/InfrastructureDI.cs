@@ -53,7 +53,7 @@ public static class InfrastructureDi
         services.AddScoped<IAmenityRepository, AmenityRepository>();
         services.AddScoped<IVenueHolidayRepository, VenueHolidayRepository>();
         services.AddScoped<IVenueImageRepository, VenueImageRepository>();
-        services.AddScoped<ISpaceImageRepository, SpaceImageRepository>();
+        services.AddScoped<ISpaceAssetRepository, SpaceAssetRepository>();
         services.AddScoped<ISpaceAmenityRepository, SpaceAmenityRepository>();
         services.AddScoped<ISpaceTypeRepository, SpaceTypeRepository>();
         services.AddScoped<IExceptionRepository, ExceptionRepository>();

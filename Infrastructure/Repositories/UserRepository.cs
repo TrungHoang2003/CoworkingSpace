@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using Domain.Entites;
+using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
 using Infrastructure.DbHelper;

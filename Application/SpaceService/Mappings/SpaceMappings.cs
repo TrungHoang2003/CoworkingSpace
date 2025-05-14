@@ -6,29 +6,27 @@ namespace Application.SpaceService.Mappings;
 
 public static class SpaceMappings
 {
-    public static Space ToSpace(this SpaceInfos spaceInfos, string? videoUrl, string? virtualVideoUrl, string? pdfFlyerUrl)
+    public static Space ToSpace(this SpaceInfoDto spaceInfoDto)
     {
         return new Space
         {
-            Name = spaceInfos.Name,
-            Description = spaceInfos.Description,
-            Capacity = spaceInfos.Capacity,
-            SpaceTypeId = spaceInfos.SpaceTypeId,
-            VideoUrl = videoUrl,
-            VirtualVideoUrl = virtualVideoUrl,
-            PdfFlyerUrl = pdfFlyerUrl,
+            ListingType = spaceInfoDto.ListingType,
+            Quantity = spaceInfoDto.Quantity,
+            Name = spaceInfoDto.Name,
+            Description = spaceInfoDto.Description,
+            Capacity = spaceInfoDto.Capacity,
+            SpaceTypeId = spaceInfoDto.SpaceTypeId,
         };
     }
     
-    public static Space ToSpace(this SpaceInfos spaceInfos, Space existingSpace, string? videoUrl, string? virtualVideoUrl, string? pdfFlyerUrl)
+    public static Space ToSpace(this SpaceInfoDto spaceInfoDto, Space existingSpace)
     {
-        existingSpace.Name = spaceInfos.Name;
-        existingSpace.Description = spaceInfos.Description;
-        existingSpace.Capacity = spaceInfos.Capacity;
-        existingSpace.SpaceTypeId = spaceInfos.SpaceTypeId;
-        existingSpace.VideoUrl = videoUrl;
-        existingSpace.VirtualVideoUrl = virtualVideoUrl;
-        existingSpace.PdfFlyerUrl = pdfFlyerUrl;
+        existingSpace.Quantity = spaceInfoDto.Quantity;
+        existingSpace.ListingType = spaceInfoDto.ListingType;
+        existingSpace.Name = spaceInfoDto.Name;
+        existingSpace.Description = spaceInfoDto.Description;
+        existingSpace.Capacity = spaceInfoDto.Capacity;
+        existingSpace.SpaceTypeId = spaceInfoDto.SpaceTypeId;
         return existingSpace;
     }
 }

@@ -4,82 +4,61 @@ using Application.SpaceService.Mappings;
 using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
-using FluentValidation;
 using Infrastructure.Repositories;
-using Infrastructure.Services;
 using MediatR;
 
 namespace Application.SpaceService.CQRS.Commands;
 
 public sealed record UpdateSpaceCommand(
     int SpaceId,
-    SpaceInfos? SpaceInfos,
-    SpacePriceDto? SpacePrice,
+    SpaceInfoDto? BasicInfo,
+    SpacePriceDto? Price,
     List<int>? AmenityIds) : IRequest<Result>;
 
-public class UpdateSpaceCommandHandler(IUnitOfWork unitOfWork, CloudinaryService cloudinaryService, IValidator<UpdateSpaceCommand> validator)
+public class UpdateSpaceCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<UpdateSpaceCommand, Result>
 {
     public async Task<Result> Handle(UpdateSpaceCommand request, CancellationToken cancellationToken)
     {
-        var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-        if (!validatorResult.IsValid)
-            return Result.Failure(new Error("Validation Errors",
-                string.Join("; ", validatorResult.Errors.Select(x => x.ErrorMessage).ToList())));
+        // var validatorResult = await validator.ValidateAsync(request, cancellationToken);
+        // if (!validatorResult.IsValid)
+        //     return Result.Failure(new Error("Validation Errors",
+        //         string.Join("; ", validatorResult.Errors.Select(x => x.ErrorMessage).ToList())));
         
         var space = await unitOfWork.Space.GetById(request.SpaceId);
         if (space is null) return SpaceErrors.SpaceNotFound;
 
-        if (request.SpaceInfos != null)
+        if (request.BasicInfo != null)
         {
-            var spaceType = await unitOfWork.SpaceType.GetById(request.SpaceInfos.SpaceTypeId);
+            var spaceType = await unitOfWork.SpaceType.GetById(request.BasicInfo.SpaceTypeId);
             if (spaceType is null) return SpaceErrors.SpaceTypeNotFound;
 
-            switch (request.SpaceInfos.ListingType)
+            switch (request.BasicInfo.ListingType)
             {
                 case ListingType.Daily when !spaceType.IsDaiLySpaceType:
                     return SpaceErrors.NotDailySpaceType;
                 case ListingType.Monthly when spaceType.IsDaiLySpaceType:
                     return SpaceErrors.NotMonthlySpaceType;
             }
-
-            var spaceInfos = request.SpaceInfos;
-            string? videoUrl = null;
-            string? virtualVideoUrl = null;
-            string? pdfFlyerUrl = null;
-            if (spaceInfos.VirtualVideo != null)
-            {
-                virtualVideoUrl = await cloudinaryService.UploadImage(spaceInfos.VirtualVideo);
-            }
-
-            if (spaceInfos.Video != null)
-            {
-                videoUrl = await cloudinaryService.UploadImage(spaceInfos.Video);
-            }
-
-            if (spaceInfos.PdfFlyer != null)
-            {
-                pdfFlyerUrl = await cloudinaryService.UploadImage(spaceInfos.PdfFlyer);
-            }
-            space = request.SpaceInfos.ToSpace(space, videoUrl, virtualVideoUrl, pdfFlyerUrl);
+            space = request.BasicInfo.ToSpace();
         }
 
-        if (request.SpacePrice != null)
+        if (request.Price != null)
         {
             var price = new Price();
-            switch (request.SpaceInfos!.ListingType)
+            switch (request.BasicInfo!.ListingType)
             {
                 case ListingType.Daily:
                     price.TimeUnit = TimeUnit.Day;
                     break;
                 case ListingType.Monthly:
                     price.TimeUnit = TimeUnit.Month;
-                    price.DiscountPercentage = request.SpacePrice.DiscountPercentage;
-                    price.SetupFee = request.SpacePrice.SetupFee;
+                    price.DiscountPercentage = request.Price.DiscountPercentage;
+                    price.SetupFee = request.Price.SetupFee;
                     break;
             }
 
-            price.Amount = request.SpacePrice.Amount;
+            price.Amount = request.Price.Amount;
             space.Price = price;
         }
 

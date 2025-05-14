@@ -9,7 +9,7 @@ public interface IUnitOfWork
    ISpaceRepository Space { get; }
    IGuestHourRepository GuestHour { get; }
    IVenueImageRepository VenueImage { get; }
-   ISpaceImageRepository SpaceImage { get; }
+   ISpaceAssetRepository SpaceAsset { get; }
    IVenueTypeRepository VenueType { get; }
    IVenueAddressRepository VenueAddress{ get; }
    IUserRepository User { get; }
@@ -22,14 +22,14 @@ public interface IUnitOfWork
    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 
-public class UnitOfWork(ApplicationDbContext dbContext, IVenueRepository venue, IUserRepository user, IVenueTypeRepository venueType, IVenueAddressRepository venueAddress, IGuestHourRepository guestHour, IHolidayRepository holiday, IVenueHolidayRepository venueHoliday, IBookingWindowRepository bookingWindow, ISpaceRepository space, IExceptionRepository exception, ISpaceTypeRepository spaceType, IAmenityRepository amenity, ISpaceAmenityRepository spaceAmenity, IVenueImageRepository venueImage, ISpaceImageRepository spaceImage) : IUnitOfWork
+public class UnitOfWork(ApplicationDbContext dbContext, IVenueRepository venue, IUserRepository user, IVenueTypeRepository venueType, IVenueAddressRepository venueAddress, IGuestHourRepository guestHour, IHolidayRepository holiday, IVenueHolidayRepository venueHoliday, IBookingWindowRepository bookingWindow, ISpaceRepository space, IExceptionRepository exception, ISpaceTypeRepository spaceType, IAmenityRepository amenity, ISpaceAmenityRepository spaceAmenity, IVenueImageRepository venueImage, ISpaceAssetRepository spaceAsset) : IUnitOfWork
 {
     public IVenueRepository Venue { get; } = venue;
     public ISpaceTypeRepository SpaceType { get; } = spaceType;
     public ISpaceRepository Space { get; } = space;
     public IGuestHourRepository GuestHour { get; } = guestHour;
     public IVenueImageRepository VenueImage { get; } = venueImage;
-    public ISpaceImageRepository SpaceImage { get; } = spaceImage;
+    public ISpaceAssetRepository SpaceAsset { get; } = spaceAsset;
     public IVenueTypeRepository VenueType { get; } = venueType;
     public IUserRepository User { get; } = user;
     public IVenueHolidayRepository VenueHoliday { get; } = venueHoliday;

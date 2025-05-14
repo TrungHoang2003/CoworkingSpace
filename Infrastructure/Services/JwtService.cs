@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Domain.Entites;
+using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
 using Infrastructure.Errors;

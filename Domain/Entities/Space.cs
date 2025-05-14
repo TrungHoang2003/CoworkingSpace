@@ -38,9 +38,6 @@ public class Space
     public string? Name { get; set; }
     public string? Description { get; set; }
     public ListingType ListingType { get; set; }
-    public string? VideoUrl { get; set; }
-    public string? VirtualVideoUrl { get; set; }
-    public string? PdfFlyerUrl { get; set; }
     public int? Capacity { get; set; }
     public int? Size { get; set; } 
     public int? Quantity { get; set; } 
@@ -52,7 +49,7 @@ public class Space
     // Quan hệ
     public ICollection<SpaceCollection>? Collections { get; set; } // Thuộc 1 hoặc nhiều bộ sưu tập
     public ICollection<SpaceAmenity>? Amenities{ get; set; } // Các dịch vụ tiện ích
-    public ICollection<SpaceImage>? SpaceImages { get; set; } // Các ảnh mô tả
+    public ICollection<SpaceAsset>? SpaceAssets { get; set; } // Các ảnh mô tả
     public ICollection<Reservation>? Reservations { get; set; } // 
     public ICollection<Review>? Reviews { get; set; } // Các đánh giá không gian
 }

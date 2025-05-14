@@ -1,7 +1,7 @@
-using Domain.Entities;
+using Domain.Entites;
 using Microsoft.AspNetCore.Identity;
 
-namespace Domain.Entites;
+namespace Domain.Entities;
 
 public class User: IdentityUser<int> 
 {

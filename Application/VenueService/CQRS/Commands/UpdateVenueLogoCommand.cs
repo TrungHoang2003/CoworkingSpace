@@ -16,10 +16,18 @@ public class UpdateVenueLogoCommandHandler(IUnitOfWork unitOfWork, CloudinarySer
         var venue = await unitOfWork.Venue.GetById(request.VenueId);
         if (venue == null) return VenueErrors.VenueNotFound;
 
-        var url = await cloudinaryService.UploadImage(request.Logo);
-        if (url == null) return CloudinaryErrors.UploadVenueLogoFailed;
-
-        venue.LogoUrl = url;
+        if (venue.LogoUrl == null)
+        {
+            var url = await cloudinaryService.UploadImage(request.Logo);
+            if (url == null) return CloudinaryErrors.UploadVenueLogoFailed;
+            venue.LogoUrl = url;
+        }
+        else
+        {
+            var url = await cloudinaryService.UpdateImage(request.Logo, venue.LogoUrl);
+            if (url == null) return CloudinaryErrors.UploadVenueLogoFailed;
+            venue.LogoUrl = url;
+        }
         await unitOfWork.Venue.Update(venue);
         await unitOfWork.SaveChangesAsync(cancellationToken);
 

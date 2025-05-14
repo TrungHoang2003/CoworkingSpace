@@ -520,12 +520,6 @@ namespace Infrastructure.Migrations
                     Description = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     ListingType = table.Column<int>(type: "int", nullable: false),
-                    VideoUrl = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    VirtualVideoUrl = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    PdfFlyerUrl = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Capacity = table.Column<int>(type: "int", nullable: true),
                     Size = table.Column<int>(type: "int", nullable: true),
                     Quantity = table.Column<int>(type: "int", nullable: true),
@@ -712,6 +706,30 @@ namespace Infrastructure.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
+                name: "SpaceAsset",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    SpaceId = table.Column<int>(type: "int", nullable: false),
+                    Url = table.Column<string>(type: "longtext", nullable: false)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    Type = table.Column<int>(type: "int", nullable: true),
+                    UploadedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_SpaceAsset", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_SpaceAsset_Space_SpaceId",
+                        column: x => x.SpaceId,
+                        principalTable: "Space",
+                        principalColumn: "SpaceId",
+                        onDelete: ReferentialAction.Cascade);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
                 name: "SpaceCollection",
                 columns: table => new
                 {
@@ -731,30 +749,6 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_SpaceCollection_Space_SpaceId",
-                        column: x => x.SpaceId,
-                        principalTable: "Space",
-                        principalColumn: "SpaceId",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "SpaceImage",
-                columns: table => new
-                {
-                    ImageId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    SpaceId = table.Column<int>(type: "int", nullable: false),
-                    ImageUrl = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    Type = table.Column<int>(type: "int", nullable: true),
-                    UploadedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_SpaceImage", x => x.ImageId);
-                    table.ForeignKey(
-                        name: "FK_SpaceImage_Space_SpaceId",
                         column: x => x.SpaceId,
                         principalTable: "Space",
                         principalColumn: "SpaceId",
@@ -922,6 +916,11 @@ namespace Infrastructure.Migrations
                 column: "SpaceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_SpaceAsset_SpaceId",
+                table: "SpaceAsset",
+                column: "SpaceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_SpaceCollection_CollectionId",
                 table: "SpaceCollection",
                 column: "CollectionId");
@@ -929,11 +928,6 @@ namespace Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_SpaceCollection_SpaceId",
                 table: "SpaceCollection",
-                column: "SpaceId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_SpaceImage_SpaceId",
-                table: "SpaceImage",
                 column: "SpaceId");
 
             migrationBuilder.CreateIndex(
@@ -1007,10 +1001,10 @@ namespace Infrastructure.Migrations
                 name: "SpaceAmenity");
 
             migrationBuilder.DropTable(
-                name: "SpaceCollection");
+                name: "SpaceAsset");
 
             migrationBuilder.DropTable(
-                name: "SpaceImage");
+                name: "SpaceCollection");
 
             migrationBuilder.DropTable(
                 name: "VenueHoliday");
