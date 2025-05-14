@@ -2,6 +2,7 @@ using Dapper;
 using Domain.Entities;
 using Infrastructure.DbHelper;
 using Microsoft.Extensions.Configuration;
+using MySqlConnector;
 
 namespace Infrastructure.Repositories;
 
@@ -11,7 +12,7 @@ public interface IVenueHolidayRepository : IGenericRepository<VenueHoliday>
     Task GenerateDefaultHolidays(List<Holiday> holidays, Venue venue);
 }
 
-public class VenueHolidayRepository(ApplicationDbContext dbContext, IConfiguration configuration) : GenericRepository<VenueHoliday>(dbContext), IVenueHolidayRepository
+public class VenueHolidayRepository(ApplicationDbContext dbContext, DbConnection<MySqlConnection> dbConnection) : GenericRepository<VenueHoliday>(dbContext), IVenueHolidayRepository
 {
     public async Task GenerateDefaultHolidays(List<Holiday> holidays, Venue venue)
     {
@@ -28,7 +29,7 @@ public class VenueHolidayRepository(ApplicationDbContext dbContext, IConfigurati
     
     public async Task<VenueHoliday?> GetByVenueIdAndHolidayId(int holidayId, int venueId)
     {
-        var cnn = new MySqlServer(configuration).OpenConnection();
+        var cnn = dbConnection.OpenConnection();
         
         var sql = $"Select * from VenueHoliday where HolidayId = {holidayId} and VenueId = {venueId}";
         var result = await cnn.QueryFirstOrDefaultAsync<VenueHoliday>(sql, new {HolidayId = holidayId, VenueId = venueId});

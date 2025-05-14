@@ -13,96 +13,97 @@ using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
-DotEnv.Load();
+var env = builder.Environment.EnvironmentName;
+Console.WriteLine($"Environment: {env}");
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+// Add services
 builder.Services.AddOpenApi();
 builder.Services.AddControllers();
 builder.Services.AddApplication();
 
-// Lấy MYSQL_URL từ biến môi trường
-var mysqlUrl = Environment.GetEnvironmentVariable("MYSQL_URL");
-Console.WriteLine($"MYSQL_URL from Environment: {mysqlUrl}");
-
+// Connection String config
 string? connectionString;
-if (!string.IsNullOrEmpty(mysqlUrl))
+
+if (builder.Environment.IsDevelopment())
 {
-    // Chuyển đổi từ URI-style sang ADO.NET
+    // Local development — dùng appsettings.json
+    connectionString = builder.Configuration.GetConnectionString("MySqlConnectionStr");
+    Console.WriteLine($"[DEV] Using connection string from appsettings.json: {connectionString}");
+}
+else
+{
+    // Production — lấy MYSQL_URL từ biến môi trường
+    var mysqlUrl = Environment.GetEnvironmentVariable("MYSQL_URL");
+    Console.WriteLine($"[PROD] MYSQL_URL from Environment: {mysqlUrl}");
+
+    if (string.IsNullOrEmpty(mysqlUrl))
+    {
+        throw new Exception("MYSQL_URL is not set in environment variables.");
+    }
+
     if (mysqlUrl.StartsWith("mysql://"))
     {
         var uri = new Uri(mysqlUrl);
         var host = uri.Host;
-        var portt = uri.Port;
+        var port = uri.Port;
         var user = uri.UserInfo.Split(':')[0];
         var password = uri.UserInfo.Split(':')[1];
         var database = uri.PathAndQuery.TrimStart('/');
 
-        connectionString = $"Server={host};Port={portt};Database={database};User Id={user};Password={password};";
+        connectionString = $"Server={host};Port={port};Database={database};User Id={user};Password={password};";
     }
     else
     {
-        connectionString = mysqlUrl; // Sử dụng trực tiếp nếu đã ở định dạng ADO.NET
+        connectionString = mysqlUrl; // fallback nếu là ADO.NET string
     }
-}
-else
-{
-    Console.WriteLine("Falling back to Configuration (e.g., appsettings.json).");
-    connectionString = builder.Configuration.GetConnectionString("MySqlConnectionStr");
-    Console.WriteLine($"MySqlConnectionStr from Configuration: {connectionString}");
+
+    Console.WriteLine($"[PROD] Final connection string: {connectionString}");
 }
 
 if (string.IsNullOrEmpty(connectionString))
 {
-    Console.WriteLine("No valid connection string found.");
-    throw new Exception("Chuoi ket noi chua duoc thiet lap");
+    throw new Exception("No valid connection string found.");
 }
 
-Console.WriteLine($"Using connection string: {connectionString}");
+// Add Infrastructure service
+builder.Services.AddInfrastructure(connectionString);
 
-try
+// OpenAPI
+builder.Services.AddOpenApi("v1", options =>
 {
-    builder.Services.AddInfrastructure(connectionString);
-}
-catch (Exception ex)
-{
-    Console.WriteLine($"Failed to configure infrastructure services: {ex.Message}");
-    throw;
-}
+    options.AddDocumentTransformer<BearerSercuritySchemeTransformer>();
+});
 
-builder.Services.AddOpenApi("v1", options => { options.AddDocumentTransformer<BearerSercuritySchemeTransformer>();});
-
+// JWT Authentication
 builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    var secret = builder.Configuration["JWT:Secret"];
+    var issuer = builder.Configuration["JWT:ValidIssuer"];
+    var audience = builder.Configuration["JWT:ValidAudience"];
+
+    if (string.IsNullOrEmpty(secret) || string.IsNullOrEmpty(issuer) || string.IsNullOrEmpty(audience))
     {
-        // Chỉ định scheme mặc định cho Authenticate và Challenge
-        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-    })
-    .AddJwtBearer(options =>
+        throw new Exception("JWT config is missing in appsettings.json or environment variables.");
+    }
+
+    options.TokenValidationParameters = new TokenValidationParameters
     {
-        var secret = builder.Configuration["JwtSettings:Secret"];
-        var issuer = builder.Configuration["JwtSettings:Issuer"];
-        var audience = builder.Configuration["JwtSettings:Audience"];
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = issuer,
+        ValidAudience = audience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
+    };
+});
 
-        if (string.IsNullOrEmpty(secret))
-            throw new Exception("JWT Secret is not configured in environment variables.");
-        if (string.IsNullOrEmpty(issuer))
-            throw new Exception("JWT Issuer is not configured in environment variables.");
-        if (string.IsNullOrEmpty(audience))
-            throw new Exception("JWT Audience is not configured in environment variables.");
-
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = issuer,
-            ValidAudience = audience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
-        };
-    });
-
+// CORS
 builder.Services.AddCors(option =>
 {
     option.AddPolicy("AllowAll", policyBuilder =>
@@ -113,16 +114,17 @@ builder.Services.AddCors(option =>
     });
 });
 
-var options = new ConfigurationOptions
+// Redis
+var redisOptions = new ConfigurationOptions
 {
-    EndPoints = {"localhost:6379"},
+    EndPoints = { "localhost:6379" },
     AbortOnConnectFail = false,
 };
-builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(options));
+builder.Services.AddSingleton<IConnectionMultiplexer>(ConnectionMultiplexer.Connect(redisOptions));
 
 var app = builder.Build();
 
-// Chạy migration với retry logic
+// Apply database migrations
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
@@ -136,7 +138,7 @@ using (var scope = app.Services.CreateScope())
             Console.WriteLine($"Attempting migration (Attempt {retry}/{maxRetries})...");
             dbContext.Database.Migrate();
             Console.WriteLine("Migration completed successfully.");
-            break; // Thoát vòng lặp nếu thành công
+            break;
         }
         catch (Exception ex)
         {
@@ -144,15 +146,15 @@ using (var scope = app.Services.CreateScope())
             if (retry == maxRetries)
             {
                 Console.WriteLine("Max retries reached. Migration failed.");
-                throw; // Ném lỗi sau khi hết số lần retry
+                throw;
             }
             Console.WriteLine($"Retrying in {delaySeconds} seconds...");
-            Thread.Sleep(delaySeconds * 1000); // Chờ trước khi thử lại
+            Thread.Sleep(delaySeconds * 1000);
         }
     }
 }
 
-// Configure the HTTP request pipeline.
+// HTTP Request pipeline
 if (app.Environment.IsDevelopment())
 {
     app.MapOpenApi();
@@ -169,10 +171,14 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<ExceptionHandlerMiddleWare>();
-//app.UseMiddleware<TokenValidateMiddleware>();
+// app.UseMiddleware<TokenValidateMiddleware>();
 app.MapControllers();
 
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
-app.Urls.Add($"http://0.0.0.0:{port}"); // Đảm bảo lắng nghe trên 0.0.0.0
+// App URL Config
+if (!app.Environment.IsDevelopment())
+{
+    var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+    app.Urls.Add($"http://0.0.0.0:{port}");
+}
 
 app.Run();

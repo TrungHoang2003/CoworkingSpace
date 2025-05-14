@@ -3,6 +3,7 @@ using Domain.Entites;
 using Domain.Entities;
 using Infrastructure.DbHelper;
 using Microsoft.Extensions.Configuration;
+using MySqlConnector;
 
 namespace Infrastructure.Repositories;
 
@@ -15,12 +16,11 @@ public interface IVenueRepository: IGenericRepository<Venue>
    Task<bool> FindById(int venueId);
 }
 
-public class VenueRepository(ApplicationDbContext dbContext, IConfiguration configuration) : GenericRepository<Venue>(dbContext), IVenueRepository
+public class VenueRepository(ApplicationDbContext dbContext, DbConnection<MySqlConnection> dbConnection) : GenericRepository<Venue>(dbContext), IVenueRepository
 {
     public async Task<IEnumerable<VenueType>> GetVenueTypes()
     {
-        var cnn = new MySqlServer(configuration).OpenConnection();
-
+        var cnn = dbConnection.OpenConnection();
         try
         {
             const string sql = "select * from VenueType";
@@ -35,8 +35,7 @@ public class VenueRepository(ApplicationDbContext dbContext, IConfiguration conf
 
     public async Task<Venue?> GetVenuesByTypeId(int venueTypeId)
     {
-        var cnn = new MySqlServer(configuration).OpenConnection();
-
+        var cnn = dbConnection.OpenConnection();
         try
         {
             const string sql = "select * from Venue where VenueTypeId = @venueTypeId";
@@ -51,7 +50,7 @@ public class VenueRepository(ApplicationDbContext dbContext, IConfiguration conf
 
     public async Task<VenueType?> GetVenueTypeById(int venueTypeId)
     {
-        var cnn = new MySqlServer(configuration).OpenConnection();
+        var cnn = dbConnection.OpenConnection();
 
         try
         {
@@ -67,7 +66,7 @@ public class VenueRepository(ApplicationDbContext dbContext, IConfiguration conf
 
     public async Task<Venue?> GetById(int venueId)
     {
-        var cnn = new MySqlServer(configuration).OpenConnection();
+        var cnn = dbConnection.OpenConnection();
 
         try
         {
@@ -83,7 +82,7 @@ public class VenueRepository(ApplicationDbContext dbContext, IConfiguration conf
 
     public async Task<bool> FindById(int venueId)
     {
-        var cnn = new MySqlServer(configuration).OpenConnection();
+        var cnn = dbConnection.OpenConnection();
         
         const string sql = "select count(*) from Venue where VenueId = @venueId";
         var result = await cnn.ExecuteScalarAsync<int>(sql, new { VenueId = venueId });

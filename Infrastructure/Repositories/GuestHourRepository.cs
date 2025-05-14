@@ -3,6 +3,8 @@ using Dapper;
 using Domain.Entities;
 using Infrastructure.DbHelper;
 using Microsoft.Extensions.Configuration;
+using System.Data.Common;
+using MySqlConnector;
 using static System.Enum;
 
 namespace Infrastructure.Repositories;
@@ -15,9 +17,11 @@ public interface IGuestHourRepository : IGenericRepository<GuestHour>
     void RemoveRange(List<GuestHour> guestHours);
 }
 
-public class GuestHourRepository(ApplicationDbContext dbContext, IConfiguration configuration)
+public class GuestHourRepository(ApplicationDbContext dbContext, DbConnection<MySqlConnection> dbConnection)
     : GenericRepository<GuestHour>(dbContext), IGuestHourRepository
 {
+    private readonly ApplicationDbContext _dbContext = dbContext;
+
     public List<GuestHour> GenerateDefaultGuestHours(Venue venue)
     {
         var guestHours = new List<GuestHour>();
@@ -41,7 +45,7 @@ public class GuestHourRepository(ApplicationDbContext dbContext, IConfiguration 
     {
         try
         {
-            await dbContext.GuestHour.AddRangeAsync(guestHours);
+            await _dbContext.GuestHour.AddRangeAsync(guestHours);
         }
         catch (Exception e)
         {
@@ -51,17 +55,16 @@ public class GuestHourRepository(ApplicationDbContext dbContext, IConfiguration 
 
     public void RemoveRange(List<GuestHour> guestHours)
     {
-        dbContext.GuestHour.RemoveRange(guestHours);
+        _dbContext.GuestHour.RemoveRange(guestHours);
     }
 
     public async Task<List<GuestHour>> GetGuestHoursByVenueId(int venueId)
     {
-        var cnn = new MySqlServer(configuration).OpenConnection();
+        var cnn = dbConnection.OpenConnection();
         try
         {
             var sql = $"select * from GuestHour where VenueId = {venueId}";
             var result = await cnn.QueryAsync<GuestHour>(sql, new { VenueId = venueId });
-
             return result.ToList();
         }
         catch (Exception e)

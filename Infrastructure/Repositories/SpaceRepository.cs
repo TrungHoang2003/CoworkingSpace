@@ -3,6 +3,7 @@ using Domain.Entites;
 using Domain.Entities;
 using Infrastructure.DbHelper;
 using Microsoft.Extensions.Configuration;
+using MySqlConnector;
 
 namespace Infrastructure.Repositories;
 
@@ -13,11 +14,11 @@ public interface ISpaceRepository: IGenericRepository<Space>
    Task<Space?> GetById(int spaceId);
    Task<Space?> GetByIdAndVenue(int spaceId, int venueId);
 } 
-public class SpaceRepository(ApplicationDbContext dbContext, IConfiguration configuration) : GenericRepository<Space>(dbContext), ISpaceRepository
+public class SpaceRepository(ApplicationDbContext dbContext, DbConnection<MySqlConnection> dbConnection) : GenericRepository<Space>(dbContext), ISpaceRepository
 {
     public async Task<List<Space>> GetAllWorkingSpacesAsync()
     {
-        var connection = new MySqlServer(configuration).OpenConnection();
+        var connection = dbConnection.OpenConnection();
         var sql = $"select * from Space";
         var result = await connection.QueryAsync<Space>(sql);
 
@@ -26,7 +27,7 @@ public class SpaceRepository(ApplicationDbContext dbContext, IConfiguration conf
 
     public async Task<List<Space>> GetVenueWorkingSpacesAsync(int venueId)
     {
-        var connection = new MySqlServer(configuration).OpenConnection();
+        var connection =dbConnection.OpenConnection();
         var sql = $"select * from Space where VenueId = @venueId";
         var result = await connection.QueryAsync<Space>(sql, new { VenueId = venueId });
 
@@ -35,7 +36,7 @@ public class SpaceRepository(ApplicationDbContext dbContext, IConfiguration conf
 
     public async Task<Space?> GetById(int spaceId)
     {
-        var cnn = new MySqlServer(configuration).OpenConnection();
+        var cnn = dbConnection.OpenConnection();
         var sql = "Select * from Space where SpaceId = @spaceId";
         var result = await cnn.QueryFirstOrDefaultAsync<Space>(sql, new { SpaceId = spaceId });
 
@@ -44,7 +45,7 @@ public class SpaceRepository(ApplicationDbContext dbContext, IConfiguration conf
 
     public async Task<Space?> GetByIdAndVenue(int spaceId, int venueId)
     {
-        var cnn = new MySqlServer(configuration).OpenConnection();
+        var cnn = dbConnection.OpenConnection();
         const string sql = "Select * from Space where SpaceId = @spaceId and VenueId = @venueId";
         var result = await cnn.QueryFirstOrDefaultAsync<Space>(sql, new { SpaceId = spaceId, VenueId = venueId });
         

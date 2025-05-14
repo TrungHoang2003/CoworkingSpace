@@ -3,6 +3,8 @@ using Domain.Entites;
 using Domain.Entities;
 using Infrastructure.DbHelper;
 using Microsoft.Extensions.Configuration;
+using System.Data.Common;
+using MySqlConnector;
 
 namespace Infrastructure.Repositories;
 
@@ -13,7 +15,7 @@ public interface IVenueAddressRepository: IGenericRepository<VenueAddress>
     Task<VenueAddress?> GetById(int venueAddressId);
 }
 
-public class VenueAddressRepository(ApplicationDbContext dbContext, IConfiguration configuration) : GenericRepository<VenueAddress>(dbContext), IVenueAddressRepository
+public class VenueAddressRepository(ApplicationDbContext dbContext, DbConnection<MySqlConnection> dbConnection) : GenericRepository<VenueAddress>(dbContext), IVenueAddressRepository
 {
     private readonly ApplicationDbContext _dbContext = dbContext;
 
@@ -25,8 +27,7 @@ public class VenueAddressRepository(ApplicationDbContext dbContext, IConfigurati
 
     public Task<VenueAddress?> GetById(int venueAddressId)
     {
-        var cnn = new MySqlServer(configuration).OpenConnection();
-
+        var cnn = dbConnection.OpenConnection();
         try
         {
             const string sql = "select * from VenueAddress where VenueAddressId = @venueAddressId";

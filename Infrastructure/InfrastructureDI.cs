@@ -8,6 +8,7 @@ using Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using MySqlConnector;
 using StackExchange.Redis;
 using Role = Domain.Entities.Role;
 
@@ -47,6 +48,7 @@ public static class InfrastructureDi
         services.AddSingleton<CloudinaryService>();
         services.AddSingleton<GoogleAuthService>();
         services.AddSingleton<HttpClient>();
+        services.AddScoped<DbConnection<MySqlConnection>, MySqlServer>();
         services.AddScoped<ISpaceRepository, SpaceRepository>();
         services.AddScoped<IAmenityRepository, AmenityRepository>();
         services.AddScoped<IVenueHolidayRepository, VenueHolidayRepository>();
