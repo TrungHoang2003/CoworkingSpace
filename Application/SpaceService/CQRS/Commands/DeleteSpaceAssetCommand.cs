@@ -21,7 +21,8 @@ public class DeleteSpaceAssetCommandHandler(IUnitOfWork unitOfWork, CloudinarySe
         if (asset is null) return SpaceErrors.SpaceAssetNotFound;
         
         await unitOfWork.SpaceAsset.Delete(asset);
-        await cloudinaryService.DeleteFile(asset.Url);
+        var result = await cloudinaryService.DeleteFile(asset.Url);
+        if (!result) return CloudinaryErrors.DeteleSpaceAssetFailed;
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

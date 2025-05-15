@@ -1,3 +1,6 @@
+using Application.UserService.DTOs;
+using Application.UserService.Mappings;
+using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
 using Infrastructure.Repositories;
@@ -15,6 +18,7 @@ public sealed record LoginResponse
 {
     public string? AccessToken { get; init; }
     public string? RefreshToken { get; init; } 
+    public UserViewModel User { get; init; }
 }
 
 public class LoginCommandHandler(
@@ -49,11 +53,14 @@ public class LoginCommandHandler(
         {
             return Result<LoginResponse>.Failure(new Error("Redis.SaveFailed", $"Failed to save tokens: {ex.Message}"));
         }
-
+        
+        var userViewModel = user.ToUserViewModel();
+        
         return Result<LoginResponse>.Success(new LoginResponse
         {
             AccessToken = accessToken,
-            RefreshToken = refreshToken
+            RefreshToken = refreshToken,
+            User = userViewModel
         });
     }
 }

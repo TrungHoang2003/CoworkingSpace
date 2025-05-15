@@ -29,7 +29,7 @@ public class SpaceAssetRepository(ApplicationDbContext dbContext, DbConnection<M
    {
       var cnn = dbConnection.OpenConnection();
       const string sql = $"SELECT * FROM SpaceAsset WHERE Url = @{nameof(url)} and SpaceId = @{nameof(spaceId)}";
-      var result = await cnn.QueryFirstOrDefaultAsync(sql, new { url, spaceId });
+      var result = await cnn.QueryFirstOrDefaultAsync<SpaceAsset>(sql, new { url, spaceId });
       return result;
    }
 

@@ -112,10 +112,10 @@ public class CloudinaryService
     {
         var uri = new Uri(url);
         var path = uri.AbsolutePath; // /demo/image/upload/v17199999/Coworking-Space/Images/logo_abcd1234.png
-        var uploadIndex = path.IndexOf("/upload/") + "/upload/".Length;
+        var uploadIndex = path.IndexOf("/Coworking-Space/") + "/Coworking-Space/".Length;
         var withoutVersion = path.Substring(uploadIndex);
         var withoutExtension = withoutVersion.Substring(0, withoutVersion.LastIndexOf('.'));
 
-        return withoutExtension;
+        return "Coworking-Space/"+withoutExtension;
     }
 }
