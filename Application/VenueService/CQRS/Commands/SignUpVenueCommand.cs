@@ -54,7 +54,7 @@ public class SignUpVenueCommandHandler(
         }
 
         // Lấy userId từ JWT
-        var userId = httpContextAccessor.HttpContext?.User?.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var userId = httpContextAccessor.HttpContext?.Items["UserId"]?.ToString();
         if (string.IsNullOrEmpty(userId))
             return AuthenErrors.UserIdNotFoundInJwt;
 

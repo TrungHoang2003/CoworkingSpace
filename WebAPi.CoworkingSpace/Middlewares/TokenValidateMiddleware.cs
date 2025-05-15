@@ -53,6 +53,7 @@ public class TokenValidateMiddleware(RequestDelegate next, RedisService redisSer
 
             // Lưu userId vào context để sử dụng cho các middleware hoặc controller sau
             context.Items["UserId"] = userId;
+            context.Items["AccessToken"] = token;
         }
         catch (Exception ex)
         {

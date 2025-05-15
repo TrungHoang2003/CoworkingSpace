@@ -187,7 +187,7 @@ app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseMiddleware<ExceptionHandlerMiddleWare>();
-// app.UseMiddleware<TokenValidateMiddleware>();
+app.UseMiddleware<TokenValidateMiddleware>();
 app.MapControllers();
 
 // App URL Config
