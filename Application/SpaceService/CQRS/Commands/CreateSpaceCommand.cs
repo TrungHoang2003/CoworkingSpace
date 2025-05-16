@@ -4,7 +4,6 @@ using Application.SpaceService.Mappings;
 using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
-using FluentValidation;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using MediatR;
@@ -21,17 +20,11 @@ public sealed record CreateSpaceCommand(
 
 public class CreateSpaceCommandHandler(
     IUnitOfWork unitOfWork,
-    CloudinaryService cloudinaryService,
-    IValidator<CreateSpaceCommand> validator)
+    CloudinaryService cloudinaryService)
     : IRequestHandler<CreateSpaceCommand, Result>
 {
     public async Task<Result> Handle(CreateSpaceCommand request, CancellationToken cancellationToken)
     {
-        var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-        if (!validatorResult.IsValid)
-            return Result.Failure(new Error("Validation Errors",
-                string.Join("; ", validatorResult.Errors.Select(x => x.ErrorMessage).ToList())));
-
         var venueExists = await unitOfWork.Venue.GetById(request.VenueId);
         if (venueExists is null) return VenueErrors.VenueNotFound;
 

@@ -3,7 +3,7 @@ using Domain.Entities;
 
 namespace Application.ExceptionService.Mappings;
 
-public static class ExceptionMappingExtensions
+public static class ExceptionMapping
 {
     public static ExceptionRule ToExceptionRule(this AddExceptionCommand command)
     {

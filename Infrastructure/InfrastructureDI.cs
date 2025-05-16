@@ -49,6 +49,7 @@ public static class InfrastructureDi
         services.AddSingleton<GoogleAuthService>();
         services.AddSingleton<HttpClient>();
         services.AddScoped<DbConnection<MySqlConnection>, MySqlServer>();
+        services.AddScoped<IGuestArrivalRepository, GuestArrivalRepository>();
         services.AddScoped<ISpaceRepository, SpaceRepository>();
         services.AddScoped<IAmenityRepository, AmenityRepository>();
         services.AddScoped<IVenueHolidayRepository, VenueHolidayRepository>();

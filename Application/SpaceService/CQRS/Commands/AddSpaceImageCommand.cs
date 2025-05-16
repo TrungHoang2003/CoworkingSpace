@@ -1,7 +1,6 @@
 using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
-using FluentValidation;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using MediatR;
@@ -11,16 +10,11 @@ namespace Application.SpaceService.CQRS.Commands;
 
 public sealed record AddSpaceImageCommand(IFormFile Image, int SpaceId, SpaceAssetType Type):IRequest<Result>;
 
-public class AddSpaceImageCommandHandler(IUnitOfWork unitOfWork, IValidator<AddSpaceImageCommand> validator, CloudinaryService cloudinaryService)
+public class AddSpaceImageCommandHandler(IUnitOfWork unitOfWork, CloudinaryService cloudinaryService)
     : IRequestHandler<AddSpaceImageCommand, Result>
 {
     public async Task<Result> Handle(AddSpaceImageCommand request, CancellationToken cancellationToken)
     {
-        var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-        if (!validatorResult.IsValid)
-            return Result.Failure(new Error("Validation Errors",
-                string.Join("; ", validatorResult.Errors.Select(x => x.ErrorMessage).ToList())));
-        
         var space = await unitOfWork.Space.GetById(request.SpaceId);
         if (space is null) return SpaceErrors.SpaceNotFound;
         

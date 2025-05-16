@@ -2,7 +2,6 @@ using Application.BookingWindowService.Mappings;
 using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
-using FluentValidation;
 using Infrastructure.Repositories;
 using MediatR;
 
@@ -18,16 +17,11 @@ public sealed record AddBookingWindowCommand(
     List<int>? SpaceIds
 ) : IRequest<Result>;
 
-public class AddBookingWindowCommandHandler(IUnitOfWork unitOfWork, IValidator<AddBookingWindowCommand> validator)
+public class AddBookingWindowCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<AddBookingWindowCommand, Result>
 {
     public async Task<Result> Handle(AddBookingWindowCommand request, CancellationToken cancellationToken)
     {
-        var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-        if (!validatorResult.IsValid)
-            return Result.Failure(new Error("Validation Errors",
-                string.Join("; ", validatorResult.Errors.Select(x => x.ErrorMessage).ToList())));
-
         var venue = await unitOfWork.Venue.GetById(request.VenueId);
         if (venue is null) return VenueErrors.VenueNotFound;
 

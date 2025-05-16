@@ -2,7 +2,6 @@ using Application.ExceptionService.Mappings;
 using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
-using FluentValidation;
 using Infrastructure.Repositories;
 using MediatR;
 
@@ -22,15 +21,11 @@ public sealed record UpdateExceptionCommand(
     List<int>? SpaceIds     
     ) : IRequest<Result>;
 
-public class UpdateExceptionCommandHandler(IUnitOfWork unitOfWork, IValidator<UpdateExceptionCommand> validator)
+public class UpdateExceptionCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<UpdateExceptionCommand, Result>
 {
     public async Task<Result> Handle(UpdateExceptionCommand request, CancellationToken cancellationToken)
     {
-        var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-        if(!validatorResult.IsValid)
-            return Result.Failure(new Error("Validation Errors", string.Join("; ",validatorResult.Errors.Select(x => x.ErrorMessage).ToList())));
-        
         var exception = await unitOfWork.Exception.GetById(request.ExceptionId);
         if (exception == null) return ExceptionErrors.ExceptionNotFound;
         

@@ -1,4 +1,5 @@
 using Application.VenueService.CQRS.Commands;
+using Application.VenueService.DTOs;
 using Domain.Entities;
 
 namespace Application.VenueService.Mappings;
@@ -24,18 +25,5 @@ public static class VenueMapping
                 Longitude = command.Address.Longitude
             }
         };
-    }
-
-    public static Venue ToVenue(this SetUpVenueCommand command, Venue existingVenue)
-    {
-        existingVenue.Name = command.Details?.Name;
-        existingVenue.Description = command.Details?.Description;
-        existingVenue.Floor = command.Details?.Floor;
-        existingVenue.Address.Street = command.Address?.Street;
-        existingVenue.Address.District = command.Address?.District;
-        existingVenue.Address.City = command.Address?.City;
-        existingVenue.Address.Latitude = command.Address?.Latitude;
-        existingVenue.Address.Longitude = command.Address?.Longitude;
-        return existingVenue;
     }
 }

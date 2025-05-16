@@ -1,12 +1,12 @@
 using Application.GuestHourService.DTOs;
 using Application.GuestHourService.Mappings;
 using Application.VenueAddressService.DTOs;
+using Application.VenueAddressService.Mappings;
 using Application.VenueService.DTOs;
 using Application.VenueService.Mappings;
 using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
-using FluentValidation;
 using Infrastructure.Repositories;
 using MediatR;
 
@@ -21,20 +21,27 @@ public sealed record SetUpVenueCommand(
     List<int>? HolidayIds
 ) : IRequest<Result>;
 
-public class SetUpVenueCommandHandler(IUnitOfWork unitOfWork, IValidator<SetUpVenueCommand> validator)
+public class SetUpVenueCommandHandler(IUnitOfWork unitOfWork)
     : IRequestHandler<SetUpVenueCommand, Result>
 {
     public async Task<Result> Handle(SetUpVenueCommand request, CancellationToken cancellationToken)
     {
-        var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-        if(!validatorResult.IsValid)
-            return Result.Failure(new Error("Validation Errors", string.Join("\n",validatorResult.Errors.Select(x => x.ErrorMessage).ToList())));
-        
         var venue = await unitOfWork.Venue.GetById(request.VenueId);
         if (venue == null) return VenueErrors.VenueNotFound;
         
         // Update Venue 
-        venue = request.ToVenue(venue);
+        if (request.Details is not null)
+        {
+            venue.Name = request.Details.Name;
+            venue.Description = request.Details.Description;
+            venue.Floor = request.Details.Floor;
+        }
+
+        if (request.Address is not null)
+        {
+            var address = request.Address.ToVenueAddress();
+            venue.Address = address;
+        }
         
         // Update GuestHours
         if (request.GuestHours is { Count: > 0 })
@@ -48,7 +55,6 @@ public class SetUpVenueCommandHandler(IUnitOfWork unitOfWork, IValidator<SetUpVe
 
             foreach (var guestHourDto in request.GuestHours)
             {
-                var newGuestHours = new List<GuestHour>();
                 var guestHour = guestHourDto.ToGuestHour();
                 venue.GuestHours.Add(guestHour);
             }
@@ -58,6 +64,11 @@ public class SetUpVenueCommandHandler(IUnitOfWork unitOfWork, IValidator<SetUpVe
         if (request.GuestArrival != null)
         {
             var guestArrival = request.GuestArrival.ToGuestArrival();
+            if (venue.GuestArrival is null)
+            {
+                await unitOfWork.GuestArrival.Create(guestArrival);
+                venue.GuestArrival = guestArrival;
+            }
             venue.GuestArrival = guestArrival;
         }
         

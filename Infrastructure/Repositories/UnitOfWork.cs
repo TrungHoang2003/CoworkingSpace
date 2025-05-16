@@ -17,11 +17,12 @@ public interface IUnitOfWork
    IBookingWindowRepository BookingWindow { get; }
    IExceptionRepository Exception { get; }
    IAmenityRepository Amenity { get; }
+   IGuestArrivalRepository GuestArrival { get; }
    ISpaceAmenityRepository SpaceAmenity { get; }
    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 
-public class UnitOfWork(ApplicationDbContext dbContext, IVenueRepository venue, IUserRepository user, IVenueTypeRepository venueType, IVenueAddressRepository venueAddress, IGuestHourRepository guestHour, IHolidayRepository holiday, IVenueHolidayRepository venueHoliday, IBookingWindowRepository bookingWindow, ISpaceRepository space, IExceptionRepository exception, ISpaceTypeRepository spaceType, IAmenityRepository amenity, ISpaceAmenityRepository spaceAmenity, ISpaceAssetRepository spaceAsset) : IUnitOfWork
+public class UnitOfWork(ApplicationDbContext dbContext, IVenueRepository venue, IUserRepository user, IVenueTypeRepository venueType, IVenueAddressRepository venueAddress, IGuestHourRepository guestHour, IHolidayRepository holiday, IVenueHolidayRepository venueHoliday, IBookingWindowRepository bookingWindow, ISpaceRepository space, IExceptionRepository exception, ISpaceTypeRepository spaceType, IAmenityRepository amenity, ISpaceAmenityRepository spaceAmenity, ISpaceAssetRepository spaceAsset, IGuestArrivalRepository guestArrival) : IUnitOfWork
 {
     public IVenueRepository Venue { get; } = venue;
     public ISpaceTypeRepository SpaceType { get; } = spaceType;
@@ -36,6 +37,7 @@ public class UnitOfWork(ApplicationDbContext dbContext, IVenueRepository venue, 
     public IBookingWindowRepository BookingWindow { get; } = bookingWindow;
     public IExceptionRepository Exception { get; } = exception;
     public IAmenityRepository Amenity { get; } = amenity;
+    public IGuestArrivalRepository GuestArrival { get; } = guestArrival;
     public ISpaceAmenityRepository SpaceAmenity { get; } = spaceAmenity;
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)

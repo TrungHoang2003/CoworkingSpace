@@ -5,7 +5,7 @@ using Domain.Entities;
 
 namespace Application.GuestHourService.Mappings;
 
-public static class GuestHourMappingExtensions
+public static class GuestHourMapping
 {
    public static GuestHour ToGuestHour(this SetUpVenueGuestHourDto setUpVenueGuestHourDto)
    {

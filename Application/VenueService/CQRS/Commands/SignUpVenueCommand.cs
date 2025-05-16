@@ -5,7 +5,6 @@ using Domain.Entites;
 using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
-using FluentValidation;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using MediatR;
@@ -29,16 +28,11 @@ public class SignUpVenueCommandHandler(
     CloudinaryService cloudinaryService,
     UserManager<User> userManager,
     RoleManager<Role> roleManager,
-    IValidator<SignUpVenueCommand> validator,
     IHttpContextAccessor httpContextAccessor,
     IUnitOfWork unitOfWork) : IRequestHandler<SignUpVenueCommand, Result>
 {
     public async Task<Result> Handle(SignUpVenueCommand request, CancellationToken cancellationToken)
     {
-        var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-        if(!validatorResult.IsValid)
-            return Result.Failure(new Error("Validation Errors", string.Join("; ",validatorResult.Errors.Select(x => x.ErrorMessage).ToList())));
-        
         string? userAvatarUrl = null;
         string? venueLogoUrl= null;
 

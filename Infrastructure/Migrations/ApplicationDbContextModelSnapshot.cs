@@ -180,11 +180,11 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.GuestArrival", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("GuestHourId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("GuestHourId"));
 
                     b.Property<string>("EntryInformation")
                         .HasColumnType("longtext");
@@ -207,7 +207,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("WifiPassword")
                         .HasColumnType("longtext");
 
-                    b.HasKey("Id");
+                    b.HasKey("GuestHourId");
 
                     b.ToTable("GuestArrival");
                 });

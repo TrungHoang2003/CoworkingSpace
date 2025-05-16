@@ -3,7 +3,7 @@ using Domain.Entities;
 
 namespace Application.BookingWindowService.Mappings;
 
-public static class BookingWindowMappingExtensions
+public static class BookingWindowMapping
 {
     public static BookingWindow ToBookingWindow(this AddBookingWindowCommand command)
     {

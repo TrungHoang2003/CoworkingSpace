@@ -21,7 +21,7 @@ public class Venue
     [ForeignKey("VenueAddressId")] public VenueAddress Address { get; set; }
     
     //GuestArrival
-    public int GuestArrivalId { get; set; }
+    public int? GuestArrivalId { get; set; }
     [ForeignKey("GuestArrivalId")] public GuestArrival? GuestArrival { get; set; }
 
     // Thông tin văn phòng

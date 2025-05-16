@@ -14,6 +14,7 @@ public interface IVenueRepository: IGenericRepository<Venue>
    Task<VenueType?> GetVenueTypeById(int venueTypeId);
    Task<Venue?> GetById(int venueId);
    Task<bool> FindById(int venueId);
+   Task<List<Venue>> GetVenuesByHostId(int hostId);
 }
 
 public class VenueRepository(ApplicationDbContext dbContext, DbConnection<MySqlConnection> dbConnection) : GenericRepository<Venue>(dbContext), IVenueRepository
@@ -87,5 +88,20 @@ public class VenueRepository(ApplicationDbContext dbContext, DbConnection<MySqlC
         const string sql = "select count(*) from Venue where VenueId = @venueId";
         var result = await cnn.ExecuteScalarAsync<int>(sql, new { VenueId = venueId });
         return result > 0;
+    }
+
+    public async Task<List<Venue>> GetVenuesByHostId(int hostId)
+    {
+        var cnn = dbConnection.OpenConnection();
+        try
+        {
+            const string sql = "select * from Venue where HostId = @hostId";
+            var result = await cnn.QueryAsync<Venue>(sql, new { HostId= hostId });
+            return result.ToList();
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Error while getting venues by user id", e);
+        }
     }
 }

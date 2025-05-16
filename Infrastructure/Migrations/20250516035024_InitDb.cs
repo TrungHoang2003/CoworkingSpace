@@ -131,7 +131,7 @@ namespace Infrastructure.Migrations
                 name: "GuestArrival",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    GuestHourId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     WelcomeMessage = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
@@ -148,7 +148,7 @@ namespace Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_GuestArrival", x => x.Id);
+                    table.PrimaryKey("PK_GuestArrival", x => x.GuestHourId);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -494,7 +494,7 @@ namespace Infrastructure.Migrations
                         name: "FK_Venue_GuestArrival_GuestArrivalId",
                         column: x => x.GuestArrivalId,
                         principalTable: "GuestArrival",
-                        principalColumn: "Id",
+                        principalColumn: "GuestHourId",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Venue_VenueAddress_VenueAddressId",

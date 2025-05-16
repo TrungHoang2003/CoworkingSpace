@@ -17,11 +17,6 @@ internal class UpdateSpaceVideoCommandHandler(CloudinaryService cloudinaryServic
 {
     public async Task<Result> Handle(UpdateSpaceVideoCommand request, CancellationToken cancellationToken)
     {
-        // var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-        // if (!validatorResult.IsValid)
-        //     return Result.Failure(new Error("Validation Errors",
-        //         string.Join("; ", validatorResult.Errors.Select(x => x.ErrorMessage).ToList())));
-
         var space = await unitOfWork.Space.FindById(request.SpaceId);
         if (!space) return SpaceErrors.SpaceNotFound;
 

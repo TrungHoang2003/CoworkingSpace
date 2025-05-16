@@ -20,11 +20,6 @@ public class UpdateSpaceCommandHandler(IUnitOfWork unitOfWork)
 {
     public async Task<Result> Handle(UpdateSpaceCommand request, CancellationToken cancellationToken)
     {
-        // var validatorResult = await validator.ValidateAsync(request, cancellationToken);
-        // if (!validatorResult.IsValid)
-        //     return Result.Failure(new Error("Validation Errors",
-        //         string.Join("; ", validatorResult.Errors.Select(x => x.ErrorMessage).ToList())));
-        
         var space = await unitOfWork.Space.GetById(request.SpaceId);
         if (space is null) return SpaceErrors.SpaceNotFound;
 

@@ -1,10 +1,12 @@
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities;
 
 public class GuestArrival
 {
-    public int Id { get; set; }
+    [Key]
+    public int GuestHourId { get; set; }
     public string? WelcomeMessage { get; set; }
     public string? EntryInformation { get; set; }
     public string? ParkingInformation { get; set; }

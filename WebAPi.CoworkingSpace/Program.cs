@@ -1,8 +1,10 @@
 using System.Text;
 using Application;
+using Application.SpaceService.CQRS.Commands;
 using CoworkingSpace.Middlewares;
 using CoworkingSpace.Transformer;
 using dotenv.net;
+using FluentValidation;
 using Infrastructure;
 using Infrastructure.DbHelper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -168,6 +170,12 @@ using (var scope = app.Services.CreateScope())
             Thread.Sleep(delaySeconds * 1000);
         }
     }
+    
+    var validators = scope.ServiceProvider.GetServices<IValidator<CreateSpaceCommand>>();
+    foreach (var v in validators)
+    {
+        Console.WriteLine($"Validator: {v.GetType().FullName}");
+    }
 }
 
 // HTTP Request pipeline
@@ -186,7 +194,7 @@ app.UseRouting();
 app.UseCors("AllowAll");
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseMiddleware<ExceptionHandlerMiddleWare>();
+app.UseMiddleware<ExceptionHandlerMiddleWare>(); 
 app.UseMiddleware<TokenValidateMiddleware>();
 app.MapControllers();
 
