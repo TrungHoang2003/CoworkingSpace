@@ -1,0 +1,29 @@
+﻿services:
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_DATABASE: CoworkingSpace
+      MYSQL_USER: trung
+      MYSQL_PASSWORD: trung220703
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./Infrastructure/Database:/docker-entrypoint-initdb.d
+    networks:
+      - coworking-network
+
+  redis:
+    image: redis:latest
+    container_name: coworking-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - coworking-network
+      
+networks:
+  coworking-network:
+    driver: bridge
+
+volumes:
+  mysql-data:

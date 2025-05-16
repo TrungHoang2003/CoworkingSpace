@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="SqlDialectMappings">
+    <file url="file://$PROJECT_DIR$/Infrastructure/Database/init.sql" dialect="MySQL" />
+    <file url="file://$PROJECT_DIR$/Infrastructure/Repositories/AmenityRepository.cs" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/Infrastructure/Repositories/SpaceRepository.cs" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/Infrastructure/Repositories/SpaceTypeRepository.cs" dialect="GenericSQL" />
+    <file url="file://$PROJECT_DIR$/Infrastructure/Repositories/VenueRepository.cs" dialect="GenericSQL" />
+  </component>
+</project>

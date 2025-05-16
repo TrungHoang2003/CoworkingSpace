@@ -1,22 +1,11 @@
-<<<<<<< HEAD
 # Default ignored files
 /shelf/
 /workspace.xml
 # Rider ignored files
 /modules.xml
+/.idea.WebAPi.iml
 /projectSettingsUpdater.xml
-/.idea.CoworkingSpace.iml
 /contentModel.xml
-=======
-﻿# Default ignored files
-/shelf/
-/workspace.xml
-# Rider ignored files
-/contentModel.xml
-/projectSettingsUpdater.xml
-/modules.xml
-/.idea.CoworkingSpace.iml
->>>>>>> dev
 # Editor-based HTTP Client requests
 /httpRequests/
 # Datasource local storage ignored files
