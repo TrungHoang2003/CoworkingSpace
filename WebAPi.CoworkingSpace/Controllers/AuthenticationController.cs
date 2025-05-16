@@ -47,4 +47,16 @@ public class AuthenticationController : ControllerBase
         var result = await _mediator.Send(command);
         return result.IsSuccess ? Redirect(result.Value) : BadRequest(result.Error);
     }
+    
+    [HttpPost("Logout")]
+    public async Task<IActionResult> Logout()
+    {
+        var command = new LogoutCommand();
+        var result = await _mediator.Send(command);
+        
+        if(!result.IsSuccess)
+            return BadRequest(result.Error);
+    
+        return Ok(result.Value);
+    }
 }

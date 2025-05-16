@@ -11,17 +11,16 @@ public class TokenValidateMiddleware(RequestDelegate next, RedisService redisSer
 
         // Bỏ qua middleware cho các endpoint không cần xác thực
         if (path != null &&
-            (path.StartsWith("/account/login") ||
-             path.StartsWith("/account/refreshtoken") ||
-             path.StartsWith("/account/register") ||
-             path.StartsWith("/scalar") || 
-             path.StartsWith("/account/logout")))
+            (path.StartsWith("/authentication/login") ||
+             path.StartsWith("/authentication/refreshtoken") ||
+             path.StartsWith("/authentication/register") ||
+             path.StartsWith("/scalar")))
         {
             await next(context);
             return;
         }
 
-        string token = null;
+        string? token = null;
 
         // ✅ Ưu tiên lấy token từ Authorization Header
         var authHeader = context.Request.Headers["Authorization"].ToString();

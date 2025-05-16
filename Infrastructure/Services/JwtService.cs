@@ -14,7 +14,7 @@ namespace Infrastructure.Services;
 
 public class JwtService(IConfiguration configuration)
 {
-    public int GetUserIdFromToken(string token)
+    public int GetUserIdFromToken(string? token)
     {
         try
         {
