@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using Application.DTOs;
 using Application.ExceptionService.Mappings;
 using Domain.Entities;
 using Domain.Errors;

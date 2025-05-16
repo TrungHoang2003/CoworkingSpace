@@ -22,7 +22,7 @@ public class DeleteSpaceAssetCommandHandler(IUnitOfWork unitOfWork, CloudinarySe
         
         await unitOfWork.SpaceAsset.Delete(asset);
         var result = await cloudinaryService.DeleteFile(asset.Url);
-        if (!result) return CloudinaryErrors.DeteleSpaceAssetFailed;
+        if (!result) return CloudinaryErrors.DeleteSpaceAssetFailed;
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

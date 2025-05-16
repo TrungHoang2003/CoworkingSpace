@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class InitDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -124,6 +124,31 @@ namespace Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ExceptionRule", x => x.ExceptionId);
+                })
+                .Annotation("MySql:CharSet", "utf8mb4");
+
+            migrationBuilder.CreateTable(
+                name: "GuestArrival",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
+                    WelcomeMessage = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    EntryInformation = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ParkingInformation = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    ParkingPrice = table.Column<decimal>(type: "decimal(65,30)", nullable: true),
+                    ParkingType = table.Column<int>(type: "int", nullable: true),
+                    WifiName = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
+                    WifiPassword = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4")
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_GuestArrival", x => x.Id);
                 })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
@@ -446,6 +471,7 @@ namespace Infrastructure.Migrations
                     HostId = table.Column<int>(type: "int", nullable: false),
                     VenueTypeId = table.Column<int>(type: "int", nullable: false),
                     VenueAddressId = table.Column<int>(type: "int", nullable: false),
+                    GuestArrivalId = table.Column<int>(type: "int", nullable: false),
                     Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Description = table.Column<string>(type: "longtext", nullable: true)
@@ -462,6 +488,12 @@ namespace Infrastructure.Migrations
                         name: "FK_Venue_AspNetUsers_HostId",
                         column: x => x.HostId,
                         principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Venue_GuestArrival_GuestArrivalId",
+                        column: x => x.GuestArrivalId,
+                        principalTable: "GuestArrival",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
@@ -582,29 +614,6 @@ namespace Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_VenueHoliday_Venue_VenueId",
-                        column: x => x.VenueId,
-                        principalTable: "Venue",
-                        principalColumn: "VenueId",
-                        onDelete: ReferentialAction.Cascade);
-                })
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "VenueImage",
-                columns: table => new
-                {
-                    VenueImageId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    VenueId = table.Column<int>(type: "int", nullable: false),
-                    ImageUrl = table.Column<string>(type: "longtext", nullable: true)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    UploadedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_VenueImage", x => x.VenueImageId);
-                    table.ForeignKey(
-                        name: "FK_VenueImage_Venue_VenueId",
                         column: x => x.VenueId,
                         principalTable: "Venue",
                         principalColumn: "VenueId",
@@ -931,6 +940,11 @@ namespace Infrastructure.Migrations
                 column: "SpaceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Venue_GuestArrivalId",
+                table: "Venue",
+                column: "GuestArrivalId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Venue_HostId",
                 table: "Venue",
                 column: "HostId");
@@ -953,11 +967,6 @@ namespace Infrastructure.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_VenueHoliday_VenueId",
                 table: "VenueHoliday",
-                column: "VenueId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_VenueImage_VenueId",
-                table: "VenueImage",
                 column: "VenueId");
         }
 
@@ -1010,9 +1019,6 @@ namespace Infrastructure.Migrations
                 name: "VenueHoliday");
 
             migrationBuilder.DropTable(
-                name: "VenueImage");
-
-            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
@@ -1047,6 +1053,9 @@ namespace Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "GuestArrival");
 
             migrationBuilder.DropTable(
                 name: "VenueAddress");

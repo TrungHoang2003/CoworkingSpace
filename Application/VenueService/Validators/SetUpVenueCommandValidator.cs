@@ -1,4 +1,3 @@
-using Application.DTOs;
 using Application.GuestHourService.Validators;
 using Application.VenueService.CQRS.Commands;
 using Application.VenueService.DTOs;

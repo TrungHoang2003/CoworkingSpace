@@ -14,5 +14,5 @@ public sealed record CloudinaryErrors
     public static readonly Error UpdateSpaceVirtualVideoFailed= new("Cloudinary Erros","Update space virtual video failed");
     public static readonly Error UploadSpacePdfFlyerFailed= new("Cloudinary Erros","Upload space pdf flyer failed");
     public static readonly Error UploadSpaceImageFailed= new("Cloudinary Erros","Upload space image failed");
-    public static readonly Error DeteleSpaceAssetFailed= new("Cloudinary Erros","Delete space asset failed");
+    public static readonly Error DeleteSpaceAssetFailed= new("Cloudinary Erros","Delete space asset failed");
 }

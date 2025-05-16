@@ -15,6 +15,7 @@ namespace Application.VenueService.CQRS.Commands;
 public sealed record SetUpVenueCommand(
     int VenueId,
     SetUpVenueDetailsDto? Details,
+    GuestArrivalDto? GuestArrival,
     SetUpVenueAddressDto? Address,
     List<SetUpVenueGuestHourDto>? GuestHours,
     List<int>? HolidayIds
@@ -34,7 +35,6 @@ public class SetUpVenueCommandHandler(IUnitOfWork unitOfWork, IValidator<SetUpVe
         
         // Update Venue 
         venue = request.ToVenue(venue);
-        await unitOfWork.Venue.Update(venue);
         
         // Update GuestHours
         if (request.GuestHours is { Count: > 0 })
@@ -50,9 +50,15 @@ public class SetUpVenueCommandHandler(IUnitOfWork unitOfWork, IValidator<SetUpVe
             {
                 var newGuestHours = new List<GuestHour>();
                 var guestHour = guestHourDto.ToGuestHour();
-                newGuestHours.Add(guestHour);
-                await unitOfWork.GuestHour.AddRangeAsync(newGuestHours);
+                venue.GuestHours.Add(guestHour);
             }
+        }
+        
+        // Update GuestArrival
+        if (request.GuestArrival != null)
+        {
+            var guestArrival = request.GuestArrival.ToGuestArrival();
+            venue.GuestArrival = guestArrival;
         }
         
         // Set Observed Holidays
@@ -75,9 +81,10 @@ public class SetUpVenueCommandHandler(IUnitOfWork unitOfWork, IValidator<SetUpVe
                         "Cannot find venueHoliday with Id = " + holidayId + ""));
 
                 venueHoliday.IsObserved = true;
-                await unitOfWork.VenueHoliday.Update(venueHoliday);
+                (venue.Holidays ??= new List<VenueHoliday>()).Add(venueHoliday);
             }
         }
+        await unitOfWork.Venue.Update(venue);
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

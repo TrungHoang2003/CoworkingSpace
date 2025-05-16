@@ -61,7 +61,7 @@ public class CreateSpaceCommandHandler(
                     Url = result,
                     Type = SpaceAssetType.VirtualVideo,
                 };
-                space.SpaceAssets?.Add(asset);
+                (space.SpaceAssets ??= new List<SpaceAsset>()).Add(asset);
             }
 
             if (spaceAsset.Video != null)
@@ -73,7 +73,7 @@ public class CreateSpaceCommandHandler(
                     Url = result,
                     Type = SpaceAssetType.Video,
                 };
-                space.SpaceAssets?.Add(asset);
+                (space.SpaceAssets ??= new List<SpaceAsset>()).Add(asset);
             }
 
             if (spaceAsset.PdfFlyer != null)
@@ -85,7 +85,7 @@ public class CreateSpaceCommandHandler(
                     Url = result,
                     Type = SpaceAssetType.Pdf,
                 };
-                space.SpaceAssets?.Add(asset);
+                (space.SpaceAssets ??= new List<SpaceAsset>()).Add(asset);
             }
         }
 
@@ -101,7 +101,7 @@ public class CreateSpaceCommandHandler(
                     Url = result,
                     Type = imageDto.Type,
                 };
-                space.SpaceAssets?.Add(newSpaceImage);
+                (space.SpaceAssets ??= new List<SpaceAsset>()).Add(newSpaceImage);
             }
         }
 
@@ -131,7 +131,7 @@ public class CreateSpaceCommandHandler(
                         "Amenity not found with Id = " + amenityId));
 
                 var spaceAmenity = new SpaceAmenity { AmenityId = amenityId };
-                space.Amenities?.Add(spaceAmenity);
+                (space.Amenities??= new List<SpaceAmenity>()).Add(spaceAmenity);
             }
         }
 

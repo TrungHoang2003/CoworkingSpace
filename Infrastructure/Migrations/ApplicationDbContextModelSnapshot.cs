@@ -178,6 +178,40 @@ namespace Infrastructure.Migrations
                     b.ToTable("ExceptionRuleDay");
                 });
 
+            modelBuilder.Entity("Domain.Entities.GuestArrival", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("EntryInformation")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("ParkingInformation")
+                        .HasColumnType("longtext");
+
+                    b.Property<decimal?>("ParkingPrice")
+                        .HasColumnType("decimal(65,30)");
+
+                    b.Property<int?>("ParkingType")
+                        .HasColumnType("int");
+
+                    b.Property<string>("WelcomeMessage")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("WifiName")
+                        .HasColumnType("longtext");
+
+                    b.Property<string>("WifiPassword")
+                        .HasColumnType("longtext");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("GuestArrival");
+                });
+
             modelBuilder.Entity("Domain.Entities.GuestHour", b =>
                 {
                     b.Property<int>("GuestHourId")
@@ -673,6 +707,9 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Floor")
                         .HasColumnType("longtext");
 
+                    b.Property<int>("GuestArrivalId")
+                        .HasColumnType("int");
+
                     b.Property<int>("HostId")
                         .HasColumnType("int");
 
@@ -689,6 +726,8 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("VenueId");
+
+                    b.HasIndex("GuestArrivalId");
 
                     b.HasIndex("HostId");
 
@@ -754,30 +793,6 @@ namespace Infrastructure.Migrations
                     b.HasIndex("VenueId");
 
                     b.ToTable("VenueHoliday");
-                });
-
-            modelBuilder.Entity("Domain.Entities.VenueImage", b =>
-                {
-                    b.Property<int>("VenueImageId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("VenueImageId"));
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("longtext");
-
-                    b.Property<DateTime>("UploadedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<int>("VenueId")
-                        .HasColumnType("int");
-
-                    b.HasKey("VenueImageId");
-
-                    b.HasIndex("VenueId");
-
-                    b.ToTable("VenueImage");
                 });
 
             modelBuilder.Entity("Domain.Entities.VenueType", b =>
@@ -1099,6 +1114,12 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Venue", b =>
                 {
+                    b.HasOne("Domain.Entities.GuestArrival", "GuestArrival")
+                        .WithMany()
+                        .HasForeignKey("GuestArrivalId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Domain.Entities.User", "Host")
                         .WithMany("Venues")
                         .HasForeignKey("HostId")
@@ -1119,6 +1140,8 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Address");
 
+                    b.Navigation("GuestArrival");
+
                     b.Navigation("Host");
 
                     b.Navigation("Type");
@@ -1134,17 +1157,6 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.Entities.Venue", "Venue")
                         .WithMany("Holidays")
-                        .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Venue");
-                });
-
-            modelBuilder.Entity("Domain.Entities.VenueImage", b =>
-                {
-                    b.HasOne("Domain.Entities.Venue", "Venue")
-                        .WithMany("VenueImages")
                         .HasForeignKey("VenueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -1270,8 +1282,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("Holidays");
 
                     b.Navigation("Spaces");
-
-                    b.Navigation("VenueImages");
                 });
 #pragma warning restore 612, 618
         }

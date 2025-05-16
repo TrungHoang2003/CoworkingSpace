@@ -52,7 +52,6 @@ public static class InfrastructureDi
         services.AddScoped<ISpaceRepository, SpaceRepository>();
         services.AddScoped<IAmenityRepository, AmenityRepository>();
         services.AddScoped<IVenueHolidayRepository, VenueHolidayRepository>();
-        services.AddScoped<IVenueImageRepository, VenueImageRepository>();
         services.AddScoped<ISpaceAssetRepository, SpaceAssetRepository>();
         services.AddScoped<ISpaceAmenityRepository, SpaceAmenityRepository>();
         services.AddScoped<ISpaceTypeRepository, SpaceTypeRepository>();

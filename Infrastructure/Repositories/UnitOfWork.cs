@@ -8,7 +8,6 @@ public interface IUnitOfWork
     ISpaceTypeRepository SpaceType { get; }    
    ISpaceRepository Space { get; }
    IGuestHourRepository GuestHour { get; }
-   IVenueImageRepository VenueImage { get; }
    ISpaceAssetRepository SpaceAsset { get; }
    IVenueTypeRepository VenueType { get; }
    IVenueAddressRepository VenueAddress{ get; }
@@ -22,13 +21,12 @@ public interface IUnitOfWork
    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 
-public class UnitOfWork(ApplicationDbContext dbContext, IVenueRepository venue, IUserRepository user, IVenueTypeRepository venueType, IVenueAddressRepository venueAddress, IGuestHourRepository guestHour, IHolidayRepository holiday, IVenueHolidayRepository venueHoliday, IBookingWindowRepository bookingWindow, ISpaceRepository space, IExceptionRepository exception, ISpaceTypeRepository spaceType, IAmenityRepository amenity, ISpaceAmenityRepository spaceAmenity, IVenueImageRepository venueImage, ISpaceAssetRepository spaceAsset) : IUnitOfWork
+public class UnitOfWork(ApplicationDbContext dbContext, IVenueRepository venue, IUserRepository user, IVenueTypeRepository venueType, IVenueAddressRepository venueAddress, IGuestHourRepository guestHour, IHolidayRepository holiday, IVenueHolidayRepository venueHoliday, IBookingWindowRepository bookingWindow, ISpaceRepository space, IExceptionRepository exception, ISpaceTypeRepository spaceType, IAmenityRepository amenity, ISpaceAmenityRepository spaceAmenity, ISpaceAssetRepository spaceAsset) : IUnitOfWork
 {
     public IVenueRepository Venue { get; } = venue;
     public ISpaceTypeRepository SpaceType { get; } = spaceType;
     public ISpaceRepository Space { get; } = space;
     public IGuestHourRepository GuestHour { get; } = guestHour;
-    public IVenueImageRepository VenueImage { get; } = venueImage;
     public ISpaceAssetRepository SpaceAsset { get; } = spaceAsset;
     public IVenueTypeRepository VenueType { get; } = venueType;
     public IUserRepository User { get; } = user;

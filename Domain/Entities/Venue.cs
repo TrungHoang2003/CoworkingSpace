@@ -19,6 +19,10 @@ public class Venue
     // Địa chỉ văn phòng
     public int VenueAddressId { get; set; }
     [ForeignKey("VenueAddressId")] public VenueAddress Address { get; set; }
+    
+    //GuestArrival
+    public int GuestArrivalId { get; set; }
+    [ForeignKey("GuestArrivalId")] public GuestArrival? GuestArrival { get; set; }
 
     // Thông tin văn phòng
     public string? Name { get; set; }
@@ -26,7 +30,6 @@ public class Venue
     public string? LogoUrl { get; set; }
     public string? Floor { get; set; }
 
-    public ICollection<VenueImage>? VenueImages { get; set; } // Hình ảnh văn phòng
     public ICollection<Space> Spaces { get; set; } // Danh sách không gian trong văn phòng
     public ICollection<GuestHour> GuestHours { get; set; } // Giờ cho thuê
     public ICollection<VenueHoliday>? Holidays { get; set; } // Ngày nghỉ lễ
