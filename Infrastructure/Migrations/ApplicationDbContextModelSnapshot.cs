@@ -707,7 +707,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Floor")
                         .HasColumnType("longtext");
 
-                    b.Property<int>("GuestArrivalId")
+                    b.Property<int?>("GuestArrivalId")
                         .HasColumnType("int");
 
                     b.Property<int>("HostId")
@@ -1116,9 +1116,7 @@ namespace Infrastructure.Migrations
                 {
                     b.HasOne("Domain.Entities.GuestArrival", "GuestArrival")
                         .WithMany()
-                        .HasForeignKey("GuestArrivalId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("GuestArrivalId");
 
                     b.HasOne("Domain.Entities.User", "Host")
                         .WithMany("Venues")

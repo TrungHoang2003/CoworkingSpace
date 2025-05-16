@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class InitDb : Migration
+    public partial class initDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -471,7 +471,7 @@ namespace Infrastructure.Migrations
                     HostId = table.Column<int>(type: "int", nullable: false),
                     VenueTypeId = table.Column<int>(type: "int", nullable: false),
                     VenueAddressId = table.Column<int>(type: "int", nullable: false),
-                    GuestArrivalId = table.Column<int>(type: "int", nullable: false),
+                    GuestArrivalId = table.Column<int>(type: "int", nullable: true),
                     Name = table.Column<string>(type: "longtext", nullable: true)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Description = table.Column<string>(type: "longtext", nullable: true)
@@ -494,8 +494,7 @@ namespace Infrastructure.Migrations
                         name: "FK_Venue_GuestArrival_GuestArrivalId",
                         column: x => x.GuestArrivalId,
                         principalTable: "GuestArrival",
-                        principalColumn: "GuestHourId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "GuestHourId");
                     table.ForeignKey(
                         name: "FK_Venue_VenueAddress_VenueAddressId",
                         column: x => x.VenueAddressId,

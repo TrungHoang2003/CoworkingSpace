@@ -1,4 +1,6 @@
 using Application.VenueService.CQRS.Commands;
+using Application.VenueService.CQRS.Queries;
+using Domain.Errors;
 using Infrastructure.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -51,6 +53,25 @@ public class VenueController(IVenueRepository repository, IMediator mediator): C
         if (result.IsFailure)
             return BadRequest(result.Error);
         
+        return Ok(result);
+    }
+
+    [HttpGet("GetUserVenues")]
+    public async Task<IActionResult> GetUserVenues()
+    {
+        var result = await mediator.Send(new GetUserVenuesQuery());
+        if (result.IsFailure)
+            return BadRequest(result.Error);
+        
+        return Ok(result.Value);
+    }
+    
+    [HttpGet("GetVenueById/{venueId}")]
+    public async Task<IActionResult> GetVenueById(int venueId)
+    {
+        var result = await repository.GetById(venueId);
+        if(result == null)
+            return BadRequest(VenueErrors.VenueNotFound);
         return Ok(result);
     }
 }

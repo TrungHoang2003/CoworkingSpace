@@ -49,11 +49,9 @@ public class SignUpVenueCommandHandler(
 
         // Lấy userId từ JWT
         var userId = httpContextAccessor.HttpContext?.Items["UserId"]?.ToString();
-        if (string.IsNullOrEmpty(userId))
-            return AuthenErrors.UserIdNotFoundInJwt;
 
         // Tìm kiếm người dùng trong db
-        var user = await userManager.FindByIdAsync(userId);
+        var user = await userManager.FindByIdAsync(userId!);
         if (user == null) return AuthenErrors.NotLoggedIn;
 
         // Kiểm tra đã có role Host chưa, nếu chưa tạo role Host và gán cho User
