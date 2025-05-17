@@ -14,13 +14,12 @@ using Microsoft.AspNetCore.Identity;
 namespace Application.VenueService.CQRS.Commands;
 
 public sealed record SignUpVenueCommand(
-    IFormFile? UserAvatar,
+    string? UserAvatar,
     int VenueTypeId,
     string Name,
     string Description,
-    string Floor,
     string PhoneNumber,
-    IFormFile? Logo,
+    string? Logo,
     SignUpVenueAddressDto Address
 ) : IRequest<Result>;
 

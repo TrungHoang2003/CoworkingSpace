@@ -37,10 +37,6 @@ public class SignUpVenueCommandValidator: AbstractValidator<SignUpVenueCommand>
          .NotNull()
          .WithMessage("Description is required.");
       
-      RuleFor(x => x.Floor)
-         .NotNull()
-         .WithMessage("Floor is required.");
-      
       RuleFor(x => x.Name)
          .NotNull()
          .WithMessage("Venue Name is required.");

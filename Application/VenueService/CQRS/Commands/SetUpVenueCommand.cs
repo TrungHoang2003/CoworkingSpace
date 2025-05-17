@@ -34,7 +34,6 @@ public class SetUpVenueCommandHandler(IUnitOfWork unitOfWork)
         {
             venue.Name = request.Details.Name;
             venue.Description = request.Details.Description;
-            venue.Floor = request.Details.Floor;
         }
 
         if (request.Address is not null)

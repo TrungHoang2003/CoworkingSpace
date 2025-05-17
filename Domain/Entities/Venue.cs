@@ -28,7 +28,6 @@ public class Venue
     public string? Name { get; set; }
     public string? Description { get; set; }
     public string? LogoUrl { get; set; }
-    public string? Floor { get; set; }
 
     public ICollection<Space> Spaces { get; set; } // Danh sách không gian trong văn phòng
     public ICollection<GuestHour> GuestHours { get; set; } // Giờ cho thuê

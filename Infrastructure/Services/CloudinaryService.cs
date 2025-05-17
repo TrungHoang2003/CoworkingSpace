@@ -1,6 +1,5 @@
 using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace Infrastructure.Services;
@@ -19,103 +18,97 @@ public class CloudinaryService
         _cloudinary = new Cloudinary(acc);
     }
 
-    public async Task<string?> UploadImage(IFormFile file)
-    {
-        await using var stream = file.OpenReadStream();
+    //=================== IMAGE ===================
 
+    public async Task<string?> UploadImage(string base64Image)
+    {
         var uploadParams = new ImageUploadParams
         {
-            File = new FileDescription(file.FileName, stream),
+            File = new FileDescription("base64_image", base64Image),
             Folder = "Coworking-Space/Images"
         };
 
         var result = await _cloudinary.UploadAsync(uploadParams);
-
         return result.SecureUrl?.ToString();
     }
 
-    public async Task<string?> UpdateImage(IFormFile file, string existingUrl)
+    public async Task<string?> UpdateImage(string base64Image, string existingUrl)
     {
-        await using var stream = file.OpenReadStream();
-
         var publicId = ExtractPublicId(existingUrl);
 
         var uploadParams = new ImageUploadParams
         {
-            File = new FileDescription(file.FileName, stream),
+            File = new FileDescription("base64_image", base64Image),
             PublicId = publicId
         };
 
         var result = await _cloudinary.UploadAsync(uploadParams);
-
         return result.SecureUrl?.ToString();
     }
 
-    public async Task<string?> UploadVideo(IFormFile file)
-    {
-        await using var stream = file.OpenReadStream();
+    //=================== VIDEO ===================
 
+    public async Task<string?> UploadVideo(string base64Video)
+    {
         var uploadParams = new VideoUploadParams
         {
-            File = new FileDescription(file.FileName, stream),
+            File = new FileDescription("base64_video", base64Video),
             Folder = "Coworking-Space/Videos"
         };
 
         var result = await _cloudinary.UploadAsync(uploadParams);
-
         return result.SecureUrl?.ToString();
     }
 
-    public async Task<string?> UpdateVideo(IFormFile file, string existingUrl)
+    public async Task<string?> UpdateVideo(string base64Video, string existingUrl)
     {
-        await using var stream = file.OpenReadStream();
-
         var publicId = ExtractPublicId(existingUrl);
 
         var uploadParams = new VideoUploadParams
         {
-            File = new FileDescription(file.FileName, stream),
+            File = new FileDescription("base64_video", base64Video),
             PublicId = publicId
         };
 
         var result = await _cloudinary.UploadAsync(uploadParams);
-
         return result.SecureUrl?.ToString();
     }
 
-    public async Task<string?> UploadRaw(IFormFile file)
-    {
-        await using var stream = file.OpenReadStream();
+    //=================== RAW FILE ===================
 
+    public async Task<string?> UploadRaw(string base64File)
+    {
         var uploadParams = new RawUploadParams
         {
-            File = new FileDescription(file.FileName, stream),
+            File = new FileDescription("base64_file", base64File),
             Folder = "Coworking-Space/Files"
         };
 
         var result = await _cloudinary.UploadAsync(uploadParams);
-
         return result.SecureUrl?.ToString();
     }
+
+    //=================== DELETE ===================
 
     public async Task<bool> DeleteFile(string url)
     {
         var publicId = ExtractPublicId(url);
-
         var deletionParams = new DeletionParams(publicId);
         var result = await _cloudinary.DestroyAsync(deletionParams);
 
         return result.Result == "ok";
     }
 
+    //=================== HELPER ===================
+
     private string ExtractPublicId(string url)
     {
         var uri = new Uri(url);
-        var path = uri.AbsolutePath; // /demo/image/upload/v17199999/Coworking-Space/Images/logo_abcd1234.png
+        var path = uri.AbsolutePath;
         var uploadIndex = path.IndexOf("/Coworking-Space/") + "/Coworking-Space/".Length;
         var withoutVersion = path.Substring(uploadIndex);
         var withoutExtension = withoutVersion.Substring(0, withoutVersion.LastIndexOf('.'));
 
-        return "Coworking-Space/"+withoutExtension;
+        return "Coworking-Space/" + withoutExtension;
     }
 }

@@ -10,7 +10,7 @@ using Error = Domain.ResultPattern.Error;
 
 namespace Application.SpaceService.CQRS.Commands;
 
-public sealed record UpdateSpaceVideoCommand(IFormFile Video, int SpaceId):IRequest<Result>;
+public sealed record UpdateSpaceVideoCommand(string Video, int SpaceId):IRequest<Result>;
 
 internal class UpdateSpaceVideoCommandHandler(CloudinaryService cloudinaryService, IUnitOfWork unitOfWork)
     : IRequestHandler<UpdateSpaceVideoCommand, Result>

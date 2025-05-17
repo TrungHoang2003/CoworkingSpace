@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.SpaceService.CQRS.Commands;
 
-public sealed record AddSpaceImageCommand(IFormFile Image, int SpaceId, SpaceAssetType Type):IRequest<Result>;
+public sealed record AddSpaceImageCommand(string Image, int SpaceId, SpaceAssetType Type):IRequest<Result>;
 
 public class AddSpaceImageCommandHandler(IUnitOfWork unitOfWork, CloudinaryService cloudinaryService)
     : IRequestHandler<AddSpaceImageCommand, Result>

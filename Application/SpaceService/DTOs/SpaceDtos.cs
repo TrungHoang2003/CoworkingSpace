@@ -15,13 +15,13 @@ public class SpaceInfoDto
 
 public class SpaceAssetDto
 {
-    public IFormFile? Video { get; set; }
-    public IFormFile? VirtualVideo { get; set; }
-    public IFormFile? PdfFlyer { get; set; }
+    public string? Video { get; set; }
+    public string? VirtualVideo { get; set; }
+    public string? PdfFlyer { get; set; }
 }
 
 public class SpaceImageDto
 {
-    public IFormFile? Image { get; set; }
+    public string? Image { get; set; }
     public SpaceAssetType? Type { get; set; }
 }

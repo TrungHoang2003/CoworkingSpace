@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.VenueService.CQRS.Commands;
 
-public sealed record UpdateVenueLogoCommand(IFormFile Logo, int VenueId) : IRequest<Result>;
+public sealed record UpdateVenueLogoCommand(string Logo, int VenueId) : IRequest<Result>;
 
 public class UpdateVenueLogoCommandHandler(IUnitOfWork unitOfWork, CloudinaryService cloudinaryService) : IRequestHandler<UpdateVenueLogoCommand, Result>
 {

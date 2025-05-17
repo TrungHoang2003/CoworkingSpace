@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.UserService.CQRS.Commands;
 
-public sealed record UpdateUserAvatarCommand(IFormFile Avatar, int UserId) : IRequest<Result>;
+public sealed record UpdateUserAvatarCommand(string Avatar, int UserId) : IRequest<Result>;
 
 public class UpdateUserAvatarCommandHandler(IUnitOfWork unitOfWork, CloudinaryService cloudinaryService) : IRequestHandler<UpdateUserAvatarCommand, Result>
 {

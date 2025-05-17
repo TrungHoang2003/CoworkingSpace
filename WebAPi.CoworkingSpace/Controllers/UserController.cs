@@ -11,7 +11,7 @@ namespace CoworkingSpace.Controllers;
 public class UserController(IMediator mediator):Controller
 {
     [HttpPost("UpdateAvatar")]
-    public async Task<IActionResult> UpdateAvatar([FromForm] UpdateUserAvatarCommand request)
+    public async Task<IActionResult> UpdateAvatar([FromBody] UpdateUserAvatarCommand request)
     {
         var result = await mediator.Send(request);
         if (result.IsSuccess) return Ok(result);

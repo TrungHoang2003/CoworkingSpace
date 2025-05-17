@@ -14,7 +14,6 @@ public static class VenueMapping
             VenueTypeId = command.VenueTypeId,
             Name = command.Name,
             Description = command.Description,
-            Floor = command.Floor,
             LogoUrl = logoUrl, // Được truyền vào từ kết quả upload Cloudinary
             Address = new VenueAddress
             {
