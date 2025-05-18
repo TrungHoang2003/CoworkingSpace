@@ -1,8 +1,8 @@
-using Application.UserService.DTOs;
 using Application.UserService.Mappings;
 using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
+using Domain.ViewModel;
 using Infrastructure.Repositories;
 using Infrastructure.Services;
 using MediatR;

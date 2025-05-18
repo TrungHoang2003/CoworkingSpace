@@ -1,6 +1,7 @@
 using Dapper;
 using Domain.Entites;
 using Domain.Entities;
+using Domain.ViewModel;
 using Infrastructure.DbHelper;
 using Microsoft.Extensions.Configuration;
 using MySqlConnector;
@@ -14,7 +15,8 @@ public interface IVenueRepository: IGenericRepository<Venue>
    Task<VenueType?> GetVenueTypeById(int venueTypeId);
    Task<Venue?> GetById(int venueId);
    Task<bool> FindById(int venueId);
-   Task<List<Venue>> GetVenuesByHostId(int hostId);
+   Task<List<VenueItemViewModel>> GetVenueListItem(int hostId);
+   Task<VenueItemViewModel?> GetVenueItem(int hostId, int venueId);
 }
 
 public class VenueRepository(ApplicationDbContext dbContext, DbConnection<MySqlConnection> dbConnection) : GenericRepository<Venue>(dbContext), IVenueRepository
@@ -90,18 +92,41 @@ public class VenueRepository(ApplicationDbContext dbContext, DbConnection<MySqlC
         return result > 0;
     }
 
-    public async Task<List<Venue>> GetVenuesByHostId(int hostId)
+    public async Task<List<VenueItemViewModel>> GetVenueListItem(int hostId)
     {
         var cnn = dbConnection.OpenConnection();
         try
         {
-            const string sql = "select * from Venue where HostId = @hostId";
-            var result = await cnn.QueryAsync<Venue>(sql, new { HostId= hostId });
+            const string sql = @"SELECT v.VenueId, v.Name, v.LogoUrl, a.FullAddress
+            FROM Venue v
+            LEFT JOIN VenueAddress a ON v.VenueAddressId = a.VenueAddressId
+            WHERE v.HostId = @HostId";
+            
+            var result = await cnn.QueryAsync<VenueItemViewModel>(sql, new { HostId= hostId });
             return result.ToList();
         }
         catch (Exception e)
         {
-            throw new Exception("Error while getting venues by user id", e);
+            throw new Exception("Error while getting venue lis item", e);
+        }
+    }
+
+    public async Task<VenueItemViewModel?> GetVenueItem(int hostId, int venueId)
+    {
+        var cnn = dbConnection.OpenConnection();
+        try
+        {
+            const string sql = @"SELECT v.VenueId, v.Name, v.LogoUrl, a.FullAddress
+            FROM Venue v
+            LEFT JOIN VenueAddress a ON v.VenueAddressId = a.VenueAddressId
+            WHERE v.HostId = @HostId and v.VenueId = @VenueId";
+            
+            var result = await cnn.QueryFirstOrDefaultAsync<VenueItemViewModel>(sql, new { VenueId = venueId, HostId= hostId });
+            return result;
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Error while getting Venue item", e);
         }
     }
 }

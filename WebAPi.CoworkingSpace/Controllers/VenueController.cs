@@ -56,22 +56,23 @@ public class VenueController(IVenueRepository repository, IMediator mediator): C
         return Ok(result);
     }
 
-    [HttpGet("GetUserVenues")]
+    [HttpGet("GetVenueListItem")]
     public async Task<IActionResult> GetUserVenues()
     {
-        var result = await mediator.Send(new GetUserVenuesQuery());
+        var result = await mediator.Send(new GetVenueListItemQuery());
         if (result.IsFailure)
             return BadRequest(result.Error);
         
         return Ok(result.Value);
     }
     
-    [HttpGet("GetVenueById/{venueId}")]
-    public async Task<IActionResult> GetVenueById(int venueId)
+    [HttpGet("GetVenueItem/{venueId}")]
+    public async Task<IActionResult> GetVenueItem(int venueId)
     {
-        var result = await repository.GetById(venueId);
-        if(result == null)
-            return BadRequest(VenueErrors.VenueNotFound);
-        return Ok(result);
+        var result = await mediator.Send(new GetVenueItemQuery(venueId));
+        if (result.IsFailure)
+            return BadRequest(result.Error);
+        
+        return Ok(result.Value);
     }
 }

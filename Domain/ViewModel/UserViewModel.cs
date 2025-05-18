@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Identity;
-
-namespace Application.UserService.DTOs;
+namespace Domain.ViewModel;
 
 public class UserViewModel
 { 

@@ -1,5 +1,5 @@
-using Application.UserService.DTOs;
 using Domain.Entities;
+using Domain.ViewModel;
 
 namespace Application.UserService.Mappings;
 
