@@ -1,12 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Domain.Entities;
 
-namespace Domain.Entites;
+namespace Domain.Entities;
 
 public enum PaymentMethod
 {
-    VNPay,
+    VnPay,
     Momo,
     CreditCard
 }
@@ -33,7 +32,7 @@ public class Payment
     [ForeignKey("CustomerId")]
     public User? Customer { get; set; }
     
-    public decimal Amount { get; set; }
+    public decimal TotalPrice { get; set; }
 
     public PaymentMethod PaymentMethod { get; set; }
     public PaymentStatus Status { get; set; } = PaymentStatus.Pending;

@@ -1,5 +1,4 @@
 using Dapper;
-using Domain.Entites;
 using Domain.Entities;
 using Domain.ViewModel;
 using Infrastructure.DbHelper;
@@ -10,7 +9,8 @@ namespace Infrastructure.Repositories;
 
 public interface IVenueRepository: IGenericRepository<Venue>
 {
-   Task<IEnumerable<VenueType>> GetVenueTypes();
+    Task<VenueDetailsViewModel?> GetVenueDetails(int venueId);
+    Task<IEnumerable<VenueType>> GetVenueTypes();
    Task<Venue?> GetVenuesByTypeId(int venueTypeId);
    Task<VenueType?> GetVenueTypeById(int venueTypeId);
    Task<Venue?> GetById(int venueId);
@@ -116,10 +116,12 @@ public class VenueRepository(ApplicationDbContext dbContext, DbConnection<MySqlC
         var cnn = dbConnection.OpenConnection();
         try
         {
-            const string sql = @"SELECT v.VenueId, v.Name, v.LogoUrl, a.FullAddress
-            FROM Venue v
-            LEFT JOIN VenueAddress a ON v.VenueAddressId = a.VenueAddressId
-            WHERE v.HostId = @HostId and v.VenueId = @VenueId";
+            const string sql = """
+                               SELECT v.VenueId, v.Name, v.LogoUrl, a.FullAddress
+                                           FROM Venue v
+                                           LEFT JOIN VenueAddress a ON v.VenueAddressId = a.VenueAddressId
+                                           WHERE v.HostId = @HostId and v.VenueId = @VenueId
+                               """;
             
             var result = await cnn.QueryFirstOrDefaultAsync<VenueItemViewModel>(sql, new { VenueId = venueId, HostId= hostId });
             return result;
@@ -127,6 +129,27 @@ public class VenueRepository(ApplicationDbContext dbContext, DbConnection<MySqlC
         catch (Exception e)
         {
             throw new Exception("Error while getting Venue item", e);
+        }
+    }
+    
+    public async Task<VenueDetailsViewModel?> GetVenueDetails(int venueId)
+    {
+        var cnn = dbConnection.OpenConnection();
+        try
+        {
+            const string sql = """
+                               SELECT v.Name, v.Description, v.LogoUrl, a.City, a.District, a.Street
+                                           FROM Venue v
+                                           LEFT JOIN VenueAddress a ON v.VenueAddressId = a.VenueAddressId
+                                           WHERE v.VenueId = @VenueId
+                               """;
+            
+            var result = await cnn.QueryFirstOrDefaultAsync<VenueDetailsViewModel>(sql, new { VenueId= venueId });
+            return result;
+        }
+        catch (Exception e)
+        {
+            throw new Exception("Error while getting venue details", e);
         }
     }
 }

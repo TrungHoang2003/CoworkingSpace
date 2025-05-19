@@ -1,4 +1,5 @@
 using Application.PriceService.DTOs;
+using Application.Services.Spaces.CQRS.Commands;
 using Application.SpaceService.CQRS.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;

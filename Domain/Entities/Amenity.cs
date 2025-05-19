@@ -1,6 +1,5 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using Domain.Entites;
 
 namespace Domain.Entities;
 
@@ -19,9 +18,10 @@ public class SpaceAmenity
 {
     [Key]
     public int SpaceAmenityId { get; set; }
-
     public int SpaceId { get; set; }
-
+    public bool? Availability{ get; set; }
+    public bool? HasFee{ get; set; }
+    
     [ForeignKey("SpaceId")]
     public Space Space { get; set; }
 

@@ -1,5 +1,4 @@
 using Dapper;
-using Domain.Entites;
 using Domain.Entities;
 using Infrastructure.DbHelper;
 using Microsoft.Extensions.Configuration;

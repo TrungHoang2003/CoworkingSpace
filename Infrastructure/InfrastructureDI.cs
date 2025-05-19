@@ -1,15 +1,9 @@
-using System.Collections.Immutable;
-using System.Reflection;
-using Domain.Entites;
 using Domain.Entities;
 using Infrastructure.DbHelper;
 using Infrastructure.Repositories;
-using Infrastructure.Services;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using MySqlConnector;
-using StackExchange.Redis;
 using Role = Domain.Entities.Role;
 
 namespace Infrastructure;
@@ -43,10 +37,6 @@ public static class InfrastructureDi
                 "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
         }).AddEntityFrameworkStores<ApplicationDbContext>();
 
-        services.AddSingleton<JwtService>();
-        services.AddSingleton<RedisService>();
-        services.AddSingleton<CloudinaryService>();
-        services.AddSingleton<GoogleAuthService>();
         services.AddSingleton<HttpClient>();
         services.AddScoped<DbConnection<MySqlConnection>, MySqlServer>();
         services.AddScoped<IGuestArrivalRepository, GuestArrivalRepository>();

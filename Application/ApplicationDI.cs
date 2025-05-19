@@ -1,7 +1,8 @@
 using System.Reflection;
-using Application.Behaviors;
 using Application.BookingWindowService.CQRS.Commands;
 using Application.BookingWindowService.Validators;
+using Application.PipelineBehaviors;
+using Application.SharedServices;
 using FluentValidation;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,6 +19,10 @@ public static class ApplicationDi
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
         
         
+        services.AddSingleton<JwtService>();
+        services.AddSingleton<RedisService>();
+        services.AddSingleton<CloudinaryService>();
+        services.AddSingleton<GoogleAuthService>();
         return services;
     }
 }

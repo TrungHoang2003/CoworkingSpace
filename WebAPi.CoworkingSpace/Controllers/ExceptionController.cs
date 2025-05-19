@@ -1,4 +1,4 @@
-using Application.ExceptionService.CQRS.Commands;
+using Application.Services.Exceptions.CQRS.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

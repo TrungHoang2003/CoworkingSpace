@@ -143,39 +143,18 @@ namespace Infrastructure.Migrations
                     b.Property<TimeSpan?>("EndTime")
                         .HasColumnType("time(6)");
 
+                    b.Property<bool>("IsClosed24Hours")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime(6)");
 
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time(6)");
 
-                    b.Property<int>("Unit")
-                        .HasColumnType("int");
-
                     b.HasKey("ExceptionId");
 
                     b.ToTable("ExceptionRule");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ExceptionRuleDay", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ExceptionRuleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ExceptionRuleId");
-
-                    b.ToTable("ExceptionRuleDay");
                 });
 
             modelBuilder.Entity("Domain.Entities.GuestArrival", b =>
@@ -704,9 +683,6 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
-                    b.Property<string>("Floor")
-                        .HasColumnType("longtext");
-
                     b.Property<int?>("GuestArrivalId")
                         .HasColumnType("int");
 
@@ -948,17 +924,6 @@ namespace Infrastructure.Migrations
                         .IsRequired();
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Domain.Entities.ExceptionRuleDay", b =>
-                {
-                    b.HasOne("Domain.Entities.ExceptionRule", "ExceptionRule")
-                        .WithMany("ExceptionRuleDays")
-                        .HasForeignKey("ExceptionRuleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("ExceptionRule");
                 });
 
             modelBuilder.Entity("Domain.Entities.GuestHour", b =>
@@ -1230,8 +1195,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.ExceptionRule", b =>
                 {
-                    b.Navigation("ExceptionRuleDays");
-
                     b.Navigation("Spaces");
                 });
 

@@ -1,4 +1,4 @@
-using Infrastructure.Services;
+using Application.SharedServices;
 
 namespace CoworkingSpace.Middlewares;
 

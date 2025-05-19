@@ -1,4 +1,5 @@
 using Domain.ResultPattern;
+using Domain.ViewModel;
 
 namespace Domain.Errors;
 

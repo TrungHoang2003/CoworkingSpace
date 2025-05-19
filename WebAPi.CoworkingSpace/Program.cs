@@ -1,5 +1,6 @@
 using System.Text;
 using Application;
+using Application.Services.Spaces.CQRS.Commands;
 using Application.SpaceService.CQRS.Commands;
 using CoworkingSpace.Middlewares;
 using CoworkingSpace.Transformer;
@@ -193,8 +194,8 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 app.UseCors("AllowAll");
 app.UseAuthentication();
-app.UseAuthorization();
-app.UseMiddleware<ExceptionHandlerMiddleWare>(); 
+app.UseAuthorization(); 
+app.UseMiddleware<ExceptionHandlerMiddleWare>();
 app.UseMiddleware<TokenValidateMiddleware>();
 app.MapControllers();
 
