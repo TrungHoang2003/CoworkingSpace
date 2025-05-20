@@ -2,7 +2,6 @@ using Application.Services.Venues.CQRS.Commands;
 using Application.Services.Venues.CQRS.Queries;
 using Application.VenueService.CQRS.Commands;
 using Application.VenueService.CQRS.Queries;
-using Domain.Errors;
 using Infrastructure.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
