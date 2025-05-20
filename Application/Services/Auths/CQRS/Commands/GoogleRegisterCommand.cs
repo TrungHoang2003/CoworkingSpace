@@ -3,7 +3,7 @@ using Domain.ResultPattern;
 using Infrastructure.Repositories;
 using MediatR;
 
-namespace Application.AuthService.CQRS.Commands;
+namespace Application.Services.Auths.CQRS.Commands;
 
 public sealed record GoogleRegisterCommand(
     string UserName,

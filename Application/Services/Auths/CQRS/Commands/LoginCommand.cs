@@ -1,13 +1,12 @@
 using Application.SharedServices;
 using Application.UserService.Mappings;
-using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
 using Domain.ViewModel;
 using Infrastructure.Repositories;
 using MediatR;
 
-namespace Application.AuthService.CQRS.Commands;
+namespace Application.Services.Auths.CQRS.Commands;
 
 public sealed record LoginCommand(
     string UserName,

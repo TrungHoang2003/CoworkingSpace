@@ -1,8 +1,6 @@
-using System.Security.Claims;
 using Application.Services.Venues.Mappings;
 using Application.SharedServices;
 using Application.VenueAddressService.DTOs;
-using Application.VenueService.Mappings;
 using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
@@ -11,7 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 
-namespace Application.VenueService.CQRS.Commands;
+namespace Application.Services.Venues.CQRS.Commands;
 
 public sealed record SignUpVenueCommand(
     string? UserAvatar,

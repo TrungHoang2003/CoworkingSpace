@@ -32,7 +32,7 @@ public class Space
     
     // Thông tin giá thuê, đặt cọc, phí setup, giảm giá
     public int? PriceId { get; set; }
-    [ForeignKey("PriceId")] public Price? Price { get; set; }
+    [ForeignKey("PriceId")] public Price Price { get; set; }
     
     // Thông tin chi tiết của không gian làm việc
     public string? Name { get; set; }

@@ -1,9 +1,10 @@
+using Application.AuthService.CQRS.Commands;
 using Application.SharedServices;
 using Domain.ResultPattern;
 using Infrastructure.Repositories;
 using MediatR;
 
-namespace Application.AuthService.CQRS.Commands;
+namespace Application.Services.Auths.CQRS.Commands;
 
 public sealed record GoogleCallbackCommand(string Code) : IRequest<Result<string>>;
 

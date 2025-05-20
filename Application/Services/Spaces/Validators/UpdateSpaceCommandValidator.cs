@@ -1,8 +1,9 @@
+using Application.Services.Spaces.CQRS.Commands;
 using Application.SpaceService.CQRS.Commands;
 using Domain.Entities;
 using FluentValidation;
 
-namespace Application.SpaceService.Validators;
+namespace Application.Services.Spaces.Validators;
 
 public class UpdateSpaceCommandValidator : AbstractValidator<UpdateSpaceCommand>
 {

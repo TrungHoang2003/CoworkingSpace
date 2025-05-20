@@ -23,14 +23,10 @@ public class Payment
     public int PaymentId { get; set; }
 
     public int ReservationId { get; set; }
-
-    [ForeignKey("ReservationId")]
-    public Reservation? Reservation { get; set; }
+    [ForeignKey("ReservationId")] public Reservation? Reservation { get; set; }
 
     public int CustomerId { get; set; }
-
-    [ForeignKey("CustomerId")]
-    public User? Customer { get; set; }
+    [ForeignKey("CustomerId")] public User? Customer { get; set; }
     
     public decimal TotalPrice { get; set; }
 

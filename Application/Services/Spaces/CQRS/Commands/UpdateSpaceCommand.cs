@@ -7,7 +7,7 @@ using Domain.ResultPattern;
 using Infrastructure.Repositories;
 using MediatR;
 
-namespace Application.SpaceService.CQRS.Commands;
+namespace Application.Services.Spaces.CQRS.Commands;
 
 public sealed record UpdateSpaceCommand(
     int SpaceId,

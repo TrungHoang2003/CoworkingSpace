@@ -1,7 +1,7 @@
-using Application.AuthService.CQRS.Commands;
+using Application.Services.Auths.CQRS.Commands;
 using FluentValidation;
 
-namespace Application.AuthService.Validators;
+namespace Application.Services.Auths.Validators;
 
 public class LoginCommandValidator : AbstractValidator<LoginCommand>
 {

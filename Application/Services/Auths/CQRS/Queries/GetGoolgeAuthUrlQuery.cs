@@ -2,7 +2,7 @@ using Application.SharedServices;
 using Domain.ResultPattern;
 using MediatR;
 
-namespace Application.AuthService.CQRS.Queries;
+namespace Application.Services.Auths.CQRS.Queries;
 
 public sealed record GetGoogleAuthUrlQuery : IRequest<Result<string>>;
 

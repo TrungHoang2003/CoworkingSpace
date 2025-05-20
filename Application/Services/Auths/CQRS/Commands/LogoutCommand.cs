@@ -1,11 +1,10 @@
-using System.Security.Claims;
 using Application.SharedServices;
 using Domain.Errors;
 using Domain.ResultPattern;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace Application.AuthService.CQRS.Commands;
+namespace Application.Services.Auths.CQRS.Commands;
 
 public sealed record LogoutCommand:IRequest<Result<LogoutResponse>>;
 

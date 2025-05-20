@@ -1,3 +1,4 @@
+using Application.Services.Venues.CQRS.Commands;
 using Application.VenueService.CQRS.Commands;
 using FluentValidation;
 using Microsoft.AspNetCore.Http;

@@ -1,7 +1,8 @@
 // API/Controllers/AuthenticationController.cs
 
 using Application.AuthService.CQRS.Commands;
-using Application.AuthService.CQRS.Queries;
+using Application.Services.Auths.CQRS.Commands;
+using Application.Services.Auths.CQRS.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 

@@ -9,6 +9,7 @@ namespace Infrastructure.Repositories;
 
 public interface IVenueRepository: IGenericRepository<Venue>
 {
+    Task<List<DayOfWeek>> GetClosedDays(int venueId);
     Task<VenueDetailsViewModel?> GetVenueDetails(int venueId);
     Task<IEnumerable<VenueType>> GetVenueTypes();
    Task<Venue?> GetVenuesByTypeId(int venueTypeId);
@@ -151,5 +152,20 @@ public class VenueRepository(ApplicationDbContext dbContext, DbConnection<MySqlC
         {
             throw new Exception("Error while getting venue details", e);
         }
+    }
+
+    public async Task<List<DayOfWeek>> GetClosedDays(int venueId)
+    {
+       var cnn = dbConnection.OpenConnection();
+         try
+         {
+             const string sql = "SELECT DayOfWeek FROM GuestHour WHERE VenueId = @VenueId and IsClosed = 1";
+             var result = await cnn.QueryAsync<DayOfWeek>(sql, new { VenueId= venueId });
+             return result.ToList();
+         }
+         catch (Exception e)
+         {
+             throw new Exception("Error while getting closed days", e);
+         }
     }
 }

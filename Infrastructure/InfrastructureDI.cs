@@ -56,5 +56,6 @@ public static class InfrastructureDi
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped<IGuestHourRepository, GuestHourRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
+        services.AddScoped<IReservationRepository, ReservationRepository>();
     }
 }
