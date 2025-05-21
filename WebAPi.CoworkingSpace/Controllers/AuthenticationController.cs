@@ -25,7 +25,7 @@ public class AuthenticationController(IMediator mediator) : ControllerBase
         return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
     }
 
-    [HttpGet("GoogleLogin")]
+    [HttpPost("GoogleLogin")]
     public async Task<IActionResult> GoogleLogin()
     {
         var query = new GetGoogleAuthUrlQuery();
