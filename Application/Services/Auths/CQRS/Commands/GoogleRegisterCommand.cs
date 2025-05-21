@@ -48,7 +48,7 @@ public class GoogleRegisterCommandHandler(
         var addRoleResult = await userRepository.AddToRoleAsync(user, CustomerRole);
         if (!addRoleResult.Succeeded)
             return Result.Failure(new Error("Role.AddFailed", string.Join(",", addRoleResult.Errors.Select(e => e.Description))));
-
+        
         return Result.Success();
     }
 }

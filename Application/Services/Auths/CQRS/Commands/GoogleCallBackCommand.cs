@@ -34,7 +34,7 @@ public class GoogleCallbackCommandHandler(
                 .Handle(registerCommand, cancellationToken);
             if (!registerResult.IsSuccess)
                 return Result<string>.Failure(registerResult.Error);
-
+            
             user = await userRepository.FindByEmailAsync(payload.Email);
             if (user == null)
                 return Result<string>.Failure(new Error("User.CreateFailed", "Failed to create user after registration"));
@@ -43,6 +43,6 @@ public class GoogleCallbackCommandHandler(
         var roles = await userRepository.GetRolesAsync(user);
         var jwtToken = jwtService.GenerateJwtToken(user, string.Join(",", roles));
 
-        return Result<string>.Success($"http://localhost:3000/google-auth-success?token={jwtToken}");
+        return Result<string>.Success($"http://localhost:3000?token={jwtToken}");
     }
 }
