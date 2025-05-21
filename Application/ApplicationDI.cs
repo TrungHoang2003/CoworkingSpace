@@ -17,7 +17,7 @@ public static class ApplicationDi
             typeof(ApplicationDi).Assembly
         ));        services.AddValidatorsFromAssembly(typeof(ApplicationDi).Assembly);
         services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
-
+        services.AddSingleton<PayOsService>();
         services.AddSingleton<VnPayService>(); 
         services.AddSingleton<JwtService>();
         services.AddSingleton<RedisService>();
