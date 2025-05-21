@@ -62,7 +62,10 @@ public class GoogleAuthService(IConfiguration configuration, HttpClient httpClie
                     new Error("Google.InvalidToken", "Invalid ID token"));
 
             var payload = await GoogleJsonWebSignature.ValidateAsync(tokenData.id_token);
-            return Result<GoogleJsonWebSignature.Payload>.Success(payload);
+            if (string.IsNullOrEmpty(payload.Email))
+            {
+                throw new Exception("Email is missing in the payload");
+            }            return Result<GoogleJsonWebSignature.Payload>.Success(payload);
         }
         catch (Exception ex)
         {
