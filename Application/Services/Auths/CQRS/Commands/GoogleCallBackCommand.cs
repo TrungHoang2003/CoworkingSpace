@@ -43,6 +43,6 @@ public class GoogleCallbackCommandHandler(
         var roles = await userRepository.GetRolesAsync(user);
         var jwtToken = jwtService.GenerateJwtToken(user, string.Join(",", roles));
 
-        return Result<string>.Success($"http://localhost:3000/home?token={jwtToken}");
+        return Result<string>.Success($"https://booking-space-kappa.vercel.app/home?token={jwtToken}");
     }
 }
