@@ -1,4 +1,3 @@
-using Application.AuthService.CQRS.Commands;
 using Application.SharedServices;
 using Domain.ResultPattern;
 using Infrastructure.Repositories;

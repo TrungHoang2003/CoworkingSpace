@@ -28,12 +28,9 @@ public class ValidationBehavior<TRequest, TResponse>(IEnumerable<IValidator<TReq
             if (failures.Count != 0)
             {
                 var errorMessages = string.Join("; ", failures.Select(f => f.ErrorMessage));
-                var failureResult = Result<TResponse>.Failure(new Error("Validation Errors", errorMessages));
-
-                return failureResult as TResponse;
+                throw new Exception("Validation failed: " + errorMessages);
             }
         }
-
         return await next();
     }
 }

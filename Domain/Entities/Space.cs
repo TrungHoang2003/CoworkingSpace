@@ -31,7 +31,7 @@ public class Space
     [ForeignKey("ExceptionId")] public ExceptionRule? Exception{ get; set; }
     
     // Thông tin giá thuê, đặt cọc, phí setup, giảm giá
-    public int? PriceId { get; set; }
+    public int PriceId { get; set; }
     [ForeignKey("PriceId")] public Price Price { get; set; }
     
     // Thông tin chi tiết của không gian làm việc

@@ -56,6 +56,9 @@ public class DailySpaceBookCommandHandler(IUnitOfWork unitOfWork, IHttpContextAc
         if (user == null) return Result<DailySpaceBookResponse>.Failure(AuthenErrors.NotLoggedIn);
         
         var totalDays = (request.EndDate.Date - request.StartDate.Date).Days + 1;
+
+        var price = await unitOfWork.Price.GetById(space.PriceId);
+        if (price == null) return Result<DailySpaceBookResponse>.Failure(SpaceErrors.PriceNotFound);
         var reservation = new Reservation
         {
             CustomerId = Convert.ToInt32(userId),
@@ -63,10 +66,12 @@ public class DailySpaceBookCommandHandler(IUnitOfWork unitOfWork, IHttpContextAc
             Quantity = request.Quantity,
             StartDate = request.StartDate,
             EndDate = request.EndDate,
-            SalesPrice = space.Price.Amount * request.Quantity * totalDays,
-            TotalPrice = space.Price.Amount * request.Quantity * totalDays,
+            SalesPrice = price.Amount * request.Quantity * totalDays,
+            TotalPrice = price.Amount * request.Quantity * totalDays,
         };
+        
         await unitOfWork.Reservation.Create(reservation);
+        await unitOfWork.SaveChangesAsync(cancellationToken);
 
         var response = new DailySpaceBookResponse
         {
@@ -80,7 +85,6 @@ public class DailySpaceBookCommandHandler(IUnitOfWork unitOfWork, IHttpContextAc
             TotalPrice = reservation.TotalPrice ?? 0
         };
 
-        await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result<DailySpaceBookResponse>.Success(response);
     }
 }

@@ -11,4 +11,5 @@ public sealed record SpaceErrors
    public static readonly Error SpaceTypeNotFound  = new Error("Space Error", "Space type not found");
    public static readonly Error NotDailySpaceType  = new Error("SpaceAssetType Error", "This space type is a Monthly space type");
    public static readonly Error NotMonthlySpaceType = new Error("SpaceAssetType Error", "This space type is a Daily space type");
+   public static readonly Error PriceNotFound = new Error("Space Error", "Không gian chưa thiết lập giá");
 }

@@ -40,6 +40,7 @@ public static class InfrastructureDi
         services.AddSingleton<HttpClient>();
         services.AddScoped<DbConnection<MySqlConnection>, MySqlServer>();
         services.AddScoped<IGuestArrivalRepository, GuestArrivalRepository>();
+        services.AddScoped<IPriceRepository, PriceRepository>();
         services.AddScoped<ISpaceRepository, SpaceRepository>();
         services.AddScoped<IAmenityRepository, AmenityRepository>();
         services.AddScoped<IVenueHolidayRepository, VenueHolidayRepository>();

@@ -13,6 +13,7 @@ public class TokenValidateMiddleware(RequestDelegate next, RedisService redisSer
         if (path != null &&
             (path.StartsWith("/authentication/login") ||
              path.StartsWith("/authentication/refreshtoken") ||
+             path.StartsWith("/authentication/googlelogin") ||
              path.StartsWith("/authentication/register") ||
              path.StartsWith("/scalar")))
         {

@@ -16,7 +16,6 @@ public sealed record CreateSpaceCommand(
     SpaceAssetDto? Asset,
     List<SpaceImageDto>? Images,
     SpacePriceDto Price,
-    CreateSpaceAmenityDto? Amenities,
     List<int>? AmenityIds) : IRequest<Result>;
 
 public class CreateSpaceCommandHandler(
@@ -114,11 +113,6 @@ public class CreateSpaceCommandHandler(
 
         price.Amount = request.Price.Amount;
         space.Price = price;
-
-        if (request.Amenities != null)
-        {
-            
-        }
 
         if (request.AmenityIds is { Count: > 0 })
         {

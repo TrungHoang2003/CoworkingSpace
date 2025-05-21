@@ -18,9 +18,9 @@ public class BookingController(IMediator mediator): Controller
    }
    
     [HttpPost("CreatePayment")]
-    public async Task<IActionResult> CreatePayment([FromBody] int reservationId)
+    public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentCommand command)
     {
-        var result = await mediator.Send(new CreatePaymentCommand(reservationId));
+        var result = await mediator.Send(command);
         if (result.IsFailure)
             return BadRequest(result.Error);
         return Ok(result.Value);
