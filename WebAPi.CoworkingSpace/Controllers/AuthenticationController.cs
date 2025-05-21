@@ -30,7 +30,7 @@ public class AuthenticationController(IMediator mediator) : ControllerBase
     {
         var query = new GetGoogleAuthUrlQuery();
         var result = await mediator.Send(query);
-        return result.IsSuccess ? Redirect(result.Value) : BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
     }
 
     [HttpGet("GoogleCallBack")]
