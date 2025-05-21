@@ -109,15 +109,19 @@ builder.Services.AddAuthentication(options =>
 // CORS
 builder.Services.AddCors(option =>
 {
-    option.AddPolicy("AllowAll", policyBuilder =>
+    option.AddPolicy("AllowSpecificOrigins", policyBuilder => // Đổi tên chính sách để phản ánh rõ hơn
     {
-        policyBuilder.AllowAnyOrigin()
+        policyBuilder
+            // Liệt kê rõ ràng các origin bạn muốn cho phép
+            .WithOrigins("http://localhost:3000", // Frontend đang chạy cục bộ
+                "https://coworkingspace-production-1d94.up.railway.app", // Backend production domain
+                "https://booking-space-kappa.vercel.app") // Nếu có frontend production domain riêng
             .AllowAnyMethod()
-            .AllowAnyOrigin()
-            .AllowCredentials()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .AllowCredentials(); // Rất quan trọng khi dùng xác thực
     });
 });
+
 
 // Redis
 var redisUrl = Environment.GetEnvironmentVariable("REDIS_URL");
@@ -194,7 +198,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseRouting();
-app.UseCors("AllowAll");
+app.UseCors("AllowSpecificOrigins"); // Sử dụng chính sách CORS đã định nghĩa
 app.UseAuthentication();
 app.UseAuthorization(); 
 app.UseMiddleware<ExceptionHandlerMiddleWare>();
