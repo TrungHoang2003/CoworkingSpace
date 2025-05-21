@@ -37,10 +37,11 @@ public class GoogleCallbackCommandHandler(
                 .Handle(registerCommand, cancellationToken);
             if (!registerResult.IsSuccess)
                 return Result<string>.Failure(registerResult.Error);
-            
+
             user = await userRepository.FindByEmailAsync(payload.Email);
             if (user == null)
-                return Result<string>.Failure(new Error("User.CreateFailed", "Failed to create user after registration"));
+                return Result<string>.Failure(
+                    new Error("User.CreateFailed", "Failed to create user after registration"));
         }
 
         var roles = await userRepository.GetRolesAsync(user);
@@ -52,23 +53,16 @@ public class GoogleCallbackCommandHandler(
 
         try
         {
-            await redisService.SetValue(refreshKey, refreshToken, TimeSpan.FromDays(jwtService.getRefreshTokenValidity()));
+            await redisService.SetValue(refreshKey, refreshToken,
+                TimeSpan.FromDays(jwtService.getRefreshTokenValidity()));
             await redisService.SetValue(accessKey, jwtToken, TimeSpan.FromMinutes(jwtService.getAccessTokenValidity()));
         }
         catch (Exception ex)
         {
             return Result<string>.Failure(new Error("Redis.SaveFailed", $"Failed to save tokens: {ex.Message}"));
         }
-        var redirectUrl = $"https://booking-space-kappa.vercel.app/home" +
-                          $"?accessToken={jwtToken}" +
-                          $"&refreshToken={refreshToken}" +
-                          $"&email={user.Email}" +
-                          $"&fullName={user.FullName}" +
-                          $"&avatarUrl={user.AvatarUrl}" +
-                          $"&phoneNumber={user.PhoneNumber}" +
-                          $"&id={user.Id}" +
-                          $"&userName={user.UserName}";
-       return Result<string>.Success(redirectUrl); 
 
+        var redirectUrl = $"http://localhost:3000/home?accessToken={jwtToken}&refreshToken={refreshToken}";
+        return Result<string>.Success(redirectUrl);
     }
 }
