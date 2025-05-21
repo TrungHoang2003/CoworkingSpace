@@ -14,7 +14,7 @@ public class GoogleAuthService(IConfiguration configuration, HttpClient httpClie
         if (string.IsNullOrEmpty(clientId))
             throw new InvalidOperationException("Google Client ID not found");
 
-        var redirectUri = "http://localhost:5196/Authentication/GoogleCallback";
+        var redirectUri = "https://coworkingspace-production-1d94.up.railway.app/Authentication/GoogleCallback";
         var scope = "openid profile email";
         var state = Guid.NewGuid().ToString();
 
@@ -43,7 +43,7 @@ public class GoogleAuthService(IConfiguration configuration, HttpClient httpClie
             { "code", code },
             { "client_id", clientId },
             { "client_secret", clientSecret },
-            { "redirect_uri", "http://localhost:5196/Authentication/GoogleCallback" },
+            { "redirect_uri", "https://coworkingspace-production-1d94.up.railway.app/Authentication/GoogleCallback" },
             { "grant_type", "authorization_code" }
         };
 
