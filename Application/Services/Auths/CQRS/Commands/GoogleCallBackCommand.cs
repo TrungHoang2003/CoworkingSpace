@@ -1,5 +1,7 @@
 using Application.SharedServices;
+using Application.UserService.Mappings;
 using Domain.ResultPattern;
+using Domain.ViewModel;
 using Infrastructure.Repositories;
 using MediatR;
 
@@ -11,6 +13,7 @@ public class GoogleCallbackCommandHandler(
     GoogleAuthService googleAuthService,
     IUserRepository userRepository,
     IRoleRepository roleRepository,
+    RedisService redisService,
     JwtService jwtService)
     : IRequestHandler<GoogleCallbackCommand, Result<string>>
 {
@@ -42,7 +45,30 @@ public class GoogleCallbackCommandHandler(
 
         var roles = await userRepository.GetRolesAsync(user);
         var jwtToken = jwtService.GenerateJwtToken(user, string.Join(",", roles));
+        var refreshToken = jwtService.GenerateRefreshToken();
 
-        return Result<string>.Success($"http://localhost:3000/home?token={jwtToken}");
+        var refreshKey = $"refreshToken:{user.Id}";
+        var accessKey = $"accessToken:{user.Id}";
+
+        try
+        {
+            await redisService.SetValue(refreshKey, refreshToken, TimeSpan.FromDays(jwtService.getRefreshTokenValidity()));
+            await redisService.SetValue(accessKey, jwtToken, TimeSpan.FromMinutes(jwtService.getAccessTokenValidity()));
+        }
+        catch (Exception ex)
+        {
+            return Result<string>.Failure(new Error("Redis.SaveFailed", $"Failed to save tokens: {ex.Message}"));
+        }
+        var redirectUrl = $"https://booking-space-kappa.vercel.app/home" +
+                          $"?accessToken={jwtToken}" +
+                          $"&refreshToken={refreshToken}" +
+                          $"&email={user.Email}" +
+                          $"&fullName={user.FullName}" +
+                          $"&avatarUrl={user.AvatarUrl}" +
+                          $"&phoneNumber={user.PhoneNumber}" +
+                          $"&id={user.Id}" +
+                          $"&userName={user.UserName}";
+       return Result<string>.Success(redirectUrl); 
+
     }
 }
