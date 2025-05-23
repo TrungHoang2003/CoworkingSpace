@@ -24,5 +24,6 @@ public class PayOsService(IConfiguration configuration)
         var paymentData = new PaymentData(orderCode, amount, description, items, cancelUrl, returnUrl);
         var createPayment = await payOs.createPaymentLink(paymentData);
         return createPayment.ToString();
+        
     }
 }
