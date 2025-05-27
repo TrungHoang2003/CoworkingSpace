@@ -1,9 +1,7 @@
-using Application.GuestHourService.DTOs;
-using Application.VenueService.CQRS.Commands;
-using Application.VenueService.DTOs;
+using Application.Services.GuestHours.DTOs;
 using Domain.Entities;
 
-namespace Application.GuestHourService.Mappings;
+namespace Application.Services.GuestHours.Mappings;
 
 public static class GuestHourMapping
 {
@@ -11,10 +9,11 @@ public static class GuestHourMapping
    {
       return new GuestHour
       {
-         DayOfWeek = setUpVenueGuestHourDto.DayOfWeek,
+         OpenOnSaturday = setUpVenueGuestHourDto.OpenOnSaturday,
+         OpenOnSunday = setUpVenueGuestHourDto.OpenOnSunday,
          StartTime =setUpVenueGuestHourDto.StartTime,
          EndTime = setUpVenueGuestHourDto.EndTime,
-         IsOpen24Hours = setUpVenueGuestHourDto.IsOpen24Hours,
+         Open24Hours = setUpVenueGuestHourDto.Open24Hours,
       };
    }
 }

@@ -1,3 +1,4 @@
+using Application.Services.VenueAddresses.DTOs;
 using Application.Services.Venues.Mappings;
 using Application.SharedServices;
 using Application.VenueAddressService.DTOs;
@@ -90,10 +91,6 @@ public class SignUpVenueCommandHandler(
         // Cập nhật địa chỉ đầy đủ cho Venue
         venue.Address.UpdateFullAddress();
         await unitOfWork.Venue.Create(venue);
-
-        // Init GuestHour cho Venue
-        var guestHours = unitOfWork.GuestHour.GenerateDefaultGuestHours(venue);
-        await unitOfWork.GuestHour.AddRangeAsync(guestHours);
 
         // add Holiday cho Venue
         var holidays = await unitOfWork.Holiday.GetAllHolidays();

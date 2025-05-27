@@ -7,12 +7,12 @@ using MediatR;
 
 namespace Application.SpaceService.CQRS.Commands;
 
-public sealed record DeleteSpaceAssetCommand(int SpaceId, string Url):IRequest<Result>;
+public sealed record DeleteSpaceAsset(int SpaceId, string Url):IRequest<Result>;
 
 public class DeleteSpaceAssetCommandHandler(IUnitOfWork unitOfWork, CloudinaryService cloudinaryService)
-    : IRequestHandler<DeleteSpaceAssetCommand, Result>
+    : IRequestHandler<DeleteSpaceAsset, Result>
 {
-    public async Task<Result> Handle(DeleteSpaceAssetCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(DeleteSpaceAsset request, CancellationToken cancellationToken)
     {
         var space = await unitOfWork.Space.FindById(request.SpaceId);
         if (!space) return SpaceErrors.SpaceNotFound;

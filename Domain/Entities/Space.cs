@@ -16,7 +16,7 @@ public class Space
 
     // Loại không gian
     public int SpaceTypeId { get; set; }
-    [ForeignKey("SpaceTypeId")] public SpaceType? SpaceType { get; set; }
+    [ForeignKey("SpaceTypeId")] public SpaceType SpaceType { get; set; }
     
     // Văn phòng, địa điểm 
     public int VenueId { get; set; }
@@ -40,7 +40,6 @@ public class Space
     public ListingType ListingType { get; set; }
     public int? Capacity { get; set; }
     public int? Size { get; set; } 
-    public int? Quantity { get; set; } 
     public int? Deposit { get; set; } 
     public SpaceStatus Status { get; set; } = SpaceStatus.Pending;
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
@@ -56,6 +55,6 @@ public class Space
 
 public enum ListingType
 {
-    Monthly =0,
-    Daily = 1,
+    MonthOnly =0,
+    Normal = 1,
 }

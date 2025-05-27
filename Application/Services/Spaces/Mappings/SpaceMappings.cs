@@ -1,8 +1,7 @@
 using Application.Services.Spaces.DTOs;
-using Application.SpaceService.CQRS.Commands;
 using Domain.Entities;
 
-namespace Application.SpaceService.Mappings;
+namespace Application.Services.Spaces.Mappings;
 
 public static class SpaceMappings
 {
@@ -10,8 +9,6 @@ public static class SpaceMappings
     {
         return new Space
         {
-            ListingType = spaceInfoDto.ListingType,
-            Quantity = spaceInfoDto.Quantity,
             Name = spaceInfoDto.Name,
             Description = spaceInfoDto.Description,
             Capacity = spaceInfoDto.Capacity,
@@ -21,8 +18,6 @@ public static class SpaceMappings
     
     public static Space ToSpace(this SpaceInfoDto spaceInfoDto, Space existingSpace)
     {
-        existingSpace.Quantity = spaceInfoDto.Quantity;
-        existingSpace.ListingType = spaceInfoDto.ListingType;
         existingSpace.Name = spaceInfoDto.Name;
         existingSpace.Description = spaceInfoDto.Description;
         existingSpace.Capacity = spaceInfoDto.Capacity;

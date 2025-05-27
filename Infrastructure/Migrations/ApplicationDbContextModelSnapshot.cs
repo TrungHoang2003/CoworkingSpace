@@ -81,6 +81,7 @@ namespace Infrastructure.Migrations
                         .HasColumnType("longtext");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("longtext");
 
                     b.Property<int>("UserId")
@@ -166,27 +167,25 @@ namespace Infrastructure.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("GuestHourId"));
 
-                    b.Property<int>("DayOfWeek")
-                        .HasColumnType("int");
-
                     b.Property<TimeSpan?>("EndTime")
                         .HasColumnType("time(6)");
 
                     b.Property<bool>("IsClosed")
                         .HasColumnType("tinyint(1)");
 
-                    b.Property<bool>("IsOpen24Hours")
+                    b.Property<bool>("Open24Hours")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("OpenOnSaturday")
+                        .HasColumnType("tinyint(1)");
+
+                    b.Property<bool>("OpenOnSunday")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<TimeSpan?>("StartTime")
                         .HasColumnType("time(6)");
 
-                    b.Property<int>("VenueId")
-                        .HasColumnType("int");
-
                     b.HasKey("GuestHourId");
-
-                    b.HasIndex("VenueId");
 
                     b.ToTable("GuestHour");
                 });
@@ -249,9 +248,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("ReservationId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Status")
                         .HasColumnType("int");
 
                     b.Property<decimal>("TotalPrice")
@@ -322,9 +318,6 @@ namespace Infrastructure.Migrations
                     b.Property<decimal?>("SetupFee")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<int>("TimeUnit")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Price");
@@ -338,7 +331,7 @@ namespace Infrastructure.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("ReservationId"));
 
-                    b.Property<int?>("Capacity")
+                    b.Property<int>("Capacity")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("CreatedAt")
@@ -349,9 +342,6 @@ namespace Infrastructure.Migrations
 
                     b.Property<DateTime>("EndDate")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<int?>("Quantity")
-                        .HasColumnType("int");
 
                     b.Property<DateTime>("ReservationDate")
                         .HasColumnType("datetime(6)");
@@ -365,10 +355,11 @@ namespace Infrastructure.Migrations
                     b.Property<DateTime>("StartDate")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<int>("Status")
-                        .HasColumnType("int");
+                    b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
-                    b.Property<decimal?>("TotalPrice")
+                    b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -476,10 +467,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("longtext");
 
-                    b.Property<int?>("PriceId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("Quantity")
+                    b.Property<int>("PriceId")
                         .HasColumnType("int");
 
                     b.Property<int?>("Size")
@@ -603,7 +591,7 @@ namespace Infrastructure.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("longtext");
 
-                    b.Property<bool>("IsDaiLySpaceType")
+                    b.Property<bool>("IsNormalSpaceType")
                         .HasColumnType("tinyint(1)");
 
                     b.Property<string>("Name")
@@ -701,6 +689,9 @@ namespace Infrastructure.Migrations
                     b.Property<int?>("GuestArrivalId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("GuestHourId")
+                        .HasColumnType("int");
+
                     b.Property<int>("HostId")
                         .HasColumnType("int");
 
@@ -719,6 +710,8 @@ namespace Infrastructure.Migrations
                     b.HasKey("VenueId");
 
                     b.HasIndex("GuestArrivalId");
+
+                    b.HasIndex("GuestHourId");
 
                     b.HasIndex("HostId");
 
@@ -922,17 +915,6 @@ namespace Infrastructure.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("Domain.Entities.GuestHour", b =>
-                {
-                    b.HasOne("Domain.Entities.Venue", "Venue")
-                        .WithMany("GuestHours")
-                        .HasForeignKey("VenueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Venue");
-                });
-
             modelBuilder.Entity("Domain.Entities.HolidayDate", b =>
                 {
                     b.HasOne("Domain.Entities.Holiday", "Holiday")
@@ -1024,7 +1006,9 @@ namespace Infrastructure.Migrations
 
                     b.HasOne("Domain.Entities.Price", "Price")
                         .WithMany()
-                        .HasForeignKey("PriceId");
+                        .HasForeignKey("PriceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("Domain.Entities.SpaceType", "SpaceType")
                         .WithMany()
@@ -1098,6 +1082,10 @@ namespace Infrastructure.Migrations
                         .WithMany()
                         .HasForeignKey("GuestArrivalId");
 
+                    b.HasOne("Domain.Entities.GuestHour", "GuestHour")
+                        .WithMany()
+                        .HasForeignKey("GuestHourId");
+
                     b.HasOne("Domain.Entities.User", "Host")
                         .WithMany("Venues")
                         .HasForeignKey("HostId")
@@ -1119,6 +1107,8 @@ namespace Infrastructure.Migrations
                     b.Navigation("Address");
 
                     b.Navigation("GuestArrival");
+
+                    b.Navigation("GuestHour");
 
                     b.Navigation("Host");
 
@@ -1253,8 +1243,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.Entities.Venue", b =>
                 {
-                    b.Navigation("GuestHours");
-
                     b.Navigation("Holidays");
 
                     b.Navigation("Spaces");

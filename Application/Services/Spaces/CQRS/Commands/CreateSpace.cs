@@ -1,7 +1,7 @@
-using Application.PriceService.DTOs;
+using Application.Services.Prices.DTOs;
 using Application.Services.Spaces.DTOs;
+using Application.Services.Spaces.Mappings;
 using Application.SharedServices;
-using Application.SpaceService.Mappings;
 using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
@@ -10,7 +10,7 @@ using MediatR;
 
 namespace Application.Services.Spaces.CQRS.Commands;
 
-public sealed record CreateSpaceCommand(
+public sealed record CreateSpace(
     int VenueId,
     SpaceInfoDto BasicInfo,
     SpaceAssetDto? Asset,
@@ -21,24 +21,21 @@ public sealed record CreateSpaceCommand(
 public class CreateSpaceCommandHandler(
     IUnitOfWork unitOfWork,
     CloudinaryService cloudinaryService)
-    : IRequestHandler<CreateSpaceCommand, Result>
+    : IRequestHandler<CreateSpace, Result>
 {
-    public async Task<Result> Handle(CreateSpaceCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(CreateSpace request, CancellationToken cancellationToken)
     {
         var venueExists = await unitOfWork.Venue.GetById(request.VenueId);
         if (venueExists is null) return VenueErrors.VenueNotFound;
 
         var spaceType = await unitOfWork.SpaceType.GetById(request.BasicInfo.SpaceTypeId);
         if (spaceType is null) return SpaceErrors.SpaceTypeNotFound;
-
-        switch (request.BasicInfo.ListingType)
-        {
-            case ListingType.Daily when !spaceType.IsDaiLySpaceType:
-                return SpaceErrors.NotDailySpaceType;
-            case ListingType.Monthly when spaceType.IsDaiLySpaceType:
-                return SpaceErrors.NotMonthlySpaceType;
-        }
-
+        
+        if(request.BasicInfo.ListingType == ListingType.MonthOnly && spaceType.IsNormalSpaceType)
+            return SpaceErrors.NotMonthOnlySpaceType;
+        if(request.BasicInfo.ListingType == ListingType.Normal&& !spaceType.IsNormalSpaceType)
+            return SpaceErrors.NotNormalSpaceType;
+        
         var space = request.BasicInfo.ToSpace();
         space.VenueId = request.VenueId;
 
@@ -49,7 +46,8 @@ public class CreateSpaceCommandHandler(
             {
                 var result = await cloudinaryService.UploadImage(spaceAsset.VirtualVideo);
                 if (result is null) return CloudinaryErrors.UploadSpaceVirtualVideoFailed;
-                var asset = new SpaceAsset{
+                var asset = new SpaceAsset
+                {
                     SpaceId = space.SpaceId,
                     Url = result,
                     Type = SpaceAssetType.VirtualVideo,
@@ -61,7 +59,8 @@ public class CreateSpaceCommandHandler(
             {
                 var result = await cloudinaryService.UploadImage(spaceAsset.Video);
                 if (result is null) return CloudinaryErrors.UploadSpaceVideoFailed;
-                var asset = new SpaceAsset{
+                var asset = new SpaceAsset
+                {
                     SpaceId = space.SpaceId,
                     Url = result,
                     Type = SpaceAssetType.Video,
@@ -73,7 +72,8 @@ public class CreateSpaceCommandHandler(
             {
                 var result = await cloudinaryService.UploadImage(spaceAsset.PdfFlyer);
                 if (result is null) return CloudinaryErrors.UploadSpacePdfFlyerFailed;
-                var asset = new SpaceAsset{
+                var asset = new SpaceAsset
+                {
                     SpaceId = space.SpaceId,
                     Url = result,
                     Type = SpaceAssetType.Pdf,
@@ -98,20 +98,13 @@ public class CreateSpaceCommandHandler(
             }
         }
 
-        var price = new Price();
-        switch (request.BasicInfo!.ListingType)
+        var price = new Price
         {
-            case ListingType.Daily:
-                price.TimeUnit = TimeUnit.Day;
-                break;
-            case ListingType.Monthly:
-                price.TimeUnit = TimeUnit.Month;
-                price.DiscountPercentage = request.Price.DiscountPercentage;
-                price.SetupFee = request.Price.SetupFee;
-                break;
-        }
+            DiscountPercentage = request.Price.DiscountPercentage,
+            SetupFee = request.Price.SetupFee,
+            Amount = request.Price.Amount
+        };
 
-        price.Amount = request.Price.Amount;
         space.Price = price;
 
         if (request.AmenityIds is { Count: > 0 })
@@ -124,7 +117,7 @@ public class CreateSpaceCommandHandler(
                         "Amenity not found with Id = " + amenityId));
 
                 var spaceAmenity = new SpaceAmenity { AmenityId = amenityId };
-                (space.Amenities??= new List<SpaceAmenity>()).Add(spaceAmenity);
+                (space.Amenities ??= new List<SpaceAmenity>()).Add(spaceAmenity);
             }
         }
 

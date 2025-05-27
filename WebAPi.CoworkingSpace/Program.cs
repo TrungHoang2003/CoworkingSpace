@@ -178,7 +178,7 @@ using (var scope = app.Services.CreateScope())
         }
     }
     
-    var validators = scope.ServiceProvider.GetServices<IValidator<CreateSpaceCommand>>();
+    var validators = scope.ServiceProvider.GetServices<IValidator<CreateSpace>>();
     foreach (var v in validators)
     {
         Console.WriteLine($"Validator: {v.GetType().FullName}");

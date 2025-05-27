@@ -10,7 +10,7 @@ public class Collection
    public int UserId { get; set; }
    [ForeignKey("UserId")] public User? User { get; set; }
    
-   public string? Name {get; set;}
+   public string Name {get; set;}
    public string? Description { get; set; }
    
    public ICollection<SpaceCollection>? Spaces { get; set; } // Bộ sưu tập có thể chứa 1 hoặc nhiều không gian

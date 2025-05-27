@@ -1,10 +1,8 @@
-using Application.GuestHourService.Validators;
+using Application.Services.GuestHours.Validators;
 using Application.Services.Venues.CQRS.Commands;
-using Application.VenueService.CQRS.Commands;
-using Application.VenueService.DTOs;
 using FluentValidation;
 
-namespace Application.VenueService.Validators;
+namespace Application.Services.Venues.Validators;
 
 public class SetUpVenueCommandValidator: AbstractValidator<SetUpVenueCommand>
 {
@@ -15,12 +13,8 @@ public class SetUpVenueCommandValidator: AbstractValidator<SetUpVenueCommand>
          .WithMessage("VenueId must be greater than 0.");
 
       RuleFor(x => x.GuestHours)
-         .Must(guestHours => guestHours == null || guestHours.Count == 0 || (guestHours.Count == 7 && guestHours.Select(x => x.DayOfWeek).Distinct().Count() == 7))
-         .When(x => x.GuestHours != null)
-         .WithMessage("Guest hours must be provided for all 7 days of the week.");
-
-      RuleForEach(x => x.GuestHours)
-         .SetValidator(new SetUpVenueGuestHourDtoValidator());
+         .SetValidator(new SetUpVenueGuestHourDtoValidator())
+         .When(x => x.GuestHours != null);
 
       RuleFor(x => x.HolidayIds)
          .Must(holidayIds => holidayIds == null || holidayIds.Count > 0)

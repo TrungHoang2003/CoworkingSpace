@@ -19,6 +19,9 @@ public class Venue
     public int VenueAddressId { get; set; }
     [ForeignKey("VenueAddressId")] public VenueAddress Address { get; set; }
     
+    public int? GuestHourId { get; set; }
+    [ForeignKey("GuestHourId")] public GuestHour? GuestHour { get; set; }
+    
     //GuestArrival
     public int? GuestArrivalId { get; set; }
     [ForeignKey("GuestArrivalId")] public GuestArrival? GuestArrival { get; set; }
@@ -29,6 +32,5 @@ public class Venue
     public string? LogoUrl { get; set; }
 
     public ICollection<Space> Spaces { get; set; } // Danh sách không gian trong văn phòng
-    public ICollection<GuestHour> GuestHours { get; set; } // Giờ cho thuê
     public ICollection<VenueHoliday>? Holidays { get; set; } // Ngày nghỉ lễ
 }

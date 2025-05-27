@@ -4,6 +4,7 @@ namespace Infrastructure.Repositories;
 
 public interface IUnitOfWork
 {
+    IReviewRepository Review { get; }
    IVenueRepository Venue { get; }
    IPriceRepository Price { get; }
    IReservationRepository Reservation { get; }
@@ -21,11 +22,17 @@ public interface IUnitOfWork
    IAmenityRepository Amenity { get; }
    IGuestArrivalRepository GuestArrival { get; }
    ISpaceAmenityRepository SpaceAmenity { get; }
+   ISpaceCollectionRepository SpaceCollection { get; }
+   ICollectionRepository Collection { get; }
    Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
 }
 
-public class UnitOfWork(ApplicationDbContext dbContext, IVenueRepository venue, IUserRepository user, IVenueTypeRepository venueType, IVenueAddressRepository venueAddress, IGuestHourRepository guestHour, IHolidayRepository holiday, IVenueHolidayRepository venueHoliday, IBookingWindowRepository bookingWindow, ISpaceRepository space, IExceptionRepository exception, ISpaceTypeRepository spaceType, IAmenityRepository amenity, ISpaceAmenityRepository spaceAmenity, ISpaceAssetRepository spaceAsset, IGuestArrivalRepository guestArrival, IReservationRepository reservation, IPriceRepository price) : IUnitOfWork
+public class UnitOfWork(ApplicationDbContext dbContext, IVenueRepository venue, IUserRepository user, IVenueTypeRepository venueType, IVenueAddressRepository venueAddress, IGuestHourRepository guestHour, IHolidayRepository holiday, IVenueHolidayRepository venueHoliday, IBookingWindowRepository bookingWindow, ISpaceRepository space, IExceptionRepository exception, ISpaceTypeRepository spaceType, IAmenityRepository amenity, ISpaceAmenityRepository spaceAmenity, ISpaceAssetRepository spaceAsset, IGuestArrivalRepository guestArrival, IReservationRepository reservation,
+    IPriceRepository price, ICollectionRepository collection,
+    ISpaceCollectionRepository spaceCollection,
+    IReviewRepository review) : IUnitOfWork
 {
+    public IReviewRepository Review { get; } = review;
     public IVenueRepository Venue { get; } = venue;
     public IPriceRepository Price { get; } = price;
     public IReservationRepository Reservation { get; } = reservation;
@@ -43,6 +50,8 @@ public class UnitOfWork(ApplicationDbContext dbContext, IVenueRepository venue, 
     public IAmenityRepository Amenity { get; } = amenity;
     public IGuestArrivalRepository GuestArrival { get; } = guestArrival;
     public ISpaceAmenityRepository SpaceAmenity { get; } = spaceAmenity;
+    public ISpaceCollectionRepository SpaceCollection { get; } = spaceCollection;
+    public ICollectionRepository Collection { get; } = collection;
 
     public async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {

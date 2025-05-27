@@ -1,5 +1,5 @@
-using Application.GuestHourService.DTOs;
-using Application.GuestHourService.Mappings;
+using Application.Services.GuestHours.DTOs;
+using Application.Services.GuestHours.Mappings;
 using Application.Services.Venues.DTOs;
 using Application.SharedServices;
 using Application.VenueAddressService.DTOs;
@@ -19,7 +19,7 @@ public sealed record SetUpVenueCommand(
     SetUpVenueDetailsDto? Details,
     GuestArrivalDto? GuestArrival,
     SetUpVenueAddressDto? Address,
-    List<SetUpVenueGuestHourDto>? GuestHours,
+    SetUpVenueGuestHourDto? GuestHours,
     List<int>? HolidayIds
 ) : IRequest<Result>;
 
@@ -51,20 +51,10 @@ public class SetUpVenueCommandHandler(IUnitOfWork unitOfWork, CloudinaryService 
         }
         
         // Update GuestHours
-        if (request.GuestHours is { Count: > 0 })
+        if (request.GuestHours is not null)
         {
-            var existingGuestHours =
-                await unitOfWork.GuestHour.GetGuestHoursByVenueId(request.VenueId);
-
-            // Xóa GuestHours hiện tại của Venue
-            if (existingGuestHours.Count > 0)
-                unitOfWork.GuestHour.RemoveRange(existingGuestHours);
-
-            foreach (var guestHourDto in request.GuestHours)
-            {
-                var guestHour = guestHourDto.ToGuestHour();
-                venue.GuestHours.Add(guestHour);
-            }
+            var guestHours = request.GuestHours.ToGuestHour();
+            venue.GuestHour = guestHours;
         }
         
         // Update GuestArrival

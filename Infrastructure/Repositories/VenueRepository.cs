@@ -9,7 +9,6 @@ namespace Infrastructure.Repositories;
 
 public interface IVenueRepository: IGenericRepository<Venue>
 {
-    Task<List<DayOfWeek>> GetClosedDays(int venueId);
     Task<VenueDetailsViewModel?> GetVenueDetails(int venueId);
     Task<IEnumerable<VenueType>> GetVenueTypes();
    Task<Venue?> GetVenuesByTypeId(int venueTypeId);
@@ -132,40 +131,18 @@ public class VenueRepository(ApplicationDbContext dbContext, DbConnection<MySqlC
             throw new Exception("Error while getting Venue item", e);
         }
     }
-    
+
     public async Task<VenueDetailsViewModel?> GetVenueDetails(int venueId)
     {
         var cnn = dbConnection.OpenConnection();
-        try
-        {
-            const string sql = """
-                               SELECT v.Name, v.Description, v.LogoUrl, a.City, a.District, a.Street
-                                           FROM Venue v
-                                           LEFT JOIN VenueAddress a ON v.VenueAddressId = a.VenueAddressId
-                                           WHERE v.VenueId = @VenueId
-                               """;
-            
-            var result = await cnn.QueryFirstOrDefaultAsync<VenueDetailsViewModel>(sql, new { VenueId= venueId });
-            return result;
-        }
-        catch (Exception e)
-        {
-            throw new Exception("Error while getting venue details", e);
-        }
-    }
+        const string sql = """
+                           SELECT v.Name, v.Description, v.LogoUrl, a.City, a.District, a.Street
+                                       FROM Venue v
+                                       LEFT JOIN VenueAddress a ON v.VenueAddressId = a.VenueAddressId
+                                       WHERE v.VenueId = @VenueId
+                           """;
 
-    public async Task<List<DayOfWeek>> GetClosedDays(int venueId)
-    {
-       var cnn = dbConnection.OpenConnection();
-         try
-         {
-             const string sql = "SELECT DayOfWeek FROM GuestHour WHERE VenueId = @VenueId and IsClosed = 1";
-             var result = await cnn.QueryAsync<DayOfWeek>(sql, new { VenueId= venueId });
-             return result.ToList();
-         }
-         catch (Exception e)
-         {
-             throw new Exception("Error while getting closed days", e);
-         }
+        var result = await cnn.QueryFirstOrDefaultAsync<VenueDetailsViewModel>(sql, new { VenueId = venueId });
+        return result;
     }
 }

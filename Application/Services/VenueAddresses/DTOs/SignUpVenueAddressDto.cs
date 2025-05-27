@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Application.VenueAddressService.DTOs;
+namespace Application.Services.VenueAddresses.DTOs;
 
 public class SignUpVenueAddressDto
 {

@@ -9,21 +9,12 @@ namespace CoworkingSpace.Controllers;
 public class BookingController(IMediator mediator): Controller
 {
    [HttpPost("BookDailySpace")]
-   public async Task<IActionResult> BookDailySpace([FromBody] DailySpaceBookCommand command)
+   public async Task<IActionResult> BookDailySpace([FromBody] Book command)
    {
        var result = await mediator.Send(command);
        if (result.IsFailure)
            return BadRequest(result.Error);
        return Ok(result.Value);
    }
-   
-    [HttpPost("CreatePayment")]
-    public async Task<IActionResult> CreatePayment([FromBody] CreatePaymentCommand command)
-    {
-        var result = await mediator.Send(command);
-        if (result.IsFailure)
-            return BadRequest(result.Error);
-        return Ok(result.Value);
-    }
 }
    

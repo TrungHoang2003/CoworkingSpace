@@ -1,9 +1,7 @@
 using Application.Services.Venues.CQRS.Commands;
-using Application.VenueService.CQRS.Commands;
 using FluentValidation;
-using Microsoft.AspNetCore.Http;
 
-namespace Application.VenueService.Validators;
+namespace Application.Services.Venues.Validators;
 
 public class SignUpVenueCommandValidator: AbstractValidator<SignUpVenueCommand>
 {

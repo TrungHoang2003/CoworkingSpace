@@ -3,7 +3,7 @@ using FluentValidation;
 
 namespace Application.Services.Bookings.Validators;
 
-public class DailySpaceBookCommandValidator: AbstractValidator<DailySpaceBookCommand>
+public class DailySpaceBookCommandValidator: AbstractValidator<Book>
 {
    public DailySpaceBookCommandValidator()
    {
@@ -23,8 +23,9 @@ public class DailySpaceBookCommandValidator: AbstractValidator<DailySpaceBookCom
             .GreaterThan(x => x.StartDate)
             .WithMessage("EndDate must be greater than StartDate.");
          
-         RuleFor(x => x.Quantity)
+         RuleFor(x => x.Capacity)
             .GreaterThan(0)
-            .WithMessage("Quantity must be greater than 0.");
+            .WithMessage("Capacity must be greater than 0.");
+         
    }
 }

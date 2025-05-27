@@ -7,12 +7,12 @@ using MediatR;
 
 namespace Application.Services.Spaces.CQRS.Commands;
 
-public sealed record AddSpaceImageCommand(string Image, int SpaceId, SpaceAssetType Type):IRequest<Result>;
+public sealed record AddSpaceImage(string Image, int SpaceId, SpaceAssetType Type):IRequest<Result>;
 
 public class AddSpaceImageCommandHandler(IUnitOfWork unitOfWork, CloudinaryService cloudinaryService)
-    : IRequestHandler<AddSpaceImageCommand, Result>
+    : IRequestHandler<AddSpaceImage, Result>
 {
-    public async Task<Result> Handle(AddSpaceImageCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(AddSpaceImage request, CancellationToken cancellationToken)
     {
         var space = await unitOfWork.Space.GetById(request.SpaceId);
         if (space is null) return SpaceErrors.SpaceNotFound;

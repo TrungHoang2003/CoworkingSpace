@@ -7,7 +7,7 @@ namespace Infrastructure.Repositories;
 
 public interface IReservationRepository: IGenericRepository<Reservation>
 {
-
+    Task SaveChangesAsync();
     Task<Reservation?> GetById(int reservationId);
 }
 
@@ -19,5 +19,10 @@ public class ReservationRepository(ApplicationDbContext dbContext, DbConnection<
         const string sql = "Select * from Reservation where ReservationId = @reservationId";
         var result = await cnn.QueryFirstOrDefaultAsync<Reservation>(sql, new { ReservationId = reservationId });
         return result;
+    }
+    
+    public async Task SaveChangesAsync()
+    {
+        await dbContext.SaveChangesAsync();
     }
 }

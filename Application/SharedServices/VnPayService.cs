@@ -26,7 +26,7 @@ public class VnPayService(IConfiguration configuration, IHttpContextAccessor htt
         logger.LogInformation("vnpHashSecret (first 5 chars): {HashSecret}", vnpHashSecret.Substring(0, Math.Min(5, vnpHashSecret.Length)));
 
         // Chuyển TotalPrice thành số nguyên
-        var amount = (long)((reservation.TotalPrice ?? 0) * 100);
+        var amount = (long)(reservation.TotalPrice  * 100);
         var txnRef = reservation.ReservationId.ToString();
         var createDate = DateTime.Now.ToString("yyyyMMddHHmmss");
 

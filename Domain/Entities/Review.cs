@@ -16,7 +16,7 @@ public class Review
     public int SpaceId { get; set; }
 
     [ForeignKey("SpaceId")]
-    public Space? WorkingSpace { get; set; }
+    public Space? Space { get; set; }
 
     [Required]
     [Range(1, 5)]

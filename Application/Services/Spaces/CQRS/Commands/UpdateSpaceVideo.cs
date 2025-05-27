@@ -1,21 +1,18 @@
 using Application.SharedServices;
-using CloudinaryDotNet.Actions;
 using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
 using Infrastructure.Repositories;
 using MediatR;
-using Microsoft.AspNetCore.Http;
-using Error = Domain.ResultPattern.Error;
 
-namespace Application.SpaceService.CQRS.Commands;
+namespace Application.Services.Spaces.CQRS.Commands;
 
-public sealed record UpdateSpaceVideoCommand(string Video, int SpaceId):IRequest<Result>;
+public sealed record UpdateSpaceVideo(string Video, int SpaceId):IRequest<Result>;
 
 internal class UpdateSpaceVideoCommandHandler(CloudinaryService cloudinaryService, IUnitOfWork unitOfWork)
-    : IRequestHandler<UpdateSpaceVideoCommand, Result>
+    : IRequestHandler<UpdateSpaceVideo, Result>
 {
-    public async Task<Result> Handle(UpdateSpaceVideoCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateSpaceVideo request, CancellationToken cancellationToken)
     {
         var space = await unitOfWork.Space.FindById(request.SpaceId);
         if (!space) return SpaceErrors.SpaceNotFound;

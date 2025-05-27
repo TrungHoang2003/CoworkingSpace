@@ -2,7 +2,7 @@
   mysql:
     image: mysql:8.0
     environment:
-      MYSQL_ROOT_PASSWORD: root123
+      MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: CoworkingSpace
       MYSQL_USER: trung
       MYSQL_PASSWORD: trung220703

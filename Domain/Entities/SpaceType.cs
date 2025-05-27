@@ -8,7 +8,7 @@ public class SpaceType
 
     public string? Name { get; set; }
     public string? Description { get; set; }
-    public bool IsDaiLySpaceType{ get; set; }
+    public bool IsNormalSpaceType{ get; set; }
 }
 
     

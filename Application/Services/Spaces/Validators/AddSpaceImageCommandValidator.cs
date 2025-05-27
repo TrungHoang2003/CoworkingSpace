@@ -5,7 +5,7 @@ using FluentValidation;
 
 namespace Application.SpaceService.Validators;
 
-public class AddSpaceImageCommandValidator:AbstractValidator<AddSpaceImageCommand>
+public class AddSpaceImageCommandValidator:AbstractValidator<AddSpaceImage>
 {
     public AddSpaceImageCommandValidator()
     {

@@ -1,6 +1,6 @@
-using Application.PriceService.DTOs;
+using Application.Services.Prices.DTOs;
 using Application.Services.Spaces.DTOs;
-using Application.SpaceService.Mappings;
+using Application.Services.Spaces.Mappings;
 using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
@@ -9,51 +9,42 @@ using MediatR;
 
 namespace Application.Services.Spaces.CQRS.Commands;
 
-public sealed record UpdateSpaceCommand(
+public sealed record UpdateSpace(
     int SpaceId,
     SpaceInfoDto? BasicInfo,
     SpacePriceDto? Price,
     List<int>? AmenityIds) : IRequest<Result>;
 
 public class UpdateSpaceCommandHandler(IUnitOfWork unitOfWork)
-    : IRequestHandler<UpdateSpaceCommand, Result>
+    : IRequestHandler<UpdateSpace, Result>
 {
-    public async Task<Result> Handle(UpdateSpaceCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateSpace request, CancellationToken cancellationToken)
     {
         var space = await unitOfWork.Space.GetById(request.SpaceId);
         if (space is null) return SpaceErrors.SpaceNotFound;
 
         if (request.BasicInfo != null)
         {
+            if (request.BasicInfo.ListingType == ListingType.MonthOnly && space.SpaceType.IsNormalSpaceType)
+                return SpaceErrors.NotMonthOnlySpaceType;
+            if (request.BasicInfo.ListingType == ListingType.Normal && !space.SpaceType.IsNormalSpaceType)
+                return SpaceErrors.NotNormalSpaceType;
+
             var spaceType = await unitOfWork.SpaceType.GetById(request.BasicInfo.SpaceTypeId);
             if (spaceType is null) return SpaceErrors.SpaceTypeNotFound;
 
-            switch (request.BasicInfo.ListingType)
-            {
-                case ListingType.Daily when !spaceType.IsDaiLySpaceType:
-                    return SpaceErrors.NotDailySpaceType;
-                case ListingType.Monthly when spaceType.IsDaiLySpaceType:
-                    return SpaceErrors.NotMonthlySpaceType;
-            }
             space = request.BasicInfo.ToSpace();
         }
 
         if (request.Price != null)
         {
-            var price = new Price();
-            switch (request.BasicInfo!.ListingType)
+            var price = new Price
             {
-                case ListingType.Daily:
-                    price.TimeUnit = TimeUnit.Day;
-                    break;
-                case ListingType.Monthly:
-                    price.TimeUnit = TimeUnit.Month;
-                    price.DiscountPercentage = request.Price.DiscountPercentage;
-                    price.SetupFee = request.Price.SetupFee;
-                    break;
-            }
+                DiscountPercentage = request.Price.DiscountPercentage,
+                SetupFee = request.Price.SetupFee,
+                Amount = request.Price.Amount
+            };
 
-            price.Amount = request.Price.Amount;
             space.Price = price;
         }
 

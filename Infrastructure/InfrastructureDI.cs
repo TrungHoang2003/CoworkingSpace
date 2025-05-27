@@ -40,6 +40,7 @@ public static class InfrastructureDi
         services.AddSingleton<HttpClient>();
         services.AddScoped<DbConnection<MySqlConnection>, MySqlServer>();
         services.AddScoped<IGuestArrivalRepository, GuestArrivalRepository>();
+        services.AddScoped<IReservationRepository, ReservationRepository>();
         services.AddScoped<IPriceRepository, PriceRepository>();
         services.AddScoped<ISpaceRepository, SpaceRepository>();
         services.AddScoped<IAmenityRepository, AmenityRepository>();
@@ -58,5 +59,8 @@ public static class InfrastructureDi
         services.AddScoped<IGuestHourRepository, GuestHourRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();
         services.AddScoped<IReservationRepository, ReservationRepository>();
+        services.AddScoped<ICollectionRepository, CollectionRepository>();
+        services.AddScoped<ISpaceCollectionRepository, SpaceCollectionRepository>();
+        services.AddScoped<IReviewRepository, ReviewRepository>();
     }
 }

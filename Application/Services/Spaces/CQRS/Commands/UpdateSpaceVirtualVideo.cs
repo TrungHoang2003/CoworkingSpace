@@ -10,12 +10,12 @@ using Error = Domain.ResultPattern.Error;
 
 namespace Application.SpaceService.CQRS.Commands;
 
-public sealed record UpdateSpaceVirtualVideoCommand(string Video , int SpaceId):IRequest<Result>;
+public sealed record UpdateSpaceVirtualVideo(string Video , int SpaceId):IRequest<Result>;
 
 internal class UpdateSpaceVirtualVideoCommandHandler(CloudinaryService cloudinaryService, IUnitOfWork unitOfWork)
-    : IRequestHandler<UpdateSpaceVirtualVideoCommand, Result>
+    : IRequestHandler<UpdateSpaceVirtualVideo, Result>
 {
-    public async Task<Result> Handle(UpdateSpaceVirtualVideoCommand request, CancellationToken cancellationToken)
+    public async Task<Result> Handle(UpdateSpaceVirtualVideo request, CancellationToken cancellationToken)
     {
         var spaceVideo = await unitOfWork.SpaceAsset.GetByType(request.SpaceId, SpaceAssetType.VirtualVideo);
         if (spaceVideo == null)

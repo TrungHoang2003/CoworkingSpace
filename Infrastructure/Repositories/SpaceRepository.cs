@@ -8,6 +8,7 @@ namespace Infrastructure.Repositories;
 
 public interface ISpaceRepository: IGenericRepository<Space>
 {
+    Task<bool> CheckAvailability(int spaceId, DateTime startDate, DateTime endDate);
    Task<List<Space>> GetAllWorkingSpacesAsync();
    Task<List<Space>> GetVenueWorkingSpacesAsync(int venueId);
    Task<Space?> GetById(int spaceId);
@@ -58,5 +59,19 @@ public class SpaceRepository(ApplicationDbContext dbContext, DbConnection<MySqlC
         var result = await cnn.QueryFirstOrDefaultAsync<Space>(sql, new { SpaceId = spaceId, VenueId = venueId });
         
         return result;
+    }
+
+    public async Task<bool> CheckAvailability(int spaceId, DateTime startDate, DateTime endDate)
+    {
+        var cnn = dbConnection.OpenConnection();
+        var sql =@"
+            SELECT COUNT(1) 
+            FROM Reservation
+            WHERE SpaceId = @spaceId
+            and StartDate < @endDate
+            and EndDate > @startDate";
+        
+        var result = await cnn.ExecuteScalarAsync<int>(sql, new { SpaceId = spaceId, StartDate = startDate, EndDate = endDate });
+        return result > 0;
     }
 }
