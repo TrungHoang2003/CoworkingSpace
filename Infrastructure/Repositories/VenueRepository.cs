@@ -97,10 +97,12 @@ public class VenueRepository(ApplicationDbContext dbContext, DbConnection<MySqlC
         var cnn = dbConnection.OpenConnection();
         try
         {
-            const string sql = @"SELECT v.VenueId, v.Name, v.LogoUrl, a.FullAddress
-            FROM Venue v
-            LEFT JOIN VenueAddress a ON v.VenueAddressId = a.VenueAddressId
-            WHERE v.HostId = @HostId";
+            const string sql = """
+                               SELECT v.VenueId, v.Name, v.LogoUrl, a.FullAddress
+                                           FROM Venue v
+                                           LEFT JOIN VenueAddress a ON v.VenueAddressId = a.VenueAddressId
+                                           WHERE v.HostId = @HostId
+                               """;
             
             var result = await cnn.QueryAsync<VenueItemViewModel>(sql, new { HostId= hostId });
             return result.ToList();

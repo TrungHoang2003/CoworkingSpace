@@ -16,10 +16,8 @@ public class Reservation
     
     public int CustomerId { get; set; }
     [ForeignKey("CustomerId")] public User? Customer { get; set; }
-    
     public int SpaceId { get; set; }
     [ForeignKey("SpaceId")] public Space? Space { get; set; }
-
     public int Capacity { get; set; }
     public DateTime ReservationDate { get; set; } = DateTime.UtcNow;
     public DateTime StartDate { get; set; } 

@@ -1,4 +1,5 @@
 using Application.Services.Spaces.CQRS.Commands;
+using Application.Services.Spaces.CQRS.Queries;
 using Application.SpaceService.CQRS.Commands;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -49,5 +50,12 @@ public class SpaceController(IMediator mediator): Controller
     {
         var result = await mediator.Send(command);
         return result.IsSuccess ? Ok(result) : BadRequest(result);
+    }
+    
+    [HttpGet("GetSpaces")]
+    public async Task<IActionResult> GetSpaces([FromBody] GetSpacesCommand command)
+    {
+        var result = await mediator.Send(command);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(result);
     }
 }

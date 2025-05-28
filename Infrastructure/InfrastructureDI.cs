@@ -38,6 +38,7 @@ public static class InfrastructureDi
         }).AddEntityFrameworkStores<ApplicationDbContext>();
 
         services.AddSingleton<HttpClient>();
+        services.AddSingleton<SqlKata.Compilers.MySqlCompiler>();
         services.AddScoped<DbConnection<MySqlConnection>, MySqlServer>();
         services.AddScoped<IGuestArrivalRepository, GuestArrivalRepository>();
         services.AddScoped<IReservationRepository, ReservationRepository>();
