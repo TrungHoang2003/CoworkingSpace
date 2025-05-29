@@ -1,9 +1,8 @@
 using Application.Services.Spaces.CQRS.Commands;
-using Application.SpaceService.CQRS.Commands;
 using Domain.Entities;
 using FluentValidation;
 
-namespace Application.SpaceService.Validators;
+namespace Application.Services.Spaces.Validators;
 
 public class CreateSpaceCommandValidator : AbstractValidator<CreateSpaceCommand>
 {
@@ -30,14 +29,7 @@ public class CreateSpaceCommandValidator : AbstractValidator<CreateSpaceCommand>
             .WithMessage("ListingType must be either Daily(1) or Monthly(0).");
 
         RuleFor(x => x.BasicInfo.Capacity)
-            .Null()
-            .When(x => x.BasicInfo.ListingType == ListingType.Daily)
-            .WithMessage("If you are creating a daily space, capacity is not required");
-
-        RuleFor(x => x.BasicInfo.Quantity)
-            .Null()
-            .When(x => x.BasicInfo.ListingType == ListingType.Monthly)
-            .WithMessage("If you are creating a monthly space, quantity is not required");
+            .NotNull();
 
         RuleFor(x => x.BasicInfo.Name)
             .NotEmpty()

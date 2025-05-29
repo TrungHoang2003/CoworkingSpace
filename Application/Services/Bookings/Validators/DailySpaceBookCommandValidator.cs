@@ -23,7 +23,7 @@ public class DailySpaceBookCommandValidator: AbstractValidator<DailySpaceBookCom
             .GreaterThan(x => x.StartDate)
             .WithMessage("EndDate must be greater than StartDate.");
          
-         RuleFor(x => x.Quantity)
+         RuleFor(x => x.Capacity)
             .GreaterThan(0)
             .WithMessage("Quantity must be greater than 0.");
    }

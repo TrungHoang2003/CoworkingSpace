@@ -8,6 +8,7 @@ public class GuestHour
    [Key] public int GuestHourId { get; set; }
    
    public int VenueId { get; set; }
+   
    [ForeignKey("VenueId")] public Venue? Venue { get; set; } 
    
    public DayOfWeek DayOfWeek { get; set; }

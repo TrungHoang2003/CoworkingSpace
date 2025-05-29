@@ -15,7 +15,7 @@ public class PayOsService(IConfiguration configuration)
         var returnUrl = configuration["PayOSSettings:ReturnUrl"];
         var cancelUrl = configuration["PayOSSettings:CancelUrl"];
         var orderCode = reservation.ReservationId;
-        var amount = (int)((reservation.TotalPrice ?? 0) * 100);
+        var amount = (int)(reservation.TotalPrice  * 100);
         var description = "Thanh toan don hang " + orderCode;
 
         var items = new List<ItemData>();

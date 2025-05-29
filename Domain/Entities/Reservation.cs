@@ -3,14 +3,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Domain.Entities;
 
-public enum ReservationStatus
-{
-    Pending,
-    Confirmed,
-    Cancelled,
-    Completed
-}
-
 public class Reservation
 {
     [Key]
@@ -21,20 +13,18 @@ public class Reservation
     public int SpaceId { get; set; }
     [ForeignKey("SpaceId")] public Space? Space { get; set; }
 
-    public int? Quantity { get; set; } 
-    public int? Capacity { get; set; }
+    public int Capacity { get; set; }
     public DateTime ReservationDate { get; set; } = DateTime.UtcNow;
     public DateTime StartDate { get; set; } 
     public DateTime EndDate { get; set; } 
 
     [Column(TypeName = "decimal(10,2)")]
-    public decimal? TotalPrice { get; set; }
+    public decimal TotalPrice { get; set; }
     
-
     [Column(TypeName = "decimal(10,2)")]
     public decimal? SalesPrice{ get; set; }
     
-    public ReservationStatus Status { get; set; } = ReservationStatus.Pending;
+    public string Status { get; set; } 
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 

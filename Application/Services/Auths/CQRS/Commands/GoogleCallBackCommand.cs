@@ -62,7 +62,7 @@ public class GoogleCallbackCommandHandler(
             return Result<string>.Failure(new Error("Redis.SaveFailed", $"Failed to save tokens: {ex.Message}"));
         }
 
-        var redirectUrl = $"http://localhost:3000/home?accessToken={jwtToken}&refreshToken={refreshToken}";
+        var redirectUrl = $"https://booking-space-kappa.vercel.app/home?accessToken={jwtToken}&refreshToken={refreshToken}";
         return Result<string>.Success(redirectUrl);
     }
 }

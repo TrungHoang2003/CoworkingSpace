@@ -12,7 +12,7 @@ public sealed record DailySpaceBookCommand(
     int SpaceId,
     DateTime StartDate,
     DateTime EndDate,
-    int Quantity):IRequest<Result<DailySpaceBookResponse>>;
+    int Capacity):IRequest<Result<DailySpaceBookResponse>>;
 
 public sealed record DailySpaceBookResponse
 {
@@ -21,7 +21,7 @@ public sealed record DailySpaceBookResponse
     public int CustomerId { get; set; }
     public DateTime StartDate { get; set; }
     public DateTime EndDate { get; set; }
-    public int? Quantity { get; set; }
+    public int? Capacity{ get; set; }
     public int? TotalDays { get; set; }
     public decimal TotalPrice { get; set; }
 }
@@ -36,7 +36,7 @@ public class DailySpaceBookCommandHandler(IUnitOfWork unitOfWork, IHttpContextAc
         if (space is null) return Result<DailySpaceBookResponse>.Failure(SpaceErrors.SpaceNotFound);
 
         // Check if the space is available
-        if (space.Quantity < request.Quantity)
+        if (space.Quantity < request.Capacity)
             return Result<DailySpaceBookResponse>.Failure(BookingErrors.SpaceNotAvailable);
         
         var venue = await unitOfWork.Venue.GetById(space.VenueId);
@@ -63,11 +63,11 @@ public class DailySpaceBookCommandHandler(IUnitOfWork unitOfWork, IHttpContextAc
         {
             CustomerId = Convert.ToInt32(userId),
             SpaceId = request.SpaceId,
-            Quantity = request.Quantity,
+            Capacity= request.Capacity,
             StartDate = request.StartDate,
             EndDate = request.EndDate,
-            SalesPrice = price.Amount * request.Quantity * totalDays,
-            TotalPrice = price.Amount * request.Quantity * totalDays,
+            SalesPrice = price.Amount * request.Capacity * totalDays,
+            TotalPrice = price.Amount * request.Capacity * totalDays,
         };
         
         await unitOfWork.Reservation.Create(reservation);
@@ -80,9 +80,9 @@ public class DailySpaceBookCommandHandler(IUnitOfWork unitOfWork, IHttpContextAc
             CustomerId = reservation.CustomerId,
             StartDate = reservation.StartDate,
             EndDate = reservation.EndDate,
-            Quantity = reservation.Quantity,
+            Capacity= reservation.Capacity,
             TotalDays = totalDays,
-            TotalPrice = reservation.TotalPrice ?? 0
+            TotalPrice = reservation.TotalPrice
         };
 
         return Result<DailySpaceBookResponse>.Success(response);
