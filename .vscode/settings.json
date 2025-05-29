@@ -1,0 +1,54 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3307,
+            "driver": "MySQL",
+            "name": "coworkingSpace",
+            "username": "root",
+            "database": "CoworkingSpace",
+            "askForPassword": true
+        }
+    ],
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.formatOnPaste": true,
+    "editor.autoIndent": "full",
+    "editor.detectIndentation": true,
+    "editor.insertSpaces": true,
+    "editor.tabSize": 4,
+    "editor.cursorSurroundingLines": 5,
+    "editor.cursorBlinking": "smooth", // C# specific settings
+    "[csharp]": {
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "editor.defaultFormatter": "ms-dotnettools.csharp",
+        "editor.autoIndent": "full",
+        "editor.insertSpaces": true,
+        "editor.tabSize": 4,
+    },
+    "omnisharp.enableEditorConfigSupport": true,
+    // IntelliSense and suggestion settings
+    "editor.quickSuggestions": {
+        "other": true,
+        "comments": false,
+        "strings": false
+    },
+    "editor.suggestOnTriggerCharacters": true,
+    "editor.acceptSuggestionOnCommitCharacter": true,
+    "editor.acceptSuggestionOnEnter": "on",
+    "editor.tabCompletion": "on",
+    "editor.wordBasedSuggestions": "matchingDocuments",
+    // GitHub Copilot settings
+    "github.copilot.enable": {
+        "*": true,
+        "yaml": false,
+        "plaintext": false,
+        "markdown": false
+    },
+}

@@ -3,6 +3,7 @@ using System.Text;
 using Dapper;
 using Domain.Entities;
 using Domain.Filters;
+using Google.Apis.Requests;
 using Infrastructure.DbHelper;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -14,15 +15,15 @@ using SqlKata.Execution;
 
 namespace Infrastructure.Repositories;
 
-public interface ISpaceRepository: IGenericRepository<Space>
+public interface ISpaceRepository : IGenericRepository<Space>
 {
     Task<bool> CheckAvailability(int spaceId, DateTime startDate, DateTime endDate);
-   Task<List<Space>> GetAllWorkingSpacesAsync();
-   Task<List<Space>> GetVenueWorkingSpacesAsync(int venueId);
-   Task<Space?> GetById(int spaceId);
-   Task<bool> FindById(int spaceId);
-   Task<Space?> GetByIdAndVenue(int spaceId, int venueId);
-   Task<List<Space>> GetSpaces(SpaceFilter filter);
+    Task<List<Space>> GetAllWorkingSpacesAsync();
+    Task<List<Space>> GetVenueWorkingSpacesAsync(int venueId);
+    Task<Space?> GetById(int spaceId);
+    Task<bool> FindById(int spaceId);
+    Task<Space?> GetByIdAndVenue(int spaceId, int venueId);
+    Task<List<Space>> GetSpaces(SpaceFilter filter);
 }
 
 public class SpaceRepository(MySqlCompiler compiler, ApplicationDbContext dbContext, DbConnection<MySqlConnection> dbConnection)
@@ -88,11 +89,11 @@ public class SpaceRepository(MySqlCompiler compiler, ApplicationDbContext dbCont
         if (filter is { StartDate: not null, EndDate: not null })
         {
             query.WhereNotExists(q => q
-                .From("Reservation as r")
-                .WhereColumns("r.SpaceId", "=", "s.SpaceId")
-                .Where("r.StartDate", "<", filter.EndDate)
-                .Where("r.EndDate", ">", filter.StartDate)
-            );
+            .From("Reservation as r")
+            .WhereColumns("r.SpaceId", "=", "s.SpaceId")
+            .Where("r.StartDate", "<", filter.EndDate)
+            .Where("r.EndDate", ">", filter.StartDate)
+        );
         }
 
         if (!string.IsNullOrEmpty(filter.Name))
@@ -114,8 +115,7 @@ public class SpaceRepository(MySqlCompiler compiler, ApplicationDbContext dbCont
         {
             query.Where("s.SpaceTypeId", filter.SpaceTypeId.Value);
         }
-        
-        
+
         var result = await query.GetAsync<Space>();
         return result.ToList();
     }
@@ -130,9 +130,7 @@ public class SpaceRepository(MySqlCompiler compiler, ApplicationDbContext dbCont
                            and StartDate < @endDate
                            and EndDate > @startDate
                            """;
-
-        var result =
-            await cnn.ExecuteScalarAsync<int>(sql, new { SpaceId = spaceId, StartDate = startDate, EndDate = endDate });
+        var result = await cnn.ExecuteScalarAsync<int>(sql, new { SpaceId = spaceId, StartDate = startDate, EndDate = endDate });
         return result > 0;
     }
 }
