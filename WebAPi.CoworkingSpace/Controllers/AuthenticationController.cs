@@ -38,18 +38,18 @@ public class AuthenticationController(IMediator mediator) : ControllerBase
     {
         var command = new GoogleCallbackCommand(code);
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Redirect(result.Value) : BadRequest(result.Error);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
     }
-    
+
     [HttpPost("Logout")]
     public async Task<IActionResult> Logout()
     {
         var command = new LogoutCommand();
         var result = await mediator.Send(command);
-        
-        if(!result.IsSuccess)
+
+        if (!result.IsSuccess)
             return BadRequest(result.Error);
-    
+
         return Ok(result.Value);
     }
 }

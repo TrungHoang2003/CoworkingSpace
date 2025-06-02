@@ -5,13 +5,13 @@ using MySqlConnector;
 
 namespace Infrastructure.Repositories;
 
-public interface IReservationRepository: IGenericRepository<Reservation>
+public interface IReservationRepository : IGenericRepository<Reservation>
 {
     Task SaveChangesAsync();
     Task<Reservation?> GetById(int reservationId);
 }
 
-public class ReservationRepository(ApplicationDbContext dbContext, DbConnection<MySqlConnection> dbConnection) : GenericRepository<Reservation>(dbContext), IReservationRepository
+public class ReservationRepository(DbConnection<MySqlConnection> dbConnection, ApplicationDbContext dbContext) : GenericRepository<Reservation>(dbContext), IReservationRepository
 {
     public async Task<Reservation?> GetById(int reservationId)
     {
@@ -20,7 +20,7 @@ public class ReservationRepository(ApplicationDbContext dbContext, DbConnection<
         var result = await cnn.QueryFirstOrDefaultAsync<Reservation>(sql, new { ReservationId = reservationId });
         return result;
     }
-    
+
     public async Task SaveChangesAsync()
     {
         await dbContext.SaveChangesAsync();

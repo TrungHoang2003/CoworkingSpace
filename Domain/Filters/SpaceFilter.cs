@@ -12,4 +12,6 @@ public class SpaceFilter
     public int? SpaceTypeId { get; set; }
     public int MinPrice { get; set; } = 0;
     public int MaxPrice { get; set; } = 10000000;
+    public int? VenueTypeId { get; set; }
+    public List<int>? AmenityIds { get; set; }
 }
