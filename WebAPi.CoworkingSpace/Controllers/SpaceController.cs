@@ -1,6 +1,7 @@
 using Application.Services.Spaces.CQRS.Commands;
 using Application.Services.Spaces.CQRS.Queries;
 using Application.SpaceService.CQRS.Commands;
+using Domain.Filters;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -52,17 +53,28 @@ public class SpaceController(IMediator mediator) : Controller
         return result.IsSuccess ? Ok(result) : BadRequest(result);
     }
 
-    [HttpGet("GetSpaces")]
-    public async Task<IActionResult> GetSpaces([FromBody] GetSpacesCommand command)
+    [HttpPost("GetSpaces")]
+    public async Task<IActionResult> GetSpaces([FromBody] SpaceFilter spaceFilter)
     {
+        var command = new GetSpacesCommand(spaceFilter);
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(result);
+        return result.IsSuccess ? Ok(result.Value) : BadRequest(result.Error);
     }
 
-    [HttpGet("SearchSpaces")]
-    public async Task<IActionResult> SearchSpaces([FromBody] SearchSpacesCommand command)
+    [HttpGet("GetSuggestions")]
+    public async Task<IActionResult> GetSuggestions([FromBody] GetSuggestionsCommand command)
     {
+        if (string.IsNullOrWhiteSpace(command.Keyword))
+        {
+            return Ok(new List<string>());
+        }
         var result = await mediator.Send(command);
-        return result.IsSuccess ? Ok(result.Value) : BadRequest(result);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+
+        return BadRequest(result.Error);
     }
 }

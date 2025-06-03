@@ -6,13 +6,13 @@ namespace Domain.Entities;
 public class SpaceAsset
 {
     [Key]
-    public int Id{ get; set; }
+    public int Id { get; set; }
 
     public int SpaceId { get; set; }
     [ForeignKey("SpaceId")] Space? Space { get; set; }
-
+    public bool IsPrimary { get; set; } = false;
     public string Url { get; set; }
-    public SpaceAssetType? Type{ get; set; }
+    public SpaceAssetType? Type { get; set; }
     public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
 }
 

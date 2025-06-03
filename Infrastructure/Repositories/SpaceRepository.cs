@@ -5,6 +5,7 @@ using Infrastructure.DbHelper;
 using MySqlConnector;
 using SqlKata.Compilers;
 using SqlKata.Execution;
+using Domain;
 
 namespace Infrastructure.Repositories;
 
@@ -16,8 +17,7 @@ public interface ISpaceRepository : IGenericRepository<Space>
     Task<List<Space>> GetVenueWorkingSpacesAsync(int venueId);
     Task<bool> FindById(int spaceId);
     Task<Space?> GetByIdAndVenue(int spaceId, int venueId);
-    Task<List<Space>> GetSpaces(SpaceFilter filter);
-    Task<List<Space>> SearchSpaces(string searchTerm);
+    Task<List<SpaceViewHolder>> GetSpaces(SpaceFilter filter, int userId);
     Task<List<string>> GetSearchSuggestions(string searchTerm);
 }
 
@@ -67,41 +67,57 @@ public class SpaceRepository(MySqlCompiler compiler, ApplicationDbContext dbCont
 
         return result;
     }
-
-    public async Task<List<Space>> GetSpaces(SpaceFilter filter)
+    public async Task<List<SpaceViewHolder>> GetSpaces(SpaceFilter filter, int userId)
     {
         await using var cnn = dbConnection.OpenConnection();
         var db = new QueryFactory(cnn, compiler);
 
         var query = db.Query("Space as s")
-        .Join("Price as p", "s.PriceId", "p.Id")
-        .Select("s.*")
-        .Where("p.Amount", ">=", filter.MinPrice)
-        .Where("p.Amount", "<=", filter.MaxPrice);
+            .Join("Price as p", "s.PriceId", "p.Id")
+            .Join("Venue as v", "s.VenueId", "v.VenueId")
+            .Join("VenueAddress as va", "v.VenueAddressId", "va.VenueAddressId")
+            .LeftJoin("SpaceAsset as sa", j => j.On("s.SpaceId", "sa.SpaceId"))
+            .LeftJoin("Review as r", "s.SpaceId", "r.SpaceId")
+            .LeftJoin("SpaceCollection as sc", "s.SpaceId", "sc.SpaceId")
+            .LeftJoin("Collection as c", "sc.CollectionId", "c.CollectionId")
+            .Where("c.UserId", userId)
+            .Select(
+        "s.SpaceId",
+        "s.Name",
+        "va.FullAddress",
+        "p.Amount as Price"
+            )
+            .SelectRaw("IF(COUNT(sc.SpaceCollectionId) > 0, true, false) as IsLiked")
+            .SelectRaw("(SELECT Url FROM SpaceAsset WHERE SpaceId = s.SpaceId ORDER BY Id LIMIT 1) as ImageUrl")
+            .SelectRaw("Round(COALESCE(AVG(r.Rating), 0),1) as Rate")
+            .Where("p.Amount", ">=", filter.MinPrice)
+            .Where("p.Amount", "<=", filter.MaxPrice)
+            .GroupBy("s.SpaceId", "s.Name", "va.FullAddress", "p.Amount");
+
+        // Apply conditional filters
+        if (filter.Type.HasValue)
+        {
+            query.Where("s.ListingType", "=", filter.Type.Value);
+        }
+
+        if (filter.Capacity.HasValue)
+        {
+            query.Where("s.Capacity", ">=", filter.Capacity.Value);
+        }
 
         if (filter is { StartDate: not null, EndDate: not null })
         {
             query.WhereNotExists(q => q
-            .From("Reservation as r")
-            .WhereColumns("r.SpaceId", "=", "s.SpaceId")
-            .Where("r.StartDate", "<", filter.EndDate)
-            .Where("r.EndDate", ">", filter.StartDate)
-        );
+                .From("Reservation as res")
+                .WhereColumns("res.SpaceId", "=", "s.SpaceId")
+                .Where("res.StartDate", "<", filter.EndDate)
+                .Where("res.EndDate", ">", filter.StartDate)
+            );
         }
 
         if (!string.IsNullOrEmpty(filter.Name))
         {
             query.Where("s.Name", "LIKE", $"%{filter.Name}%");
-        }
-
-        if (filter.ListingType.HasValue)
-        {
-            query.Where("s.ListingType", filter.ListingType.Value);
-        }
-
-        if (filter.Capacity.HasValue)
-        {
-            query.Where("s.Capacity", filter.Capacity.Value);
         }
 
         if (filter.SpaceTypeId.HasValue)
@@ -111,14 +127,20 @@ public class SpaceRepository(MySqlCompiler compiler, ApplicationDbContext dbCont
 
         if (filter.VenueTypeId.HasValue)
         {
-            query.Where("s.VenueTypeId", filter.VenueTypeId);
+            query.Where("v.VenueTypeId", filter.VenueTypeId.Value);
         }
 
         if (filter.AmenityIds is { Count: > 0 })
         {
-            query.WhereIn("s.SpaceId", db.Query("SpaceAmenity").Select("SpaceId").WhereIn("AmenityId", filter.AmenityIds));
+            query.WhereIn("s.SpaceId",
+                db.Query("SpaceAmenity")
+                    .Select("SpaceId")
+                    .WhereIn("AmenityId", filter.AmenityIds)
+                    .GroupBy("SpaceId")
+                    .Having("COUNT(DISTINCT AmenityId)", "=", filter.AmenityIds.Count)
+            );
         }
-        var result = await query.GetAsync<Space>();
+        var result = await query.GetAsync<SpaceViewHolder>();
         return result.ToList();
     }
 
@@ -135,21 +157,6 @@ public class SpaceRepository(MySqlCompiler compiler, ApplicationDbContext dbCont
         var result = await cnn.ExecuteScalarAsync<int>(sql, new { SpaceId = spaceId, StartDate = startDate, EndDate = endDate });
         return result > 0;
     }
-    public async Task<List<Space>> SearchSpaces(string searchTerm)
-    {
-        var cnn = dbConnection.OpenConnection();
-
-        var db = new QueryFactory(cnn, compiler);
-        var query = db.Query("Space as s")
-            .Join("Venue as v", "s.VenueId", "v.VenueId")
-            .Join("VenueAddress as va", "v.VenueAddressId", "va.VenueAddressId")
-            .Select("s.*")
-            .WhereLike("s.Name", $"%{searchTerm}%")
-            .OrWhereLike("va.FullAddress", $"%{searchTerm}%");
-        var result = await query.GetAsync<Space>();
-        return result.ToList();
-    }
-
     public async Task<List<string>> GetSearchSuggestions(string keyWord)
     {
         if (string.IsNullOrWhiteSpace(keyWord) || keyWord.Length < 2)
@@ -184,30 +191,20 @@ public class SpaceRepository(MySqlCompiler compiler, ApplicationDbContext dbCont
                 .GetAsync<string>();
             suggestions.AddRange(venueNames.Where(x => !string.IsNullOrEmpty(x)));
 
-            // 3. City từ VenueAddress
+            // 3. VenueAddress
             var cities = await db.Query("VenueAddress")
-                .Select("City")
-                .Where("City", "LIKE", $"%{keyWord}%")
-                .WhereNotNull("City")
+                .Select("FullAddress")
+                .Where("FullAddress", "LIKE", $"%{keyWord}%")
+                .WhereNotNull("FullAddress")
                 .Distinct()
                 .Limit(3)
                 .GetAsync<string>();
             suggestions.AddRange(cities.Where(x => !string.IsNullOrEmpty(x)));
-
-            // 4. State từ VenueAddress
-            var states = await db.Query("VenueAddress")
-                .Select("State")
-                .Where("State", "LIKE", $"%{keyWord}%")
-                .WhereNotNull("State")
-                .Distinct()
-                .Limit(2)
-                .GetAsync<string>();
-            suggestions.AddRange(states.Where(x => !string.IsNullOrEmpty(x)));
         }
         catch (Exception)
         {
             // Log error if needed
-            return new List<string>();
+            return [];
         }
 
         // Loại bỏ trùng lặp và giới hạn 10 kết quả

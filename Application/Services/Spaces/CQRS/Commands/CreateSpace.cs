@@ -30,12 +30,12 @@ public class CreateSpaceCommandHandler(
 
         var spaceType = await unitOfWork.SpaceType.GetById(request.BasicInfo.SpaceTypeId);
         if (spaceType is null) return SpaceErrors.SpaceTypeNotFound;
-        
-        if(request.BasicInfo.ListingType == ListingType.MonthOnly && spaceType.IsNormalSpaceType)
+
+        if (request.BasicInfo.ListingType == ListingType.MonthOnly && spaceType.IsNormalSpaceType)
             return SpaceErrors.NotMonthOnlySpaceType;
-        if(request.BasicInfo.ListingType == ListingType.Normal&& !spaceType.IsNormalSpaceType)
+        if (request.BasicInfo.ListingType == ListingType.Normal && !spaceType.IsNormalSpaceType)
             return SpaceErrors.NotNormalSpaceType;
-        
+
         var space = request.BasicInfo.ToSpace();
         space.VenueId = request.VenueId;
 
@@ -52,7 +52,7 @@ public class CreateSpaceCommandHandler(
                     Url = result,
                     Type = SpaceAssetType.VirtualVideo,
                 };
-                (space.SpaceAssets ??= new List<SpaceAsset>()).Add(asset);
+                (space.SpaceAssets ??= []).Add(asset);
             }
 
             if (spaceAsset.Video != null)
@@ -94,7 +94,7 @@ public class CreateSpaceCommandHandler(
                     Url = result,
                     Type = imageDto.Type,
                 };
-                (space.SpaceAssets ??= new List<SpaceAsset>()).Add(newSpaceImage);
+                (space.SpaceAssets ??= []).Add(newSpaceImage);
             }
         }
 
@@ -126,4 +126,3 @@ public class CreateSpaceCommandHandler(
         return Result.Success();
     }
 }
-    

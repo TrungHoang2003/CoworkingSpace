@@ -3,19 +3,17 @@ using FluentValidation;
 
 namespace Application.Services.Spaces.Validators;
 
-public class SpaceFilterValidator:AbstractValidator<SpaceFilter>
+public class SpaceFilterValidator : AbstractValidator<SpaceFilter>
 {
     public SpaceFilterValidator()
     {
-        RuleFor(x => x.ListingType)
+        RuleFor(x => x.Type)
             .IsInEnum()
-            .WithMessage("Listing Type must be either (1)Normal or (0)MonthOnly.")
-            .When(x => x.ListingType.HasValue);
+            .WithMessage("Listing Type must be either (1)Normal or (0)MonthOnly.");
 
         RuleFor(x => x.Capacity)
             .GreaterThan(0)
-            .WithMessage("Capacity must be greater than 0.")
-            .When(x => x.Capacity.HasValue);
+            .WithMessage("Capacity must be greater than 0.");
 
         RuleFor(x => x.StartDate)
             .LessThanOrEqualTo(x => x.EndDate)

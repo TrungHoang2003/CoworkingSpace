@@ -1,7 +1,6 @@
 using Application.Services.VenueAddresses.DTOs;
 using Application.Services.Venues.Mappings;
 using Application.SharedServices;
-using Application.VenueAddressService.DTOs;
 using Domain.Entities;
 using Domain.Errors;
 using Domain.ResultPattern;
@@ -32,7 +31,7 @@ public class SignUpVenueCommandHandler(
     public async Task<Result> Handle(SignUpVenueCommand request, CancellationToken cancellationToken)
     {
         string? userAvatarUrl = null;
-        string? venueLogoUrl= null;
+        string? venueLogoUrl = null;
 
         // Kiểm tra xem loại văn phòng có tồn tại không
         var venueType = await unitOfWork.Venue.GetVenueTypeById(request.VenueTypeId);
@@ -55,7 +54,7 @@ public class SignUpVenueCommandHandler(
         // Kiểm tra đã có role Host chưa, nếu chưa tạo role Host và gán cho User
         var hostRole = await roleManager.RoleExistsAsync("Host");
         if (!hostRole) await roleManager.CreateAsync(new Role("Host"));
-        
+
         var isHost = await userManager.IsInRoleAsync(user, "Host");
         if (!isHost)
         {
@@ -75,7 +74,7 @@ public class SignUpVenueCommandHandler(
                 string.Join(",", updatedResult.Errors.Select(e => e.Description).ToList())));
 
         // Kiểm tra xem người dùng có upload logo cho venue không, nếu có thì gọi API cloudinary và lưu Url vào db
-        if (request.Logo!= null)
+        if (request.Logo != null)
         {
             venueLogoUrl = await cloudinaryService.UploadImage(request.Logo);
             if (venueLogoUrl == null)
@@ -84,10 +83,10 @@ public class SignUpVenueCommandHandler(
 
         // Tạo Venue mới
         var venue = request.ToVenue(venueLogoUrl);
-        
+
         // Đăng ký Host cho Venue
         venue.HostId = user.Id;
-        
+
         // Cập nhật địa chỉ đầy đủ cho Venue
         venue.Address.UpdateFullAddress();
         await unitOfWork.Venue.Create(venue);
@@ -95,7 +94,7 @@ public class SignUpVenueCommandHandler(
         // add Holiday cho Venue
         var holidays = await unitOfWork.Holiday.GetAllHolidays();
         await unitOfWork.VenueHoliday.GenerateDefaultHolidays(holidays, venue);
-        
+
         await unitOfWork.SaveChangesAsync(cancellationToken);
         return Result.Success();
     }

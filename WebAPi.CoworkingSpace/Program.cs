@@ -177,7 +177,7 @@ using (var scope = app.Services.CreateScope())
             Thread.Sleep(delaySeconds * 1000);
         }
     }
-    
+
     var validators = scope.ServiceProvider.GetServices<IValidator<CreateSpace>>();
     foreach (var v in validators)
     {
@@ -200,7 +200,7 @@ if (app.Environment.IsDevelopment())
 app.UseRouting();
 app.UseCors("AllowSpecificOrigins"); // Sử dụng chính sách CORS đã định nghĩa
 app.UseAuthentication();
-app.UseAuthorization(); 
+app.UseAuthorization();
 app.UseMiddleware<ExceptionHandlerMiddleWare>();
 app.UseMiddleware<TokenValidateMiddleware>();
 app.MapControllers();

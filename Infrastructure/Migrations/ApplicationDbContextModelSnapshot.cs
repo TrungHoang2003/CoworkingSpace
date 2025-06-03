@@ -537,6 +537,9 @@ namespace Infrastructure.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("IsPrimary")
+                        .HasColumnType("tinyint(1)");
+
                     b.Property<int>("SpaceId")
                         .HasColumnType("int");
 
@@ -983,7 +986,7 @@ namespace Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Domain.Entities.Space", "WorkingSpace")
+                    b.HasOne("Domain.Entities.Space", "Space")
                         .WithMany("Reviews")
                         .HasForeignKey("SpaceId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -991,7 +994,7 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Customer");
 
-                    b.Navigation("WorkingSpace");
+                    b.Navigation("Space");
                 });
 
             modelBuilder.Entity("Domain.Entities.Space", b =>

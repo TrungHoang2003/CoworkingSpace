@@ -4,7 +4,7 @@ using FluentValidation;
 
 namespace Application.Services.Venues.Validators;
 
-public class SetUpVenueCommandValidator: AbstractValidator<SetUpVenueCommand>
+public class SetUpVenueCommandValidator : AbstractValidator<SetUpVenueCommand>
 {
    public SetUpVenueCommandValidator()
    {
